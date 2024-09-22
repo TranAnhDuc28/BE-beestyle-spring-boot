@@ -7,7 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.HashSet;
 import java.util.Set;
 
-@Table(name = "tbl_permission")
+@Table(name = "permission")
 @Entity
 @Getter
 @Setter

@@ -3,7 +3,7 @@ package com.datn.beestyle.entity.order;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.user.Customer;
-import com.datn.beestyle.entity.voucher.Voucher;
+import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Table(name = "tbl_order")
+@Table(name = "order")
 @Entity
 @Getter
 @Setter

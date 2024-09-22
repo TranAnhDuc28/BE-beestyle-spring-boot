@@ -13,7 +13,7 @@ import java.util.List;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.CascadeType.PERSIST;
 
-@Table(name = "tbl_promotion")
+@Table(name = "promotion")
 @Entity
 @Getter
 @Setter

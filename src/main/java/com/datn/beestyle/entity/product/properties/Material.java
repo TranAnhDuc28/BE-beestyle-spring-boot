@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_material")
+@Table(name = "material")
 @Entity
 @Getter
 @Setter

@@ -1,12 +1,11 @@
 package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.user.Customer;
-import com.datn.beestyle.entity.user.Staff;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_address")
+@Table(name = "address")
 @Entity
 @Getter
 @Setter
@@ -24,17 +23,13 @@ public class Address extends BaseEntity<Long> {
     @Column(name = "district")
     String district;
 
-    @Column(name = "address_name")
+    @Column(name = "commune")
     String commune;
 
-    @Column(name = "address_name")
+    @Column(name = "is_default")
     boolean isDefault;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     Customer customer;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "staff_id", referencedColumnName = "id")
-    Staff staff;
 }

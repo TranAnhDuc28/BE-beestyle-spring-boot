@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_color")
+@Table(name = "color")
 @Entity
 @Getter
 @Setter

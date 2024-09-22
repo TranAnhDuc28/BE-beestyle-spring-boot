@@ -9,7 +9,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_product")
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.*;
+
+
+@Table(name = "product")
 @Entity
 @Getter
 @Setter
@@ -41,5 +47,8 @@ public class Product extends Auditable<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "material_id", referencedColumnName = "id")
     Material material;
+
+    @OneToMany(mappedBy = "product", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.LAZY)
+    List<ProductImage> productImages = new ArrayList<>();
 
 }

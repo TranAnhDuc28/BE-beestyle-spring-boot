@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static jakarta.persistence.CascadeType.*;
 
-@Table(name = "tbl_customer")
+@Table(name = "customer")
 @Entity
 @Getter
 @Setter

@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.HashSet;
 import java.util.Set;
 
-@Table(name = "tbl_role")
+@Table(name = "role")
 @Entity
 @Getter
 @Setter
@@ -28,7 +28,7 @@ public class Role {
     private Set<Staff> users = new HashSet<>();
 
     @ManyToMany
-    @JoinTable(name = "tbl_role_has_permission",
+    @JoinTable(name = "role_has_permission",
             joinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")},
             inverseJoinColumns = {@JoinColumn(name = "permission_name", referencedColumnName = "name")})
     private Set<Permission> permissions = new HashSet<>();

@@ -1,11 +1,10 @@
 package com.datn.beestyle.entity.product;
 
-import com.datn.beestyle.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_product_image")
+@Table(name = "product_image")
 @Entity
 @Getter
 @Setter
@@ -23,6 +22,6 @@ public class ProductImage {
     String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_variant_id", referencedColumnName = "id")
-    ProductVariant productVariant;
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    Product product;
 }

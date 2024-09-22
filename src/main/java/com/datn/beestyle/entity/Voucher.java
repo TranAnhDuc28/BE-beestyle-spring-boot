@@ -1,4 +1,4 @@
-package com.datn.beestyle.entity.voucher;
+package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.enums.DiscountType;
@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-@Table(name = "tbl_voucher")
+@Table(name = "voucher")
 @Entity
 @Getter
 @Setter
@@ -52,7 +52,4 @@ public class Voucher extends Auditable<Long> {
 
     @Column(name = "deleted")
     boolean deleted;
-
-    @OneToMany(mappedBy = "voucher", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<VoucherUsage> voucherUsages = new HashSet<>();
 }

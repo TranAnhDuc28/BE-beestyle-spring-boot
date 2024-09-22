@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static jakarta.persistence.CascadeType.ALL;
 
-@Table(name = "tbl_staff")
+@Table(name = "staff")
 @Entity
 @Getter
 @Setter
@@ -44,6 +44,9 @@ public class Staff extends Auditable<Long> {
     @Column(name = "avatar")
     String avatar;
 
+    @Column(name = "address")
+    String address;
+
     @Column(name = "password")
     String password;
 
@@ -54,22 +57,9 @@ public class Staff extends Auditable<Long> {
     @Column(name = "deleted")
     boolean deleted;
 
-    @OneToMany(mappedBy = "staff", cascade = ALL, fetch = FetchType.LAZY)
-    Set<Address> addresses = new HashSet<>();
-
     @ManyToMany
-    @JoinTable(name = "tbl_user_has_role",
+    @JoinTable(name = "user_has_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
     private Set<Role> roles = new HashSet<>();
-
-    public void saveAddress(Address address) {
-        if (address != null) {
-            if (addresses == null) {
-                addresses = new HashSet<>();
-            }
-            addresses.add(address);
-            address.setStaff(this); // save staff id
-        }
-    }
 }

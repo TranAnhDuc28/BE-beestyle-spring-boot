@@ -6,7 +6,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "tbl_category")
+@Table(name = "category")
 @Entity
 @Getter
 @Setter
