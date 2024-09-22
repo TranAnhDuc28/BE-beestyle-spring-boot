@@ -1,4 +1,24 @@
 package com.datn.beestyle.entity.product.properties;
 
-public class Brand {
+import com.datn.beestyle.entity.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+@Table(name = "tbl_brand")
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Brand extends BaseEntity<Integer> {
+
+    @Column(name = "brand_name")
+    String brandName;
+
+    @Column(name = "deleted")
+    boolean deleted;
 }

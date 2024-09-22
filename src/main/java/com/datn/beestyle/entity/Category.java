@@ -15,11 +15,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category extends BaseEntity<Integer> {
 
+    @Column(name = "category_name")
     String categoryName;
 
-    String gender;
-
+    @Column(name = "description")
     String description;
 
+    @Column(name = "deleted")
     boolean deleted;
 }
