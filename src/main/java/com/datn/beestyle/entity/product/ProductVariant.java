@@ -51,5 +51,6 @@ public class ProductVariant extends Auditable<Long> {
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
 
-
+    @OneToMany(mappedBy = "productVariant", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.LAZY)
+    List<ProductImage> productImages = new ArrayList<>();
 }

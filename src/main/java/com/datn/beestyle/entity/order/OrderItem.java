@@ -28,9 +28,6 @@ public class OrderItem {
     @Column(name = "price")
     BigDecimal price = BigDecimal.ZERO;
 
-    @Column(name = "total_price")
-    BigDecimal totalPrice = BigDecimal.ZERO;
-
     @Column(name = "note")
     String note;
 

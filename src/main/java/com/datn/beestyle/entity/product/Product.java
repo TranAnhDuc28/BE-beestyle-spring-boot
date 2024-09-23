@@ -27,6 +27,9 @@ public class Product extends Auditable<Long> {
     @Column(name = "product_name")
     String productName;
 
+    @Column(name = "image_url")
+    String imageUrl;
+
     @Column(name = "gender")
     Gender gender;
 
@@ -48,7 +51,6 @@ public class Product extends Auditable<Long> {
     @JoinColumn(name = "material_id", referencedColumnName = "id")
     Material material;
 
-    @OneToMany(mappedBy = "product", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.LAZY)
-    List<ProductImage> productImages = new ArrayList<>();
+
 
 }
