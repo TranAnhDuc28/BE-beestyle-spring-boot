@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
 
     protected final IGenericRepository<T, ID> entityRepository;

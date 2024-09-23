@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), request);
         errorResponse.setError("Invalid Payload");
+        errorResponse.setMessage(errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
