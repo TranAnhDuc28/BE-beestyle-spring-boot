@@ -24,14 +24,12 @@ public class MaterialService
         implements IMaterialService {
 
     private final MaterialRepository materialRepository;
-    private final MaterialMapper materialMapper;
 
     protected MaterialService(IGenericRepository<Material, Integer> entityRepository,
                               IGenericMapper<Material, CreateMaterialRequest, UpdateMaterialRequest, MaterialResponse> mapper,
                               MaterialRepository materialRepository, MaterialMapper materialMapper) {
         super(entityRepository, mapper);
         this.materialRepository = materialRepository;
-        this.materialMapper = materialMapper;
     }
 
 
