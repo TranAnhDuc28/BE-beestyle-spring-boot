@@ -2,8 +2,8 @@ package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.dto.material.MaterialResponse;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.properties.Material;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,5 +32,4 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Mapping(target = "deleted", defaultValue = "true")
     @Override
     List<Material> toCreateEntityList(List<CreateMaterialRequest> dtoList);
-
 }
