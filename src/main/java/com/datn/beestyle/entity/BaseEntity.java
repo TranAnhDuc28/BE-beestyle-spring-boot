@@ -23,7 +23,7 @@ public abstract class BaseEntity<T extends Serializable> implements Serializable
     T id;
 
     // lưu thời gian record được tạo ra
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime createdAt;

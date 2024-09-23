@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-public abstract class GenericServiceAbstract<T, ID, C, U, R> implements GenericService<T, ID, C, U, R>{
+public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
 
-    protected final GenericRepository<T, ID> entityRepository;
-    protected final GenericMapper<T, C, U, R> mapper;
+    protected final IGenericRepository<T, ID> entityRepository;
+    protected final IGenericMapper<T, C, U, R> mapper;
 
-    protected GenericServiceAbstract(GenericRepository<T, ID> entityRepository, GenericMapper<T, C, U, R> mapper) {
+    protected IGenericServiceAbstract(IGenericRepository<T, ID> entityRepository, IGenericMapper<T, C, U, R> mapper) {
         this.entityRepository = entityRepository;
         this.mapper = mapper;
     }
@@ -22,14 +22,14 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements GenericS
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
         Page<T> entityPage = entityRepository.findAll(pageable);
-
-        List<R> result = entityPage.get().map(mapper::toEntityDto).toList();
-
-        return new PageResponse<>(pageable.getPageNumber() + 1,
-                pageable.getPageSize(),
-                entityPage.getTotalElements(),
-                entityPage.getTotalPages(),
-                result);
+        List<R> result = mapper.toEntityDtoList(entityPage.getContent());
+        return PageResponse.builder()
+                .pageNo(pageable.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(entityPage.getTotalElements())
+                .totalPages(entityPage.getTotalPages())
+                .items(result)
+                .build();
     }
 
     @Transactional
