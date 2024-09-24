@@ -16,7 +16,7 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", defaultValue = "true")
+    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
     @Override
     Material toCreateEntity(CreateMaterialRequest request);
 
@@ -29,7 +29,7 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", defaultValue = "true")
+    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
     @Override
     List<Material> toCreateEntityList(List<CreateMaterialRequest> dtoList);
 }
