@@ -1,19 +1,22 @@
 package com.datn.beestyle.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestControllerAdvice
@@ -23,20 +26,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage(), request);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException e, WebRequest request) {
-        Map<String, String> errors = new HashMap<>();
-        BindingResult bindingResult = e.getBindingResult();
-        for (FieldError fieldError: bindingResult.getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-
-        ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), request);
-        errorResponse.setError("Invalid Payload");
-        errorResponse.setMessage(errors);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler({InvalidDataException.class, EmptyResultDataAccessException.class})
@@ -50,6 +39,42 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), request);
         log.info("Class exception: {}", e.getClass());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class, ConstraintViolationException.class})
+    public ResponseEntity<ErrorResponse> handleValidationException(Exception e, WebRequest request) {
+        Map<String, String> errors = new HashMap<>();
+        ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage(), request);
+
+        if(e instanceof MethodArgumentNotValidException) {
+            BindingResult bindingResult = ((MethodArgumentNotValidException) e).getBindingResult();
+            for (FieldError fieldError: bindingResult.getFieldErrors()) {
+                errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+            errorResponse.setError("Invalid Payload");
+            errorResponse.setMessage(errors);
+        } else if (e instanceof ConstraintViolationException) {
+            Set<ConstraintViolation<?>> violations = ((ConstraintViolationException)e).getConstraintViolations();
+
+//             "message": {
+//                      "updateMaterials.requestList[3].materialName": "K de trong",
+//                      "updateMaterials.requestList[1].materialName": "K de trong"
+//             }
+//            for (ConstraintViolation<?> violation: violations) {
+//                errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+//            }
+//            errorResponse.setMessage(errors);
+
+//             "message": {
+//                     "updateMaterials.requestList[3].materialName": "K de trong",
+//                     "updateMaterials.requestList[1].materialName": "K de trong"
+//             }
+            List<String> errorList = violations.stream()
+                    .map(err -> err.getPropertyPath() + ": " + err.getMessage()).toList();
+            errorResponse.setMessage(errorList);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     private ErrorResponse createErrorResponse(HttpStatus httpStatus, String message, WebRequest request) {

@@ -2,25 +2,30 @@ package com.datn.beestyle.common;
 
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.exception.ResourceNotFoundException;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
 
     protected final IGenericRepository<T, ID> entityRepository;
     protected final IGenericMapper<T, C, U, R> mapper;
-
-    protected IGenericServiceAbstract(IGenericRepository<T, ID> entityRepository, IGenericMapper<T, C, U, R> mapper) {
-        this.entityRepository = entityRepository;
-        this.mapper = mapper;
-    }
+    protected final EntityManager entityManager;
 
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
-        Page<T> entityPage = entityRepository.findAll(pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<T> entityPage = entityRepository.findAll(pageRequest);
         List<R> result = mapper.toEntityDtoList(entityPage.getContent());
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)
