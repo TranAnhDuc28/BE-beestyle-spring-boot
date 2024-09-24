@@ -49,7 +49,7 @@ public class MaterialController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Material deleted successfully.");
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ApiResponse<?> getMaterial(@PathVariable int id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Material", materialService.getDtoById(id));
     }
