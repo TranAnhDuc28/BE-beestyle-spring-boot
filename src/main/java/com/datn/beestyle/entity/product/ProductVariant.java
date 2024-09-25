@@ -2,8 +2,8 @@ package com.datn.beestyle.entity.product;
 
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Promotion;
-import com.datn.beestyle.entity.product.properties.Color;
-import com.datn.beestyle.entity.product.properties.Size;
+import com.datn.beestyle.entity.product.attributes.Color;
+import com.datn.beestyle.entity.product.attributes.Size;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +22,9 @@ import static jakarta.persistence.CascadeType.*;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductVariant extends Auditable<Long> {
+
+    @Column(name = "sku")
+    String sku;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")

@@ -1,14 +1,15 @@
-package com.datn.beestyle.dto.material;
+package com.datn.beestyle.dto.product.attributes.material;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Getter
-@Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateMaterialRequest {
+public class MaterialResponse {
+    Integer id;
     String materialName;
     Boolean deleted;
 }

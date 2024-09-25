@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.material;
+package com.datn.beestyle.dto.product.attributes.size;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,7 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MaterialResponse {
+public class SizeResponse {
     Integer id;
-    String materialName;
+    String sizeName;
+    Boolean deleted;
 }
