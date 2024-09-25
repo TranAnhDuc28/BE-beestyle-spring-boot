@@ -46,6 +46,4 @@ public class Product extends Auditable<Long> {
     @JoinColumn(name = "material_id", referencedColumnName = "id")
     Material material;
 
-
-
 }

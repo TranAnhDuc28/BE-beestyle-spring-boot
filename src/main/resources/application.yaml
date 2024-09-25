@@ -34,9 +34,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
-          batch_size: 10
+          batch_size: 3
           batch_versioned_data: true
         order_updates: true
+        order_inserts: true
 #        generate_statistics: true
 
 
