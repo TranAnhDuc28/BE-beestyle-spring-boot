@@ -1,8 +1,9 @@
 package com.datn.beestyle.service.voucher;
 
+import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
-import com.datn.beestyle.common.IGenericServiceAbstract;
+
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
@@ -10,6 +11,7 @@ import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.mapper.VoucherMapper;
 import com.datn.beestyle.repository.VoucherRepository;
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +22,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class VoucherService
-        extends IGenericServiceAbstract<Voucher, Integer, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse>
+        extends GenericServiceAbstract<Voucher, Integer, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse>
         implements IVoucherService {
 
     private final VoucherRepository voucherRepository;
@@ -28,15 +30,15 @@ public class VoucherService
 
     protected VoucherService(IGenericRepository<Voucher, Integer> entityRepository,
                              IGenericMapper<Voucher, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse> mapper,
-                             VoucherRepository voucherRepository, VoucherMapper voucherMapper) {
-        super(entityRepository, mapper);
+                             VoucherRepository voucherRepository, VoucherMapper voucherMapper, EntityManager entityManager) {
+        super(entityRepository, mapper, entityManager);
         this.voucherRepository = voucherRepository;
         this.voucherMapper = voucherMapper;
     }
 
     @Override
-    public PageResponse<?> searchByName(Pageable pageable, String code) {
-        Page<Voucher> voucherPage = voucherRepository.findAllByVoucherCodeContaining(pageable, code);
+    public PageResponse<?> searchByName(Pageable pageable, String code,boolean deleted) {
+        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndDeleted(pageable, code,deleted);
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)
@@ -47,10 +49,21 @@ public class VoucherService
                 .build();
     }
 
+
     @Override
     public List<VoucherResponse> createVoucher(List<CreateVoucherRequest> requestList) {
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
+    }
+
+    @Override
+    protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
+        return null;
+    }
+
+    @Override
+    protected List<UpdateVoucherRequest> beforeUpdateEntities(List<UpdateVoucherRequest> requests) {
+        return null;
     }
 
     @Override

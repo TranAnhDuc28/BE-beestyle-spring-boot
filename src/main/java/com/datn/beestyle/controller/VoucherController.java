@@ -1,9 +1,9 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.product.attributes.material.UpdateBrandRequest;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
-import com.datn.beestyle.service.material.MaterialService;
 import com.datn.beestyle.service.voucher.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +21,11 @@ public class VoucherController {
 
 
     @GetMapping
-    public ApiResponse<?> getVouchers(Pageable pageable, @RequestParam(required = false) String code) {
+    public ApiResponse<?> getVouchers(Pageable pageable,
+                                      @RequestParam(required = false) String code,
+                                      @RequestParam(defaultValue = "false") boolean deleted) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
-                voucherService.searchByName(pageable, code));
+                voucherService.searchByName(pageable, code,deleted));
     }
 
     @PostMapping("/create")
@@ -43,7 +45,11 @@ public class VoucherController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Voucher sửa thành công",
                 voucherService.update(id, request));
     }
-
+    @PatchMapping("/updates")
+    public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateVoucherRequest> requestList) {
+        voucherService.updateEntities(requestList);
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials updated successfully");
+    }
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deleteVoucher(@PathVariable Integer id) {
         voucherService.delete(id);
