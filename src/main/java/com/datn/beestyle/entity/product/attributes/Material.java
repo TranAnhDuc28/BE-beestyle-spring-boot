@@ -1,4 +1,4 @@
-package com.datn.beestyle.entity.product.properties;
+package com.datn.beestyle.entity.product.attributes;
 
 import com.datn.beestyle.entity.BaseEntity;
 import jakarta.persistence.Column;
@@ -7,17 +7,17 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "size")
+@Table(name = "material")
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Size extends BaseEntity<Integer> {
+public class Material extends BaseEntity<Integer> {
 
-    @Column(name = "size_name")
-    String sizeName;
+    @Column(name = "material_name")
+    String materialName;
 
     @Column(name = "deleted")
     boolean deleted;

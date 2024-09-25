@@ -1,4 +1,4 @@
-package com.datn.beestyle.entity.product.properties;
+package com.datn.beestyle.entity.product.attributes;
 
 import com.datn.beestyle.entity.BaseEntity;
 import jakarta.persistence.Column;
