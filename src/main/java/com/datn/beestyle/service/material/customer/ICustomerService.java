@@ -7,5 +7,4 @@ import org.springframework.stereotype.Service;
 
 
 public interface ICustomerService  {
-    PageResponse<?> searchByFullName(Pageable pageable, String fullname);
 }

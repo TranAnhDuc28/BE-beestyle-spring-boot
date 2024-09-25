@@ -18,7 +18,10 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping()
-    public ApiResponse<?> getAll(Pageable pageable, @RequestParam(required = false) String fullname){
-        return new ApiResponse<>(HttpStatus.OK.value(),"Customers",customerService.searchByFullName(pageable, fullname));
+    public ApiResponse<?> getAll(Pageable pageable,
+                                 @RequestParam(required = false) String fullname,
+                                 @RequestParam(required = false) boolean delete){
+        return new ApiResponse<>(HttpStatus.OK.value(),
+                "Customers",customerService.getAllByNameAndDeleted(pageable, fullname, delete));
     }
 }
