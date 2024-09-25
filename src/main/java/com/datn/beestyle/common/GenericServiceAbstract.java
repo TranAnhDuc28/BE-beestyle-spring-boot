@@ -1,6 +1,7 @@
 package com.datn.beestyle.common;
 
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
@@ -25,7 +27,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     public PageResponse<?> getAll(Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<T> entityPage = entityRepository.findAll(pageRequest);
         List<R> result = mapper.toEntityDtoList(entityPage.getContent());
@@ -42,7 +44,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt"));
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<T> materialPage = entityRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
         List<R> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
@@ -93,6 +95,11 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     }
 
     @Override
+    public List<R> getAllById(Set<ID> ids) {
+        return mapper.toEntityDtoList(entityRepository.findAllById(ids));
+    }
+
+    @Override
     public void delete(ID id) {
         entityRepository.deleteById(id);
     }
@@ -107,6 +114,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
         return entityRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(this.getEntityName() + " not found."));
     }
+
 
     protected abstract List<C> beforeCreateEntities(List<C> requests);
     protected abstract List<U> beforeUpdateEntities(List<U> requests);

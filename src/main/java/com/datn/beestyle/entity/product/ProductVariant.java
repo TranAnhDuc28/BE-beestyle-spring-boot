@@ -23,6 +23,9 @@ import static jakarta.persistence.CascadeType.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductVariant extends Auditable<Long> {
 
+    @Column(name = "sku")
+    String sku;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     Product product;
