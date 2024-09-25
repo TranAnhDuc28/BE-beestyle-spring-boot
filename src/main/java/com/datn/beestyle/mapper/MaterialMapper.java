@@ -1,35 +1,26 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.material.MaterialResponse;
-import com.datn.beestyle.dto.material.UpdateMaterialRequest;
-import com.datn.beestyle.entity.product.properties.Material;
+import com.datn.beestyle.dto.product.attributes.material.CreateBrandRequest;
+import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
+import com.datn.beestyle.dto.product.attributes.material.UpdateBrandRequest;
+import com.datn.beestyle.entity.product.attributes.Material;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
-public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialRequest, UpdateMaterialRequest, MaterialResponse> {
+public interface MaterialMapper extends IGenericMapper<Material, CreateBrandRequest, UpdateBrandRequest, MaterialResponse> {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
+    @Mapping(target = "deleted", source = "deleted", defaultValue = "false")
     @Override
-    Material toCreateEntity(CreateMaterialRequest request);
+    Material toCreateEntity(CreateBrandRequest request);
 
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Override
-    void toUpdateEntity(@MappingTarget Material entity, UpdateMaterialRequest request);
-
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
-    @Override
-    List<Material> toCreateEntityList(List<CreateMaterialRequest> dtoList);
+    void toUpdateEntity(@MappingTarget Material entity, UpdateBrandRequest request);
 }
