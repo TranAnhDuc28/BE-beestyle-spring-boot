@@ -1,5 +1,7 @@
 package com.datn.beestyle.common;
 
+import org.mapstruct.MappingTarget;
+
 import java.util.List;
 
 public interface IGenericMapper<T, C, U, R> {
@@ -8,4 +10,5 @@ public interface IGenericMapper<T, C, U, R> {
     T toCreateEntity(C request);
     void toUpdateEntity(T entity, U request);
     List<T> toCreateEntityList(List<C> dtoCreateList);
+    List<T> toUpdateEntityList(List<U> dtoUpdateList);
 }
