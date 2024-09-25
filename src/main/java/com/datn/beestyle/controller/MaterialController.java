@@ -1,9 +1,9 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.material.UpdateMaterialRequest;
-import com.datn.beestyle.service.material.MaterialService;
+import com.datn.beestyle.dto.product.attributes.material.CreateBrandRequest;
+import com.datn.beestyle.dto.product.attributes.material.UpdateBrandRequest;
+import com.datn.beestyle.service.product.attributes.material.IMaterialService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -20,38 +20,38 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MaterialController {
 
-    private final MaterialService materialService;
+    private final IMaterialService materialService;
 
     @GetMapping
-    public ApiResponse<?> getCommunes(Pageable pageable,
+    public ApiResponse<?> getMaterials(Pageable pageable,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false, defaultValue = "false") boolean deleted) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Materials",
-                materialService.searchByName(pageable, name, deleted));
+                materialService.getAllByNameAndDeleted(pageable, name, deleted));
     }
 
     @PostMapping("/create")
-    public ApiResponse<?> createMaterial(@Valid @RequestBody CreateMaterialRequest request) {
+    public ApiResponse<?> createMaterial(@Valid @RequestBody CreateBrandRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Material added successfully",
                 materialService.create(request));
     }
 
     @PostMapping("/creates")
-    public ApiResponse<?> createMaterials(@RequestBody List<@Valid CreateMaterialRequest> requestList) {
+    public ApiResponse<?> createMaterials(@RequestBody List<@Valid CreateBrandRequest> requestList) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials added successfully",
-                materialService.createMaterials(requestList));
+                materialService.createEntities(requestList));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateMaterial(@Min(1) @PathVariable int id,
-                                         @Valid @RequestBody UpdateMaterialRequest request) {
+                                         @Valid @RequestBody UpdateBrandRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Material updated successfully",
                 materialService.update(id, request));
     }
 
     @PatchMapping("/updates")
-    public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateMaterialRequest> requestList) {
-        materialService.updateMaterials(requestList);
+    public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateBrandRequest> requestList) {
+        materialService.updateEntities(requestList);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials updated successfully");
     }
 
@@ -62,7 +62,7 @@ public class MaterialController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<?> getMaterial(@PathVariable int id) {
+    public ApiResponse<?> getMaterial(@Min(1) @PathVariable int id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Material", materialService.getDtoById(id));
     }
 }

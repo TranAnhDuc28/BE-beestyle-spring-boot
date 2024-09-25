@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.brand;
+package com.datn.beestyle.dto.product.attributes.brand;
 
 import lombok.AccessLevel;
 import lombok.Builder;

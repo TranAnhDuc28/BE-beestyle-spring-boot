@@ -10,14 +10,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
+public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGenericService<T, ID, C, U, R> {
 
     protected final IGenericRepository<T, ID> entityRepository;
     protected final IGenericMapper<T, C, U, R> mapper;
     protected final EntityManager entityManager;
+
 
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
@@ -33,6 +35,23 @@ public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGeneri
                 .totalElements(entityPage.getTotalElements())
                 .totalPages(entityPage.getTotalPages())
                 .items(result)
+                .build();
+    }
+
+    @Override
+    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<T> materialPage = entityRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        List<R> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
+        return PageResponse.builder()
+                .pageNo(pageable.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(materialPage.getTotalElements())
+                .totalPages(materialPage.getTotalPages())
+                .items(materialResponseList)
                 .build();
     }
 
@@ -55,6 +74,24 @@ public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGeneri
         return mapper.toEntityDto(entityRepository.save(entity));
     }
 
+    @Transactional
+    @Override
+    public List<R> createEntities(List<C> requests) {
+        if (requests.isEmpty()) return Collections.emptyList();
+        List<C> entitiesToCreate = this.beforeCreateEntities(requests);
+        List<T> entities = mapper.toCreateEntityList(entitiesToCreate);
+        return mapper.toEntityDtoList(entityRepository.saveAll(entities));
+    }
+
+    @Transactional
+    @Override
+    public void updateEntities(List<U> requests) {
+        if (requests.isEmpty()) return;
+        List<T> entitiesToUpdate = mapper.toUpdateEntityList(this.beforeUpdateEntities(requests));
+        if (entitiesToUpdate.isEmpty()) return;
+        entityRepository.saveAll(entitiesToUpdate);
+    }
+
     @Override
     public void delete(ID id) {
         entityRepository.deleteById(id);
@@ -71,6 +108,8 @@ public abstract class IGenericServiceAbstract<T, ID, C, U, R> implements IGeneri
                 .orElseThrow(() -> new ResourceNotFoundException(this.getEntityName() + " not found."));
     }
 
+    protected abstract List<C> beforeCreateEntities(List<C> requests);
+    protected abstract List<U> beforeUpdateEntities(List<U> requests);
     protected abstract void beforeCreate(C request);
     protected abstract void beforeUpdate(U request);
     protected abstract void afterConvertCreateRequest(C request, T entity);

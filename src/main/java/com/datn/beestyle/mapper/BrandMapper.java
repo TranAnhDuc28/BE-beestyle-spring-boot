@@ -1,10 +1,10 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.brand.BrandResponse;
-import com.datn.beestyle.dto.brand.CreateBrandRequest;
-import com.datn.beestyle.dto.brand.UpdateBrandRequest;
-import com.datn.beestyle.entity.product.properties.Brand;
+import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
+import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
+import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
+import com.datn.beestyle.entity.product.attributes.Brand;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
