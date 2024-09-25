@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.PageResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IGenericService<T, ID, C, U, R> {
     PageResponse<?> getAll(Pageable pageable);
@@ -15,4 +16,5 @@ public interface IGenericService<T, ID, C, U, R> {
     PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted);
     List<R> createEntities(List<C> requests);
     void updateEntities(List<U> requests);
+    List<R> getAllById(Set<ID> ids);
 }

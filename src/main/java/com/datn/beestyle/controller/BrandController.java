@@ -9,10 +9,12 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/admin/brand")
 @RequiredArgsConstructor
@@ -22,8 +24,8 @@ public class BrandController {
 
     @GetMapping
     public ApiResponse<?> getBrands(Pageable pageable,
-                                      @RequestParam(required = false) String name,
-                                      @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Brands",
                 brandService.getAllByNameAndDeleted(pageable, name, deleted));
     }
@@ -48,7 +50,7 @@ public class BrandController {
     }
 
     @PatchMapping("/updates")
-    public ApiResponse<?> updateBrands(@Valid @RequestBody List<UpdateBrandRequest> requestList) {
+    public ApiResponse<?> updateBrands(@RequestBody List<@Valid UpdateBrandRequest> requestList) {
         brandService.updateEntities(requestList);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Brands updated successfully");
     }
