@@ -3,7 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
-import com.datn.beestyle.service.Promotion.IPromotionService;
+import com.datn.beestyle.service.user.promotion.IPromotionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;

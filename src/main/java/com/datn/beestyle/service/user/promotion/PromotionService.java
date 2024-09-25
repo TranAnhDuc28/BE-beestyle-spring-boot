@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.Promotion;
+package com.datn.beestyle.service.user.promotion;
 
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
