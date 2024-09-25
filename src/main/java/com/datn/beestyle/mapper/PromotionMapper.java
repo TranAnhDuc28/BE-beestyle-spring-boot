@@ -1,13 +1,10 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
 import com.datn.beestyle.entity.Promotion;
-import com.datn.beestyle.entity.product.properties.Material;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
