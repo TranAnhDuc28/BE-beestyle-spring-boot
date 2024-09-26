@@ -27,6 +27,9 @@ public class Staff extends Auditable<Long> {
     @Column(name = "full_name")
     String fullName;
 
+    @Column(name = "username")
+    String username;
+
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
     LocalDate dateOfBirth;

@@ -1,41 +1,49 @@
-package com.datn.beestyle.dto.customer;
+package com.datn.beestyle.dto.staff;
 
-import com.datn.beestyle.entity.Address;
-import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.StaffStatus;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateCustomerRequest {
-    @NotBlank(message = "Khong de trong")
+public class CreateStaffRequest {
+
+    @NotBlank(message = "Khong duoc de trong")
+    String username;
+
+    @NotBlank(message = "Khong duoc de trong")
     String fullName;
 
-    @NotBlank(message = "Khong duoc de trong")
     LocalDate dateOfBirth;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotNull(message = "Khong duoc de trong")
     Gender gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;
 
+    @NotBlank(message = "Khong duoc de trong")
     String email;
+
+    String avatar;
+
+    String address;
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
+
+    @NotNull(message = "Khong duoc de trong")
+    StaffStatus staffStatus;
+
     boolean deleted;
-
-//    ShoppingCart shoppingCart;
-
-    Set<Address> addresses = new HashSet<>();
 }
