@@ -20,7 +20,7 @@ public class StaffController {
     private final IStaffService staffService;
 
     @GetMapping
-    public ApiResponse<?> getCustomers(Pageable pageable,
+    public ApiResponse<?> getStaffs(Pageable pageable,
                                        @RequestParam(required = false) String name,
                                        @RequestParam(required = false, defaultValue = "false") boolean deleted) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Staff",
@@ -28,13 +28,23 @@ public class StaffController {
     }
 
     @PostMapping("/create")
-    public ApiResponse<?> createCustomer(@Valid @RequestBody CreateStaffRequest request){
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Customer add successfully",
+    public ApiResponse<?> createStaff(@Valid @RequestBody CreateStaffRequest request){
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff add successfully",
                 staffService.create(request));
     }
     @PutMapping("/update/{id}")
-    public ApiResponse<?> updateCustomer(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateStaffRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Customer updated successfully",
+    public ApiResponse<?> updateStaff(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateStaffRequest request) {
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff updated successfully",
                 staffService.update(id, request));
+    }
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse<?> deleteStaff(@Min(1) @PathVariable int id) {
+        staffService.delete(id);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Staff deleted successfully.");
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<?> getStaff(@Min(1) @PathVariable int id) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Staff", staffService.getDtoById(id));
     }
 }

@@ -3,6 +3,7 @@ package com.datn.beestyle.dto.staff;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.StaffStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +24,7 @@ public class UpdateStaffRequest {
 
     LocalDate dateOfBirth;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotNull(message = "Khong duoc de trong")
     Gender gender;
 
     @NotBlank(message = "Khong duoc de trong")
@@ -39,6 +40,7 @@ public class UpdateStaffRequest {
     @NotBlank(message = "Khong duoc de trong")
     String password;
 
+    @NotNull(message = "Khong duoc de trong")
     StaffStatus staffStatus;
 
     boolean deleted;

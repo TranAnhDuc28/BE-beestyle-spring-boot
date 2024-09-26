@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffResponse {
-    Integer id;
+    Long id;
     String fullName;
 
     LocalDate dateOfBirth;

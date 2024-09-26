@@ -40,13 +40,13 @@ public class CustomerController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteColor(@Min(1) @PathVariable int id) {
+    public ApiResponse<?> deleteCustomer(@Min(1) @PathVariable int id) {
         customerService.delete(id);
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer deleted successfully.");
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<?> getColor(@Min(1) @PathVariable int id) {
+    public ApiResponse<?> getCustomer(@Min(1) @PathVariable int id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer", customerService.getDtoById(id));
     }
 }
