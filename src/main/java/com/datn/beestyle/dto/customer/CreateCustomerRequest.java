@@ -28,6 +28,7 @@ public class CreateCustomerRequest {
     boolean deleted;
 
 //    ShoppingCart shoppingCart;
+
     Set<Address> addresses = new HashSet<>();
 
 
