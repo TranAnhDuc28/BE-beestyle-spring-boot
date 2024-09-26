@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -70,5 +71,10 @@ public class ColorService
     @Override
     protected String getEntityName() {
         return "Color";
+    }
+
+    @Override
+    public List<ColorResponse> getAllById(Set<Integer> integers) {
+        return null;
     }
 }

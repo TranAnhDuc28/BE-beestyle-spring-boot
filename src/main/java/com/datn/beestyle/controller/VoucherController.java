@@ -60,4 +60,9 @@ public class VoucherController {
     public ApiResponse<?> getVoucher(@PathVariable Integer id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", voucherService.getDtoById(id));
     }
+    @GetMapping("/voucherCode/{voucherCode}")
+    public ApiResponse<?> getVoucherByCode(@PathVariable String voucherCode) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher found", voucherService.getVoucherByCode(voucherCode));
+    }
+
 }

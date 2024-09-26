@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VoucherResponse {
-    Integer id;
+    Long id;
     String voucherCode;
     DiscountType discountType;
     int discountValue;

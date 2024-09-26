@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -55,7 +56,10 @@ public class VoucherService
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
+    public List<VoucherResponse> getVoucherByCode(String voucherCode) {
+        return voucherRepository.findByVoucherCode(voucherCode);
 
+    }
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
         return null;
@@ -89,5 +93,10 @@ public class VoucherService
     @Override
     protected String getEntityName() {
         return "Voucher";
+    }
+
+    @Override
+    public List<VoucherResponse> getAllById(Set<Integer> integers) {
+        return null;
     }
 }
