@@ -3,6 +3,7 @@ package com.datn.beestyle.service.product.attributes.brand;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.common.GenericServiceAbstract;
+import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
 import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
@@ -10,6 +11,10 @@ import com.datn.beestyle.entity.product.attributes.Brand;
 import com.datn.beestyle.repository.BrandRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -30,6 +35,22 @@ public class BrandService
         this.brandRepository = brandRepository;
     }
 
+    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+
+        Page<Brand> materialPage = brandRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        List<BrandResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
+
+        return PageResponse.builder()
+                .pageNo(pageable.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(materialPage.getTotalElements())
+                .totalPages(materialPage.getTotalPages())
+                .items(materialResponseList)
+                .build();
+    }
     @Override
     protected List<CreateBrandRequest> beforeCreateEntities(List<CreateBrandRequest> requests) {
         return requests;

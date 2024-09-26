@@ -1,9 +1,7 @@
 package com.datn.beestyle.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -29,7 +27,7 @@ public abstract class BaseEntity<T extends Serializable> implements Serializable
     LocalDateTime createdAt;
 
     // lưu thời gian record được update lần cuối
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", insertable = false)
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime updatedAt;

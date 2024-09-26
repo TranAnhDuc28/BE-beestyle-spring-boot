@@ -16,7 +16,6 @@ public interface MaterialRepository extends IGenericRepository<Material, Integer
                 :name is null or m.materialName like concat('%', :name, '%')
                  and m.deleted = :deleted
             """)
-    @Override
     Page<Material> findByNameContainingAndDeleted(Pageable pageable,
                                                   @Param("name") String name,
                                                   @Param("deleted") boolean deleted);

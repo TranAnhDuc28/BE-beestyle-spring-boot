@@ -25,19 +25,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException e, WebRequest request) {
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.NOT_FOUND, e.getMessage(), request);
+
+        log.error("Path: {} - Msg error: {}",errorResponse.getPath(), errorResponse.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler({InvalidDataException.class, EmptyResultDataAccessException.class})
     public ResponseEntity<ErrorResponse> handleInvalidDataException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.CONFLICT, e.getMessage(), request);
+
+        log.error("Path: {} - Msg error: {}",errorResponse.getPath(), errorResponse.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalServerErrorException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = this.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), request);
+
         log.info("Class exception: {}", e.getClass());
+        log.error("Path: {} - Msg error: {}",errorResponse.getPath(), errorResponse.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
@@ -74,6 +80,7 @@ public class GlobalExceptionHandler {
             errorResponse.setMessage(errorList);
         }
 
+        log.error("Path: {} - Msg error: {}",errorResponse.getPath(), errorResponse.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
@@ -87,7 +94,6 @@ public class GlobalExceptionHandler {
         errorResponse.setError(httpStatus.getReasonPhrase());
         errorResponse.setMessage(message);
 
-        log.error("Path: {} - Msg error: {}",path, message);
         return errorResponse;
     }
 }

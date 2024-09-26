@@ -13,7 +13,6 @@ public interface IGenericService<T, ID, C, U, R> {
     void delete(ID id);
     R getDtoById(ID id);
     T getById(ID id);
-    PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted);
     List<R> createEntities(List<C> requests);
     void updateEntities(List<U> requests);
     List<R> getAllById(Set<ID> ids);
