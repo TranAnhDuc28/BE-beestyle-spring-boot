@@ -21,4 +21,5 @@ public class Brand extends BaseEntity<Integer> {
 
     @Column(name = "deleted")
     boolean deleted;
+
 }

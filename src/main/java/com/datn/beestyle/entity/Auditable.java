@@ -2,9 +2,7 @@ package com.datn.beestyle.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;

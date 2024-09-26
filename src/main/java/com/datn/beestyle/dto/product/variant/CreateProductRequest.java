@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.brand;
+package com.datn.beestyle.dto.product.variant;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -9,11 +9,10 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateBrandRequest {
+public class CreateProductRequest {
 
     @NotBlank(message = "Không để trống trường")
     String brandName;
 
-    Boolean deleted;;
-
+    Boolean deleted;
 }

@@ -1,20 +1,16 @@
 package com.datn.beestyle.dto.product.attributes.material;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateBrandRequest {
-
+public class UserMaterialResponse {
     Integer id;
-
-    @NotBlank(message = "Không để trống trường")
-    String materialName;
-
-    Boolean deleted;
+    String brandName;
 }

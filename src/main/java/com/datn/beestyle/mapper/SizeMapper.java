@@ -18,6 +18,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface SizeMapper extends IGenericMapper<Size, CreateSizeRequest, UpdateSizeRequest, SizeResponse> {
+
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

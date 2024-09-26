@@ -3,12 +3,17 @@ package com.datn.beestyle.service.product.attributes.size;
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
+import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.product.attributes.size.CreateSizeRequest;
 import com.datn.beestyle.dto.product.attributes.size.SizeResponse;
 import com.datn.beestyle.dto.product.attributes.size.UpdateSizeRequest;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.repository.SizeRepository;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -25,6 +30,22 @@ public class SizeService
                        EntityManager entityManager, SizeRepository sizeRepository) {
         super(entityRepository, mapper, entityManager);
         this.sizeRepository = sizeRepository;
+    }
+
+    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+
+        Page<Size> materialPage = sizeRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        List<SizeResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
+        return PageResponse.builder()
+                .pageNo(pageable.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(materialPage.getTotalElements())
+                .totalPages(materialPage.getTotalPages())
+                .items(materialResponseList)
+                .build();
     }
 
     @Override
