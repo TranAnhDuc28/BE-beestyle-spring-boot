@@ -26,6 +26,6 @@ public class CustomerResponse {
     String email;
     boolean deleted;
 
-    ShoppingCart shoppingCart;
+//    ShoppingCart shoppingCart;
     Set<Address> addresses;
 }

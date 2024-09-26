@@ -24,6 +24,6 @@ public class UpdateCustomerRequest {
     String password;
     boolean deleted;
 
-    ShoppingCart shoppingCart;
+//    ShoppingCart shoppingCart;
     Set<Address> addresses = new HashSet<>();
 }

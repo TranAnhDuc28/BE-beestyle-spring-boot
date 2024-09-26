@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CustomerRepository extends IGenericRepository<Customer,Integer> {
     @Query("""
-            select c.fullName from Customer c
+            select c from Customer c
             where 
                 :name is null or c.fullName like concat('%', :name, '%')
                  and c.deleted = :deleted

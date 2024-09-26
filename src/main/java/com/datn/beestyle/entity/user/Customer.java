@@ -47,8 +47,8 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "deleted")
     boolean deleted;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
-    ShoppingCart shoppingCart;
+//    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
+//    ShoppingCart shoppingCart;
 
     @OneToMany(mappedBy = "customer", cascade = ALL, fetch = FetchType.LAZY)
     Set<Address> addresses = new HashSet<>();

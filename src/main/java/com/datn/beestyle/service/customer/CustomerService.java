@@ -10,7 +10,6 @@ import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.repository.CustomerRepository;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +45,26 @@ public class CustomerService
 
     @Override
     protected void beforeCreate(CreateCustomerRequest request) {
+        Customer customer = new Customer();
+        customer.setFullName(request.getFullName());
+        customer.setDateOfBirth(request.getDateOfBirth());
+        customer.setGender(request.getGender());
+        customer.setPhoneNumber(request.getPhoneNumber());
+        customer.setEmail(request.getEmail());
+        customer.setPassword(request.getPassword());
+        customer.setDeleted(request.isDeleted());
 
+        // Kiểm tra nếu ShoppingCart không tồn tại thì bỏ qua phần xử lý này
+//        if (request.getShoppingCart() != null && request.getShoppingCart().getId() != null) {
+//            ShoppingCart shoppingCart = entityManager.find(ShoppingCart.class, request.getShoppingCart().getId());
+//            if (shoppingCart != null) {
+//                shoppingCart.setCustomer(customer);
+//                customer.setShoppingCart(shoppingCart);
+//                entityManager.merge(shoppingCart);
+//            }
+//        }
+
+        entityManager.merge(customer);
     }
 
     @Override

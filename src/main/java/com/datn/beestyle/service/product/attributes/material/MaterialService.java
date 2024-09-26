@@ -49,7 +49,6 @@ public class MaterialService
 
     @Override
     protected void beforeCreate(CreateBrandRequest request) {
-
     }
 
     @Override
