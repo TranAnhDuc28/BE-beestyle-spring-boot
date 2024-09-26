@@ -10,5 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrandResponse {
     Integer id;
-    String materialName;
+    String brandName;
+    Boolean deleted;
 }

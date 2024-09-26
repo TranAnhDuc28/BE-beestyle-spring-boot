@@ -1,10 +1,6 @@
 package com.datn.beestyle.common;
 
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
-import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
-import com.datn.beestyle.dto.voucher.VoucherResponse;
-import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

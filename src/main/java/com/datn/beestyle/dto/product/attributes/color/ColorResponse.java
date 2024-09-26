@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.material;
+package com.datn.beestyle.dto.product.attributes.color;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,8 +8,8 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MaterialResponse {
+public class ColorResponse {
     Integer id;
-    String materialName;
+    String colorName;
     Boolean deleted;
 }
