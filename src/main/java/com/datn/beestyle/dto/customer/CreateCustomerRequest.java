@@ -3,6 +3,7 @@ package com.datn.beestyle.dto.customer;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateCustomerRequest {
 
+    @NotBlank(message = "Khong de trong")
     String fullName;
     LocalDate dateOfBirth;
     Gender gender;

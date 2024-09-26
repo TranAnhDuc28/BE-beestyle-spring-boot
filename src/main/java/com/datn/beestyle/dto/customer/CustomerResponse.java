@@ -18,12 +18,12 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerResponse {
+    Integer id;
     String fullName;
     LocalDate dateOfBirth;
     Gender gender;
     String phoneNumber;
     String email;
-    String password;
     boolean deleted;
 
     ShoppingCart shoppingCart;
