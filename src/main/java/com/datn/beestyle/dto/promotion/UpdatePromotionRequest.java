@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,20 +15,18 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdatePromotionRequest {
     @NotNull(message = "ID cannot be null")
-    Integer id;                 // ID của khuyến mãi
+    Integer id;
 
-    String promotionName;        // Tên khuyến mãi
+    String promotionName;
 
-    DiscountType discountType;   // Loại giảm giá
+    DiscountType discountType;
 
-    Integer discountValue;       // Giá trị giảm giá
+    Integer discountValue;
 
-    LocalDateTime startDate;     // Ngày bắt đầu
+    Timestamp startDate;
 
-    LocalDateTime endDate;       // Ngày kết thúc
+    Timestamp endDate;
+    Integer updatedBy;
+    String description;
 
-    String description;          // Mô tả khuyến mãi
-
-    @NotNull(message = "Updated by cannot be null")
-    Integer updatedBy;           // ID người cập nhật
 }

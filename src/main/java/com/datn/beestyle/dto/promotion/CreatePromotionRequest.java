@@ -24,19 +24,16 @@ public class CreatePromotionRequest {
     @NotNull(message = "Discount value cannot be null")
     Integer discountValue;
 
-    @NotBlank(message = "Start date cannot be blank")
+    @NotNull(message = "Start date cannot be blank")
     Timestamp startDate;
 
-    @NotBlank(message = "End date cannot be blank")
+    @NotNull(message = "End date cannot be blank")
     Timestamp endDate;
 
+    @NotBlank(message = "Description name cannot be blank")
     String description;
-
-    @NotNull(message = "Created by cannot be null")
+    @NotNull(message = "CreatedBy cannot be blank")
     Integer createdBy;
-
-    @NotNull(message = "Updated by cannot be null")
-    Integer updatedBy;
 
     Boolean deleted;
 }

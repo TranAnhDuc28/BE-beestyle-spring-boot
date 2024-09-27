@@ -9,16 +9,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
+
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
+    @Mapping(target = "deleted", source = "deleted", defaultValue = "false")
     @Override
     Promotion toCreateEntity(CreatePromotionRequest request);
 
@@ -27,21 +24,4 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Mapping(target = "createdAt", ignore = true)
     @Override
     void toUpdateEntity(@MappingTarget Promotion entity, UpdatePromotionRequest request);
-
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", source = "deleted", defaultValue = "true")
-    @Override
-    List<Promotion> toCreateEntityList(List<CreatePromotionRequest> dtoList);
-
-    // Phương thức chuyển đổi từ LocalDateTime sang Timestamp
-    default Timestamp map(LocalDateTime dateTime) {
-        return dateTime != null ? Timestamp.valueOf(dateTime) : null;
-    }
-
-    // Phương thức chuyển đổi từ Timestamp sang LocalDateTime
-    default LocalDateTime map(Timestamp timestamp) {
-        return timestamp != null ? timestamp.toLocalDateTime() : null;
-    }
 }
