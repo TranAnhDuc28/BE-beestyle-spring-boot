@@ -4,6 +4,7 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
+import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -11,9 +12,6 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper extends IGenericMapper<Product, CreateProductRequest, UpdateProductRequest, ProductResponse> {
-
-
-
     @Mapping(target = "material", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "brand", ignore = true)
@@ -41,4 +39,6 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
     @Mapping(target = "updateBy", ignore = true)
     @Override
     void toUpdateEntity(@MappingTarget Product entity, UpdateProductRequest request);
+
+    UserProductResponse toUserProductResponse(Product product);
 }

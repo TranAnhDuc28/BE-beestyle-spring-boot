@@ -10,5 +10,4 @@ import org.springframework.data.repository.query.Param;
 @NoRepositoryBean
 public interface IGenericRepository<T, ID> extends JpaRepository<T, ID> {
 
-
 }

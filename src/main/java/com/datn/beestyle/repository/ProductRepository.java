@@ -17,5 +17,5 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
             from Product p
             where p.deleted = false and p.category.id = :categoryId
             """)
-    Page<Product> findAllByCategoryId(Pageable pageable, @Param("categoryId") int categoryId);
+    Page<Product> findAllForUserByCategoryId(Pageable pageable, @Param("categoryId") int categoryId);
 }
