@@ -16,5 +16,6 @@ public class UpdateBrandRequest {
     @NotBlank(message = "Không để trống trường")
     String brandName;
 
-    Boolean deleted;
+
+    String status;
 }

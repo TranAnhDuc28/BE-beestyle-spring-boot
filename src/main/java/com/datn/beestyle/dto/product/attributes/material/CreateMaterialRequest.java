@@ -14,5 +14,5 @@ public class CreateMaterialRequest {
     @NotBlank(message = "Không để trống trường")
     String materialName;
 
-    Boolean deleted;
+    String status;
 }

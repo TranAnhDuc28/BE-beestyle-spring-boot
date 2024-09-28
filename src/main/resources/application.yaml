@@ -34,7 +34,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
-          batch_size: 3
+          batch_size: 10
           batch_versioned_data: true
         order_updates: true
         order_inserts: true
@@ -45,6 +45,6 @@ spring:
   data:
     web:
       pageable:
-        default-page-size: 5
+        default-page-size: 10
 
 

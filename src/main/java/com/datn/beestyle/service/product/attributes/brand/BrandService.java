@@ -35,12 +35,12 @@ public class BrandService
         this.brandRepository = brandRepository;
     }
 
-    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Brand> materialPage = brandRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        Page<Brand> materialPage = brandRepository.findByNameContainingAndStatus(pageRequest, name, status);
         List<BrandResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()

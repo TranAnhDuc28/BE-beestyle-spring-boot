@@ -3,6 +3,7 @@ package com.datn.beestyle.service.category;
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
+import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.category.CategoryResponse;
 import com.datn.beestyle.dto.category.CreateCategoryRequest;
 import com.datn.beestyle.dto.category.UpdateCategoryRequest;
@@ -12,14 +13,13 @@ import com.datn.beestyle.mapper.CategoryMapper;
 import com.datn.beestyle.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -66,6 +66,53 @@ public class CategoryService
     }
 
     @Override
+    public PageResponse<List<CategoryResponse>> getAllForAdmin(Pageable pageable, String name, Short status) {
+        Map<Integer, String> categoryNames;
+        List<Integer> ids;
+        List<CategoryResponse> categoryResponses;
+        Page<Category> categoryPages;
+
+        if (!StringUtils.hasText(name) && status == null) {
+            categoryPages = categoryRepository.findAll(pageable);
+        } else {
+            categoryPages = categoryRepository.findAllByCategoryNameContainingAndStatus(pageable, name, status);
+        }
+
+        ids = categoryPages.get().filter(category ->
+                        category.getParentCategory() != null && category.getParentCategory().getId() != null)
+                .map(Category::getId).distinct().toList();
+
+        if (ids.isEmpty()) {
+            categoryNames = null;
+        } else {
+            categoryNames = categoryRepository.findCategoryNameById(ids).stream()
+                    .collect(Collectors.toMap(objects -> (Integer) objects[0], objects -> (String) objects[1]));
+        }
+
+        if (categoryNames != null) {
+            categoryResponses = categoryPages.get().map(category -> {
+                CategoryResponse categoryResponse = categoryMapper.toEntityDto(category);
+                if (category.getParentCategory() != null) {
+                    categoryResponse.setParentCategoryName(categoryNames.get(category.getParentCategory().getId()));
+                } else {
+                    categoryResponse.setParentCategoryName(null);
+                }
+                return categoryResponse;
+            }).toList();
+        } else {
+            categoryResponses = categoryPages.get().map(categoryMapper::toEntityDto).toList();
+        }
+
+        return PageResponse.<List<CategoryResponse>>builder()
+                .pageNo(pageable.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(categoryPages.getTotalElements())
+                .totalPages(categoryPages.getTotalPages())
+                .items(categoryResponses)
+                .build();
+    }
+
+    @Override
     protected List<CreateCategoryRequest> beforeCreateEntities(List<CreateCategoryRequest> requests) {
         return null;
     }
@@ -77,7 +124,7 @@ public class CategoryService
 
     @Override
     protected void beforeCreate(CreateCategoryRequest request) {
-
+        request.setCategoryName(request.getCategoryName().trim());
     }
 
     @Override

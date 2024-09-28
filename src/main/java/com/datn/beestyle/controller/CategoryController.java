@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Validated
@@ -20,7 +21,10 @@ public class CategoryController {
     private final ICategoryService categoryService;
 
     @GetMapping
-    public ApiResponse<?> getCategories(Pageable pageable) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Categories", categoryService.getAll(pageable));
+    public ApiResponse<?> getCategories(Pageable pageable,
+                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) Short status) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Categories",
+                categoryService.getAllForAdmin(pageable, name, status));
     }
 }

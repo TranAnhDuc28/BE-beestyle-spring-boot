@@ -1,11 +1,10 @@
 package com.datn.beestyle.entity;
 
-import com.datn.beestyle.entity.product.ProductVariant;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +21,6 @@ public class Category extends BaseEntity<Integer> {
     @Column(name = "category_name")
     String categoryName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
-    Category parentCategory ;
-
-    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<Category> categoryChildren = new ArrayList<>();
-
     @Column(name = "slug")
     String slug;
 
@@ -38,8 +30,16 @@ public class Category extends BaseEntity<Integer> {
     @Column(name = "priority")
     int priority;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    Category parentCategory ;
+
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<Category> categoryChildren = new ArrayList<>();
 
     public void addCategoryChildren(Category children) {
         if (children != null) {

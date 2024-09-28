@@ -13,7 +13,7 @@ import org.mapstruct.MappingTarget;
 public interface CategoryMapper 
         extends IGenericMapper<Category, CreateCategoryRequest, UpdateCategoryRequest, CategoryResponse> {
 
-    @Mapping(target = "parentCategoryId", source = "parentCategory.id")
+    @Mapping(target = "parentCategoryName", ignore = true)
     @Override
     CategoryResponse toEntityDto(Category entity);
 

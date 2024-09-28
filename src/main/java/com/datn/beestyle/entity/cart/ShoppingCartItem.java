@@ -28,8 +28,11 @@ public class ShoppingCartItem {
     @Column(name = "quantity")
     int quantity;
 
-    @Column(name = "unit_price")
-    BigDecimal unitPrice = BigDecimal.ZERO;
+    @Column(name = "original_price")
+    BigDecimal originalPrice = BigDecimal.ZERO;
+
+    @Column(name = "discounted_price")
+    BigDecimal discountedPrice = BigDecimal.ZERO;
 
     @Column(name = "total_price")
     BigDecimal totalPrice = BigDecimal.ZERO;

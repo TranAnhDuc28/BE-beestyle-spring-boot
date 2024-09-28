@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrandResponse extends UserBrandResponse{
-    Boolean deleted;
+    String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

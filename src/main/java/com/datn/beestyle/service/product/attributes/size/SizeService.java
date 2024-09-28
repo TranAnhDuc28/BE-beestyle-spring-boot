@@ -32,12 +32,12 @@ public class SizeService
         this.sizeRepository = sizeRepository;
     }
 
-    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, Short status) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Size> materialPage = sizeRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        Page<Size> materialPage = sizeRepository.findByNameContainingAndStatus(pageRequest, name, status);
         List<SizeResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)

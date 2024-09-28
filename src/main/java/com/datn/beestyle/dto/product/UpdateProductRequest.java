@@ -34,5 +34,5 @@ public class UpdateProductRequest {
 
     String description;
 
-    Boolean deleted;
+    String status;
 }

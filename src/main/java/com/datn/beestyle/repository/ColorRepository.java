@@ -15,9 +15,9 @@ public interface ColorRepository extends IGenericRepository<Color, Integer> {
             select c from Color c 
             where 
                 :name is null or c.colorName like concat('%', :name, '%')
-                 and c.deleted = :deleted
+                 and c.status = :status
             """)
-    Page<Color> findByNameContainingAndDeleted(Pageable pageable,
+    Page<Color> findByNameContainingAndStatus(Pageable pageable,
                                                @Param("name") String name,
-                                               @Param("deleted") boolean deleted);
+                                               @Param("status") short status);
 }

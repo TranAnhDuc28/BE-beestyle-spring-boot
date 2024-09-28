@@ -1,6 +1,7 @@
 package com.datn.beestyle.service.category;
 
 import com.datn.beestyle.common.IGenericService;
+import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.category.CategoryResponse;
 import com.datn.beestyle.dto.category.CreateCategoryRequest;
 import com.datn.beestyle.dto.category.UpdateCategoryRequest;
@@ -12,6 +13,6 @@ import java.util.List;
 
 public interface ICategoryService
         extends IGenericService<Category, Integer, CreateCategoryRequest, UpdateCategoryRequest, CategoryResponse> {
-
     List<UserCategoryResponse> getAllForUser();
+    PageResponse<List<CategoryResponse>> getAllForAdmin(Pageable pageable, String name, Short status);
 }

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends IGenericRepository<Product, Long> {
 
     @Query(value = """
-            select p.id, p.productName, p.imageUrl, p.gender, p.minPrice, p.maxPrice, p.brand.id, p.brand.brandName,
+            select p.id, p.productName, p.imageUrl, p.gender, p.brand.id, p.brand.brandName,
                 p.material.id, p.material.materialName, p.description
             from Product p
-            where p.deleted = false and p.category.id = :categoryId
+            where p.status in (1, 2) and p.category.id = :categoryId
             """)
     Page<Product> findAllForUserByCategoryId(Pageable pageable, @Param("categoryId") int categoryId);
 }

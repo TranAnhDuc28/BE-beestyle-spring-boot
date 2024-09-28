@@ -1,10 +1,8 @@
 package com.datn.beestyle.entity.user;
 
-import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.author.Role;
 import com.datn.beestyle.enums.Gender;
-import com.datn.beestyle.enums.StaffStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,8 +10,6 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-
-import static jakarta.persistence.CascadeType.ALL;
 
 @Table(name = "staff")
 @Entity
@@ -51,11 +47,7 @@ public class Staff extends Auditable<Long> {
     String password;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    StaffStatus staffStatus;
-
-    @Column(name = "deleted")
-    boolean deleted;
+    short status;
 
     @ManyToMany
     @JoinTable(name = "user_has_role",

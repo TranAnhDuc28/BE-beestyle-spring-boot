@@ -24,14 +24,14 @@ public class CreateProductRequest {
 
     String imageUrl;
 
-    @EnumValue(enumClass = Gender.class, name = "Gender")
+    @EnumValue(name = "Gender", enumClass = Gender.class)
     String gender;
 
     Integer brandId;
     Integer materialId;
     Integer categoryId;
     String description;
-    Boolean deleted;
+    String status;
     List<ProductVariant> productVariants = new ArrayList<>();
 
 }

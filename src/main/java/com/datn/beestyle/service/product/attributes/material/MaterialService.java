@@ -34,12 +34,12 @@ public class MaterialService
         this.materialRepository = materialRepository;
     }
 
-    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Material> materialPage = materialRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        Page<Material> materialPage = materialRepository.findByNameContainingAndDeleted(pageRequest, name, status);
         List<MaterialResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)

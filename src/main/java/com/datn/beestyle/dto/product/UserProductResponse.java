@@ -18,8 +18,6 @@ public class UserProductResponse {
     String productName;
     String imageUrl;
     Gender gender;
-    BigDecimal minPrice;
-    BigDecimal maxPrice;
     UserBrandResponse brand;
     UserMaterialResponse material;
     String description;

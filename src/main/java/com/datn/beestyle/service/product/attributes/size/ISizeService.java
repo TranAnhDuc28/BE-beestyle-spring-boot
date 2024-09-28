@@ -11,5 +11,5 @@ import org.springframework.data.domain.Pageable;
 public interface ISizeService
         extends IGenericService<Size, Integer, CreateSizeRequest, UpdateSizeRequest, SizeResponse> {
 
-    PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted);
+    PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, Short status);
 }

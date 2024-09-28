@@ -35,12 +35,12 @@ public class ColorService
         this.colorRepository = colorRepository;
     }
 
-    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status) {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Color> materialPage = colorRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
+        Page<Color> materialPage = colorRepository.findByNameContainingAndStatus(pageRequest, name, status);
         List<ColorResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()
