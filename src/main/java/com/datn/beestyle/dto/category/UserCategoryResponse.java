@@ -1,8 +1,6 @@
 package com.datn.beestyle.dto.category;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
@@ -11,7 +9,8 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@SuperBuilder
+@AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCategoryResponse {
     Integer id;
