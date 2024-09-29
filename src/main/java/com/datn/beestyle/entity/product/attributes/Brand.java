@@ -19,6 +19,7 @@ public class Brand extends BaseEntity<Integer> {
     @Column(name = "brand_name")
     String brandName;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
+
 }

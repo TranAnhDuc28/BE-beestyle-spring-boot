@@ -44,8 +44,8 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "password")
     String password;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 
 //    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
 //    ShoppingCart shoppingCart;
@@ -53,7 +53,7 @@ public class Customer extends BaseEntity<Long> {
     @OneToMany(mappedBy = "customer", cascade = ALL, fetch = FetchType.LAZY)
     Set<Address> addresses = new HashSet<>();
 
-    public void saveAddress(Address address) {
+    public void addAddress(Address address) {
         if (address != null) {
             if (addresses == null) {
                 addresses = new HashSet<>();

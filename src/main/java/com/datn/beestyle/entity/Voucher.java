@@ -50,6 +50,6 @@ public class Voucher extends Auditable<Long> {
     @Column(name = "usage_per_user")
     int usagePerUser;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 }

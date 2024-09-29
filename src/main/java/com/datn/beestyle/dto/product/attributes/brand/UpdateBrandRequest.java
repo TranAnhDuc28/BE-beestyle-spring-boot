@@ -1,5 +1,7 @@
 package com.datn.beestyle.dto.product.attributes.brand;
 
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,5 +18,6 @@ public class UpdateBrandRequest {
     @NotBlank(message = "Không để trống trường")
     String brandName;
 
-    Boolean deleted;
+    @EnumValue(name = "Status", enumClass = Status.class)
+    String status;
 }

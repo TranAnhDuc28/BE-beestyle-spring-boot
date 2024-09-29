@@ -34,17 +34,31 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
-          batch_size: 3
+          batch_size: 10
           batch_versioned_data: true
         order_updates: true
         order_inserts: true
 #        generate_statistics: true
 
-
-
   data:
     web:
       pageable:
-        default-page-size: 5
+        default-page-size: 10
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    doc-expansion: none
+openapi:
+  service:
+    title: API Document
+    version: v1.0.0
+    description: Description API service
+    serverUrl: http://localhost:${server.port}/api/v1
+    serverName: server dev
+    api-docs: api-services
 
 

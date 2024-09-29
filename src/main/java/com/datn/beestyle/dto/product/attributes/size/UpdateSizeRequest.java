@@ -16,5 +16,5 @@ public class UpdateSizeRequest {
     @NotBlank(message = "Không để trống trường")
     String sizeName;
 
-    Boolean deleted;
+    String status;
 }
