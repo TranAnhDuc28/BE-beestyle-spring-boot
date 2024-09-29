@@ -4,12 +4,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SizeResponse {
-    Integer id;
-    String sizeName;
-    Boolean deleted;
+public class SizeResponse extends UserSizeResponse{
+    String status;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

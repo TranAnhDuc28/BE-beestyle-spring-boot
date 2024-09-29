@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.color.CreateColorRequest;
 import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.service.product.attributes.color.IColorService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/color")
 @RequiredArgsConstructor
+@Tag(name = "Color Controller")
 public class ColorController {
     
     private final IColorService colorService;
@@ -25,9 +27,9 @@ public class ColorController {
     @GetMapping
     public ApiResponse<?> getColors(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Colors",
-                colorService.getAllByNameAndDeleted(pageable, name, deleted));
+                colorService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")

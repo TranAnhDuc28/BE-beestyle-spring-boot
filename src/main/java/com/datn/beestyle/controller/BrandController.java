@@ -4,6 +4,8 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
 import com.datn.beestyle.service.product.attributes.brand.IBrandService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +20,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/brand")
 @RequiredArgsConstructor
+@Tag(name = "Brand Controller")
 public class BrandController {
 
     private final IBrandService brandService;
 
+    @Operation(method = "GET", summary = "Get list of brands",
+            description = "Send a request via this API to get brand list and search with paging by name and status")
     @GetMapping
     public ApiResponse<?> getBrands(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Brands",
-                brandService.getAllByNameAndDeleted(pageable, name, deleted));
+                brandService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")
@@ -44,7 +49,7 @@ public class BrandController {
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateBrand(@Min(1) @PathVariable int id,
-                                         @Valid @RequestBody UpdateBrandRequest request) {
+                                      @Valid @RequestBody UpdateBrandRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Brand updated successfully",
                 brandService.update(id, request));
     }
@@ -55,6 +60,7 @@ public class BrandController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Brands updated successfully");
     }
 
+    @Operation(summary = "Delete user permanently", description = "Send a request via this API to delete user permanently")
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deleteBrand(@Min(1) @PathVariable int id) {
         brandService.delete(id);

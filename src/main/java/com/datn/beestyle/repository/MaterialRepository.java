@@ -13,12 +13,11 @@ public interface MaterialRepository extends IGenericRepository<Material, Integer
     @Query("""
             select m from Material m 
             where 
-                :name is null or m.materialName like concat('%', :name, '%')
-                 and m.deleted = :deleted
+                (:name is null or m.materialName like concat('%', :name, '%')) and 
+                (:status is null or m.status = :status)
             """)
-    @Override
-    Page<Material> findByNameContainingAndDeleted(Pageable pageable,
-                                                  @Param("name") String name,
-                                                  @Param("deleted") boolean deleted);
+    Page<Material> findByNameContainingAndStatus(Pageable pageable,
+                                                 @Param("name") String name,
+                                                 @Param("status") Integer status);
 
 }

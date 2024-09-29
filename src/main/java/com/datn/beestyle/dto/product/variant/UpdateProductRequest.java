@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.material;
+package com.datn.beestyle.dto.product.variant;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
@@ -9,12 +9,12 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateBrandRequest {
+public class UpdateProductRequest {
 
     Integer id;
 
     @NotBlank(message = "Không để trống trường")
-    String materialName;
+    String brandName;
 
     Boolean deleted;
 }

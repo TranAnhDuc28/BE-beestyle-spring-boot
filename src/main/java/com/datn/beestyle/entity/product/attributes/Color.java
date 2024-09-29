@@ -19,6 +19,6 @@ public class Color extends BaseEntity<Integer> {
     @Column(name = "color_name")
     String colorName;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 }

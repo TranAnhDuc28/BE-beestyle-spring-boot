@@ -7,6 +7,8 @@ import com.datn.beestyle.entity.product.attributes.Size;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,16 +28,18 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "sku")
     String sku;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     Color color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_id", referencedColumnName = "id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     Size size;
 
     @Column(name = "original_price")
@@ -47,8 +51,8 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "quantity_in_stock")
     int quantityInStock;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")

@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.size.CreateSizeRequest;
 import com.datn.beestyle.dto.product.attributes.size.UpdateSizeRequest;
 import com.datn.beestyle.service.product.attributes.size.ISizeService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/size")
 @RequiredArgsConstructor
+@Tag(name = "Size Controller")
 public class SizeController {
     
     private final ISizeService sizeService;
@@ -25,9 +27,9 @@ public class SizeController {
     @GetMapping
     public ApiResponse<?> getSizes(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Sizes",
-                sizeService.getAllByNameAndDeleted(pageable, name, deleted));
+                sizeService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")
