@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.CategoryRepository;
 import com.datn.beestyle.service.category.ICategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/admin/category")
 @RequiredArgsConstructor
+@Tag(name = "Category Controller")
 public class CategoryController {
 
     private final ICategoryService categoryService;
@@ -24,7 +26,7 @@ public class CategoryController {
     @GetMapping
     public ApiResponse<?> getCategories(Pageable pageable,
                                         @RequestParam(required = false) String name,
-                                        @RequestParam(required = false) Short status) {
+                                        @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Categories",
                 categoryService.getAllForAdmin(pageable, name, status));
 

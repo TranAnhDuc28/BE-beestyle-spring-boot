@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.category.CreateCategoryRequest;
 import com.datn.beestyle.dto.category.UpdateCategoryRequest;
 import com.datn.beestyle.dto.category.UserCategoryResponse;
 import com.datn.beestyle.entity.Category;
+import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.CategoryMapper;
 import com.datn.beestyle.repository.CategoryRepository;
 import jakarta.persistence.EntityManager;
@@ -66,7 +67,7 @@ public class CategoryService
     }
 
     @Override
-    public PageResponse<List<CategoryResponse>> getAllForAdmin(Pageable pageable, String name, Short status) {
+    public PageResponse<List<CategoryResponse>> getAllForAdmin(Pageable pageable, String name, String status) {
         Map<Integer, String> categoryNames;
         List<Integer> ids;
         List<CategoryResponse> categoryResponses;
@@ -75,7 +76,9 @@ public class CategoryService
         if (!StringUtils.hasText(name) && status == null) {
             categoryPages = categoryRepository.findAll(pageable);
         } else {
-            categoryPages = categoryRepository.findAllByCategoryNameContainingAndStatus(pageable, name, status);
+            Integer statusValue = null;
+            if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
+            categoryPages = categoryRepository.findAllByCategoryNameContainingAndStatus(pageable, name, statusValue);
         }
 
         ids = categoryPages.get().filter(category ->

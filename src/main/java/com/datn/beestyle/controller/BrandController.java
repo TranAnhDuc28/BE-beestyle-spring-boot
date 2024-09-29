@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
 import com.datn.beestyle.service.product.attributes.brand.IBrandService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/brand")
 @RequiredArgsConstructor
+@Tag(name = "Brand Controller")
 public class BrandController {
 
     private final IBrandService brandService;
