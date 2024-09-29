@@ -2,6 +2,7 @@ package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.service.product.IProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user/product")
 @RequiredArgsConstructor
+@Tag(name = "User Product Controller")
 public class UserProductController {
 
     private final IProductService productService;

@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
 import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
 import com.datn.beestyle.service.product.attributes.material.IMaterialService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/material")
 @RequiredArgsConstructor
+@Tag(name = "Material Controller")
 public class MaterialController {
 
     private final IMaterialService materialService;

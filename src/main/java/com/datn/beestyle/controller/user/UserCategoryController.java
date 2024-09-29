@@ -1,8 +1,8 @@
 package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.repository.CategoryRepository;
 import com.datn.beestyle.service.category.ICategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user/category")
 @RequiredArgsConstructor
+@Tag(name = "User Category Controller")
 public class UserCategoryController {
 
     private final ICategoryService categoryService;
