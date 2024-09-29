@@ -1,5 +1,6 @@
 package com.datn.beestyle.dto.promotion;
 
+import com.datn.beestyle.enums.DiscountType;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,11 +13,14 @@ import java.time.LocalDateTime;
 @Getter
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PromotionResponse extends UserPromotionResponse {
-
-    String status;
-
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
-
+public class UserPromotionResponse {
+    Integer id;
+    String promotionName;
+    DiscountType discountType;
+    Integer discountValue;
+    Timestamp startDate;
+    Timestamp endDate;
+    Integer createdBy;
+    Integer updatedBy;
+    String description;
 }

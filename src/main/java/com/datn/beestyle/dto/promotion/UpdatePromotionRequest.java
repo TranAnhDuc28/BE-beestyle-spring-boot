@@ -1,6 +1,8 @@
 package com.datn.beestyle.dto.promotion;
 
 import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -39,5 +41,6 @@ public class UpdatePromotionRequest {
     Integer updatedBy;
 
     String description;
-    Boolean deleted;
+    @EnumValue(name = "Status", enumClass = Status.class)
+    String status;
 }

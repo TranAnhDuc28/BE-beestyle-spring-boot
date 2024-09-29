@@ -1,5 +1,7 @@
 package com.datn.beestyle.dto.promotion;
 
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -35,5 +37,4 @@ public class CreatePromotionRequest {
     @NotNull(message = "CreatedBy cannot be blank")
     Integer createdBy;
 
-    Boolean deleted;
 }
