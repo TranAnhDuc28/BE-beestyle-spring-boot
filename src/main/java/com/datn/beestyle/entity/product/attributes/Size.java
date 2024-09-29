@@ -19,6 +19,6 @@ public class Size extends BaseEntity<Integer> {
     @Column(name = "size_name")
     String sizeName;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 }

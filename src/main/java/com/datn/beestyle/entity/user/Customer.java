@@ -44,8 +44,8 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "password")
     String password;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
     ShoppingCart shoppingCart;

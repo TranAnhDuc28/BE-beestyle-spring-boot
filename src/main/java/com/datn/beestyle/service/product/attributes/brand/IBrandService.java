@@ -11,5 +11,5 @@ import org.springframework.data.domain.Pageable;
 public interface IBrandService
         extends IGenericService<Brand, Integer, CreateBrandRequest, UpdateBrandRequest, BrandResponse> {
 
-    PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted);
+    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status);
 }

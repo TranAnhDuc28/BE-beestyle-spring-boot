@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ColorResponse extends UserColorResponse{
-    Boolean deleted;
+    String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

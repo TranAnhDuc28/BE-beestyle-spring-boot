@@ -25,9 +25,9 @@ public class BrandController {
     @GetMapping
     public ApiResponse<?> getBrands(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Brands",
-                brandService.getAllByNameAndDeleted(pageable, name, deleted));
+                brandService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")

@@ -25,9 +25,9 @@ public class MaterialController {
     @GetMapping
     public ApiResponse<?> getMaterials(Pageable pageable,
                                       @RequestParam(required = false) String name,
-                                      @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                      @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Materials",
-                materialService.getAllByNameAndDeleted(pageable, name, deleted));
+                materialService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")

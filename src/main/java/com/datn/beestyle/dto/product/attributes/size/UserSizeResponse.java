@@ -10,5 +10,5 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserSizeResponse {
     Integer id;
-    String brandName;
+    String sizeName;
 }

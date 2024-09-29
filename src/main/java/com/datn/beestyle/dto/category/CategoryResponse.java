@@ -1,18 +1,26 @@
-package com.datn.beestyle.dto.product.attributes.material;
+package com.datn.beestyle.dto.category;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
-@SuperBuilder
+@Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class MaterialResponse extends UserMaterialResponse{
-    String status;
+public class CategoryResponse {
+    Integer id;
+    String categoryName;
+    String slug;
+    Integer level;
+    Integer priority;
+    String parentCategoryName;
+    Boolean deleted;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

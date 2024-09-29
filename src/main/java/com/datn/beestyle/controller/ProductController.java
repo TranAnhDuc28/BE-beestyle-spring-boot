@@ -19,7 +19,7 @@ public class ProductController {
     private final IProductService productService;
 
     @GetMapping
-    public ApiResponse<?> getProductsForAdmin(Pageable pageable) {
+    public ApiResponse<?> getProducts(Pageable pageable) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products", productService.getAll(pageable));
     }
 

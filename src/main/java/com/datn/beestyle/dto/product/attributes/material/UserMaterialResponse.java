@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserMaterialResponse {
     Integer id;
-    String brandName;
+    String materialName;
 }

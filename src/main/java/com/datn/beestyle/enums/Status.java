@@ -1,0 +1,33 @@
+package com.datn.beestyle.enums;
+
+import lombok.Getter;
+import org.springframework.lang.Nullable;
+
+@Getter
+public enum Status {
+
+    ACTIVE(1),
+    INACTIVE(0);
+
+    private final int value;
+    Status(int value) {
+        this.value = value;
+    }
+    public static Status valueOf(int value) {
+        Status status = resolve(value);
+        if (status == null) {
+            throw new IllegalArgumentException("No matching constant for [" + value + "]");
+        }
+        return status;
+    }
+
+    @Nullable
+    public static Status resolve(int value) {
+        for (Status status : Status.values()) {
+            if (status.value == value) {
+                return status;
+            }
+        }
+        return null;
+    }
+}

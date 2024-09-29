@@ -44,18 +44,13 @@ public class Order extends Auditable<Long> {
     PaymentMethod paymentMethod;
 
     @Column(name = "order_channel")
-    @Enumerated(EnumType.STRING)
     OrderChannel orderChannel;
 
-    @Column(name = "order_status")
-    @Enumerated(EnumType.STRING)
-    OrderStatus orderStatus;
+    @Column(name = "status")
+    short status;
 
     @Column(name = "note")
     String note;
-
-    @Column(name = "deleted")
-    boolean deleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
