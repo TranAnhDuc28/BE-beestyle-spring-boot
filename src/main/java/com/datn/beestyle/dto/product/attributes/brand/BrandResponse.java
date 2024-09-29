@@ -1,15 +1,17 @@
 package com.datn.beestyle.dto.product.attributes.brand;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BrandResponse {
-    Integer id;
-    String brandName;
-    Boolean deleted;
+public class BrandResponse extends UserBrandResponse{
+    String status;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 }

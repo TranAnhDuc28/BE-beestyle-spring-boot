@@ -1,8 +1,8 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.product.attributes.material.CreateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.material.UpdateBrandRequest;
+import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
+import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
 import com.datn.beestyle.service.product.attributes.material.IMaterialService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -25,32 +25,32 @@ public class MaterialController {
     @GetMapping
     public ApiResponse<?> getMaterials(Pageable pageable,
                                       @RequestParam(required = false) String name,
-                                      @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+                                      @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Materials",
-                materialService.getAllByNameAndDeleted(pageable, name, deleted));
+                materialService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")
-    public ApiResponse<?> createMaterial(@Valid @RequestBody CreateBrandRequest request) {
+    public ApiResponse<?> createMaterial(@Valid @RequestBody CreateMaterialRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Material added successfully",
                 materialService.create(request));
     }
 
     @PostMapping("/creates")
-    public ApiResponse<?> createMaterials(@RequestBody List<@Valid CreateBrandRequest> requestList) {
+    public ApiResponse<?> createMaterials(@RequestBody List<@Valid CreateMaterialRequest> requestList) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials added successfully",
                 materialService.createEntities(requestList));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateMaterial(@Min(1) @PathVariable int id,
-                                         @Valid @RequestBody UpdateBrandRequest request) {
+                                         @Valid @RequestBody UpdateMaterialRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Material updated successfully",
                 materialService.update(id, request));
     }
 
     @PatchMapping("/updates")
-    public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateBrandRequest> requestList) {
+    public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateMaterialRequest> requestList) {
         materialService.updateEntities(requestList);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials updated successfully");
     }

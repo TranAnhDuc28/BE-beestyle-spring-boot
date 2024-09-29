@@ -19,6 +19,6 @@ public class Material extends BaseEntity<Integer> {
     @Column(name = "material_name")
     String materialName;
 
-    @Column(name = "deleted")
-    boolean deleted;
+    @Column(name = "status")
+    short status;
 }
