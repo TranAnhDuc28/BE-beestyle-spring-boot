@@ -14,10 +14,10 @@ public interface ColorRepository extends IGenericRepository<Color, Integer> {
     @Query("""
             select c from Color c 
             where 
-                :name is null or c.colorName like concat('%', :name, '%')
-                 and c.status = :status
+                (:name is null or c.colorName like concat('%', :name, '%')) and
+                (:status is null or c.status = :status)
             """)
     Page<Color> findByNameContainingAndStatus(Pageable pageable,
                                                @Param("name") String name,
-                                               @Param("status") short status);
+                                               @Param("status") Integer status);
 }

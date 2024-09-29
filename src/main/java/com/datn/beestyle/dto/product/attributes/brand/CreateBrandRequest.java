@@ -15,8 +15,4 @@ public class CreateBrandRequest {
 
     @NotBlank(message = "Không để trống trường")
     String brandName;
-
-    @EnumValue(name = "Status", enumClass = Status.class)
-    String status;
-
 }

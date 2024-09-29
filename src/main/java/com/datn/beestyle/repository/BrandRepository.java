@@ -12,10 +12,10 @@ public interface BrandRepository extends IGenericRepository<Brand, Integer> {
     @Query("""
             select b from Brand b 
             where 
-                (:name is null or b.brandName like concat('%', :name, '%'))
-                 and b.status = :status
+                (:name is null or b.brandName like concat('%', :name, '%')) and
+                (:status is null or b.status = :status)
             """)
     Page<Brand> findByNameContainingAndStatus(Pageable pageable,
-                                               @Param("name") String name,
-                                               @Param("status") short status);
+                                              @Param("name") String name,
+                                              @Param("status") Integer status);
 }

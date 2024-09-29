@@ -25,7 +25,7 @@ public class MaterialController {
     @GetMapping
     public ApiResponse<?> getMaterials(Pageable pageable,
                                       @RequestParam(required = false) String name,
-                                      @RequestParam(required = false) Short status) {
+                                      @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Materials",
                 materialService.getAllByNameAndStatus(pageable, name, status));
     }

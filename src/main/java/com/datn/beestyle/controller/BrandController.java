@@ -25,7 +25,7 @@ public class BrandController {
     @GetMapping
     public ApiResponse<?> getBrands(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false) Short status) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Brands",
                 brandService.getAllByNameAndStatus(pageable, name, status));
     }

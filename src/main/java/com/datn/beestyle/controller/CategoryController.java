@@ -1,6 +1,7 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.CategoryRepository;
 import com.datn.beestyle.service.category.ICategoryService;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +27,6 @@ public class CategoryController {
                                         @RequestParam(required = false) Short status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Categories",
                 categoryService.getAllForAdmin(pageable, name, status));
+
     }
 }

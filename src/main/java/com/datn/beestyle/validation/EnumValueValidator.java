@@ -15,18 +15,13 @@ public class EnumValueValidator implements ConstraintValidator<EnumValue, CharSe
     public void initialize(EnumValue enumValue) {
         this.enumValue = enumValue.name();
         acceptedValues = Stream.of(enumValue.enumClass().getEnumConstants())
-                .map(Enum::name)
+                .map(enumConstant -> enumConstant.name().toUpperCase())
                 .toList();
     }
 
-    // so sánh giá trị có nằm trong list đó hay không
     @Override
     public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-        if (value == null) {
-            return true;
-        }
-
-        if (!acceptedValues.contains(value.toString())) {
+        if (value == null || !acceptedValues.contains(value.toString())) {
             String errorMessage = String.format("%s must be one of the following values: %s",
                     enumValue, String.join(", ", acceptedValues));
 

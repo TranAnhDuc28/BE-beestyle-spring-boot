@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
 import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
 import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.attributes.Material;
+import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.MaterialRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,12 +36,15 @@ public class MaterialService
         this.materialRepository = materialRepository;
     }
 
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        Integer statusValue = null;
+        if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Material> materialPage = materialRepository.findByNameContainingAndDeleted(pageRequest, name, status);
+        Page<Material> materialPage = materialRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<MaterialResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)

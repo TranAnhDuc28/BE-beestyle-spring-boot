@@ -11,5 +11,5 @@ import org.springframework.data.domain.Pageable;
 public interface IColorService
         extends IGenericService<Color, Integer, CreateColorRequest, UpdateColorRequest, ColorResponse> {
 
-    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status);
+    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status);
 }

@@ -16,8 +16,8 @@ public interface MaterialRepository extends IGenericRepository<Material, Integer
                 (:name is null or m.materialName like concat('%', :name, '%')) and 
                 (:status is null or m.status = :status)
             """)
-    Page<Material> findByNameContainingAndDeleted(Pageable pageable,
-                                                  @Param("name") String name,
-                                                  @Param("status") Short status);
+    Page<Material> findByNameContainingAndStatus(Pageable pageable,
+                                                 @Param("name") String name,
+                                                 @Param("status") Integer status);
 
 }

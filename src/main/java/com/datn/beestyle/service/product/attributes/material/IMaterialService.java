@@ -11,5 +11,5 @@ import org.springframework.data.domain.Pageable;
 public interface IMaterialService
         extends IGenericService<Material, Integer, CreateMaterialRequest, UpdateMaterialRequest, MaterialResponse> {
 
-    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status);
+    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status);
 }

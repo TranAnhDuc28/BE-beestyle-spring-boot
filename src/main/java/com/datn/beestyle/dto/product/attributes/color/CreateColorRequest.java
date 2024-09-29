@@ -13,6 +13,4 @@ public class CreateColorRequest {
 
     @NotBlank(message = "Không để trống trường")
     String colorName;
-
-    String status;
 }

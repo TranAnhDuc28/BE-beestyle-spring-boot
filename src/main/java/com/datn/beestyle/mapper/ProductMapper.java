@@ -44,6 +44,6 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
 
     @Named("statusId")
     default int statusId(UpdateProductRequest request) {
-        return Status.valueOf(request.getStatus()).getId();
+        return Status.valueOf(request.getStatus()).getValue();
     }
 }

@@ -1,6 +1,7 @@
 package com.datn.beestyle.enums;
 
 import lombok.Getter;
+import org.springframework.lang.Nullable;
 
 @Getter
 public enum OrderStatus {
@@ -15,8 +16,26 @@ public enum OrderStatus {
     RETURNED(8), // đã trả hàng
     REFUNDED(9); // đã hoàn tiền
 
-    private final int id;
-    OrderStatus(int id) {
-        this.id = id;
+    private final int value;
+    OrderStatus(int value) {
+        this.value = value;
+    }
+
+    public static OrderStatus valueOf(int value) {
+        OrderStatus orderStatus = resolve(value);
+        if (orderStatus == null) {
+            throw new IllegalArgumentException("No matching constant for [" + value + "]");
+        }
+        return orderStatus;
+    }
+
+    @Nullable
+    public static OrderStatus resolve(int value) {
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            if (orderStatus.value == value) {
+                return orderStatus;
+            }
+        }
+        return null;
     }
 }

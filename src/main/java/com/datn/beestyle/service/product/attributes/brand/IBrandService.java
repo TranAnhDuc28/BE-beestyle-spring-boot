@@ -11,5 +11,5 @@ import org.springframework.data.domain.Pageable;
 public interface IBrandService
         extends IGenericService<Brand, Integer, CreateBrandRequest, UpdateBrandRequest, BrandResponse> {
 
-    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status);
+    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status);
 }

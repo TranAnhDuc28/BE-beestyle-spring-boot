@@ -25,9 +25,9 @@ public class SizeController {
     @GetMapping
     public ApiResponse<?> getSizes(Pageable pageable,
                                     @RequestParam(required = false) String name,
-                                    @RequestParam(required = false) Short status) {
+                                    @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Sizes",
-                sizeService.getAllByNameAndDeleted(pageable, name, status));
+                sizeService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")

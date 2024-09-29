@@ -1,7 +1,6 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
 import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
 import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
@@ -12,6 +11,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialRequest, UpdateMaterialRequest, MaterialResponse> {
 
@@ -19,10 +20,10 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Override
     MaterialResponse toEntityDto(Material entity);
 
+    @Mapping(target = "status", constant = "1")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "status", source = "status", defaultValue = "1")
     @Override
     Material toCreateEntity(CreateMaterialRequest request);
 
@@ -33,13 +34,19 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Override
     void toUpdateEntity(@MappingTarget Material entity, UpdateMaterialRequest request);
 
+    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Override
+    Material toUpdateEntity(UpdateMaterialRequest request);
+
     @Named("statusId")
     default int statusId(UpdateMaterialRequest request) {
-        return Status.valueOf(request.getStatus()).getId();
+        return Status.valueOf(request.getStatus()).getValue();
     }
 
     @Named("statusName")
-    default String statusName(Material request) {
-        return Status.fromId(request.getStatus()).name();
+    default String statusName(Material material) {
+        return Status.valueOf(material.getStatus()).name();
     }
 }

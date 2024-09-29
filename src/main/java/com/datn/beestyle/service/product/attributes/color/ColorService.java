@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.product.attributes.color.ColorResponse;
 import com.datn.beestyle.dto.product.attributes.color.CreateColorRequest;
 import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.entity.product.attributes.Color;
+import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.ColorRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,12 +37,15 @@ public class ColorService
         this.colorRepository = colorRepository;
     }
 
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, Short status) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        Integer statusValue = null;
+        if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Color> materialPage = colorRepository.findByNameContainingAndStatus(pageRequest, name, status);
+        Page<Color> materialPage = colorRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<ColorResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()

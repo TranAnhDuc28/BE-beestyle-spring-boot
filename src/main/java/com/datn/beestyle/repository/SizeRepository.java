@@ -14,10 +14,10 @@ public interface SizeRepository extends IGenericRepository<Size, Integer> {
     @Query("""
             select s from Size s 
             where 
-                :name is null or s.sizeName like concat('%', :name, '%')
-                 and s.status = :status
+                (:name is null or s.sizeName like concat('%', :name, '%')) and
+                (:status is null or s.status = :status)
             """)
     Page<Size> findByNameContainingAndStatus(Pageable pageable,
                                                @Param("name") String name,
-                                               @Param("status") short status);
+                                               @Param("status") Integer status);
 }

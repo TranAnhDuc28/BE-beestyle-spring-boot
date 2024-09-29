@@ -1,5 +1,7 @@
 package com.datn.beestyle.dto.product.attributes.material;
 
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,6 +15,4 @@ public class CreateMaterialRequest {
 
     @NotBlank(message = "Không để trống trường")
     String materialName;
-
-    String status;
 }
