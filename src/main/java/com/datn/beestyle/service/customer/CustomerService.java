@@ -1,6 +1,6 @@
 package com.datn.beestyle.service.customer;
 
-<<<<<<< HEAD
+
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
@@ -90,7 +90,4 @@ public class CustomerService
 
 
 
-=======
-public class CustomerService {
->>>>>>> 34d0569f3d11af1fe9d9f62f8abb87e9356cd0fc
 }

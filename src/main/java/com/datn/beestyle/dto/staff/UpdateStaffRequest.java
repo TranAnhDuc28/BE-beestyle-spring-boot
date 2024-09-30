@@ -1,8 +1,8 @@
 package com.datn.beestyle.dto.staff;
 
 import com.datn.beestyle.enums.Gender;
-import com.datn.beestyle.enums.StaffStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,7 +41,6 @@ public class UpdateStaffRequest {
     String password;
 
     @NotNull(message = "Khong duoc de trong")
-    StaffStatus staffStatus;
+    short status;
 
-    boolean deleted;
 }

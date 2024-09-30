@@ -21,11 +21,9 @@ public class CustomerController {
     private final ICustomerService customerService;
 
     @GetMapping
-    public ApiResponse<?> getCustomers(Pageable pageable,
-                                    @RequestParam(required = false) String name,
-                                    @RequestParam(required = false, defaultValue = "false") boolean deleted) {
+    public ApiResponse<?> getCustomers(Pageable pageable) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer",
-                customerService.getAllByNameAndDeleted(pageable,name,deleted));
+                customerService.getAll(pageable));
     }
 
     @PostMapping("/create")

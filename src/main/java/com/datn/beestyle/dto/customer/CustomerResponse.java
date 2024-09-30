@@ -24,7 +24,7 @@ public class CustomerResponse {
     Gender gender;
     String phoneNumber;
     String email;
-    boolean deleted;
+    short status;
 
 //    ShoppingCart shoppingCart;
     Set<Address> addresses;

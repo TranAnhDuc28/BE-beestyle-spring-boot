@@ -45,7 +45,6 @@ public interface SizeMapper extends IGenericMapper<Size, CreateSizeRequest, Upda
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Override
     Size toUpdateEntity(UpdateSizeRequest request);
 
     @Named("statusId")

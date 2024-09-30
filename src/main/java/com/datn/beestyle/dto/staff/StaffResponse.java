@@ -1,7 +1,6 @@
 package com.datn.beestyle.dto.staff;
 
 import com.datn.beestyle.enums.Gender;
-import com.datn.beestyle.enums.StaffStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +27,6 @@ public class StaffResponse {
 
     String address;
 
-    StaffStatus staffStatus;
+    short status;
 
-    boolean deleted;
 }

@@ -35,7 +35,7 @@ public class CreateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    boolean deleted;
+    short status;
 
 //    ShoppingCart shoppingCart;
 

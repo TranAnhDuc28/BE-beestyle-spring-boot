@@ -14,7 +14,7 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", source = "deleted", defaultValue = "false")
+    @Mapping(target = "status",constant = "1")
     @Override
     Customer toCreateEntity(CreateCustomerRequest request);
 

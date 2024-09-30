@@ -37,7 +37,6 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Override
     Material toUpdateEntity(UpdateMaterialRequest request);
 
     @Named("statusId")

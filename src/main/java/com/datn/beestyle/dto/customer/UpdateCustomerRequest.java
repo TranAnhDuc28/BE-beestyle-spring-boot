@@ -4,6 +4,7 @@ import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,10 +21,10 @@ public class UpdateCustomerRequest {
     @NotBlank(message = "Khong de trong")
     String fullName;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotNull(message = "Khong duoc de trong")
     LocalDate dateOfBirth;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotNull(message = "Khong duoc de trong")
     Gender gender;
 
     @NotBlank(message = "Khong duoc de trong")
@@ -33,7 +34,7 @@ public class UpdateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    boolean deleted;
+    short status;
 
 //    ShoppingCart shoppingCart;
 
