@@ -14,6 +14,10 @@ import java.sql.Timestamp;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateVoucherRequest {
+    @NotBlank(message = "Tên voucher không được để trống")
+    @Size(max = 50, message = "Tên voucher không được quá 50 ký tự")
+    private String voucherName;
+
     @NotBlank(message = "Mã voucher không được để trống")
     @Size(max = 50, message = "Mã voucher không được quá 50 ký tự")
     private String voucherCode;
@@ -43,5 +47,5 @@ public class UpdateVoucherRequest {
     @Min(value = 0, message = "Giới hạn sử dụng cho mỗi người dùng phải lớn hơn hoặc bằng 0")
     private int usagePerUser;
 
-    private boolean deleted;
+    private short status;
 }

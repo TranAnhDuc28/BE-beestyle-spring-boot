@@ -40,23 +40,6 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
                 .build();
     }
 
-    @Override
-    public PageResponse<?> getAllByNameAndDeleted(Pageable pageable, String name, boolean deleted) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
-
-        Page<T> materialPage = entityRepository.findByNameContainingAndDeleted(pageRequest, name, deleted);
-        List<R> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
-        return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
-                .pageSize(pageable.getPageSize())
-                .totalElements(materialPage.getTotalElements())
-                .totalPages(materialPage.getTotalPages())
-                .items(materialResponseList)
-                .build();
-    }
-
     @Transactional
     @Override
     public R create(C request) {

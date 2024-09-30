@@ -5,9 +5,11 @@ import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", defaultValue = "false")
+    @Mapping(target = "status", source = "status", defaultValue = "1")
     @Override
     Voucher toCreateEntity(CreateVoucherRequest request);
 
@@ -25,6 +27,7 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Override
     void toUpdateEntity(@MappingTarget Voucher entity, UpdateVoucherRequest request);
 
@@ -32,9 +35,10 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "deleted", defaultValue = "false")
+    @Mapping(target = "status", source = "status", defaultValue = "1")
     @Override
     List<Voucher> toCreateEntityList(List<CreateVoucherRequest> dtoList);
+
     // Mapping từ Voucher sang VoucherResponse
     @Override
     VoucherResponse toEntityDto(Voucher entity);
@@ -42,4 +46,15 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     // Mapping danh sách Voucher sang VoucherResponse
     @Override
     List<VoucherResponse> toEntityDtoList(List<Voucher> entityList);
+
+    // Mapping status từ entity sang response (ví dụ: từ status ID sang status Name)
+    @Named("statusId")
+    default int statusId(UpdateVoucherRequest request) {
+        return Status.valueOf(request.getStatus()).getValue();
+    }
+
+    @Named("statusName")
+    default String statusName(Voucher voucher) {
+        return Status.valueOf(voucher.getStatus()).name();
+    }
 }

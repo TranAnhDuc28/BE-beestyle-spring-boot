@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VoucherResponse {
     Long id;
+    String voucherName;
     String voucherCode;
     DiscountType discountType;
     int discountValue;
@@ -23,5 +24,5 @@ public class VoucherResponse {
     Timestamp endDate;
     int usageLimit;
     int usagePerUser;
-    boolean deleted;
+    short status;;
 }

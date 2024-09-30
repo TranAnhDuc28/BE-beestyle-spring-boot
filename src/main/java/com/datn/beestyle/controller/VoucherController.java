@@ -3,13 +3,17 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.service.voucher.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,10 +24,10 @@ public class VoucherController {
 
     @GetMapping
     public ApiResponse<?> getVouchers(Pageable pageable,
-                                      @RequestParam(required = false) String code,
-                                      @RequestParam(defaultValue = "false") boolean deleted) {
+                                      @RequestParam(required = false) String name,
+                                      @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
-                voucherService.searchByName(pageable, code, deleted));
+                voucherService.getAllByNameAndStatus(pageable, name, status));
     }
 
     @PostMapping("/create")
@@ -60,9 +64,29 @@ public class VoucherController {
     public ApiResponse<?> getVoucher(@PathVariable Integer id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", voucherService.getDtoById(id));
     }
-    @GetMapping("/voucherCode/{voucherCode}")
-    public ApiResponse<?> getVoucherByCode(@PathVariable String voucherCode) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher found", voucherService.getVoucherByCode(voucherCode));
+
+//    @GetMapping("/voucherName/{voucherName}")
+//    public ApiResponse<?> getVoucherByCode(@PathVariable String voucherName) {
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher found", voucherService.getVoucherByName(voucherName));
+//    }
+    @GetMapping("/voucherName/{voucherName}")
+    public ApiResponse<?> getVoucherByName(@PathVariable("voucherName") String voucherName) {
+        List<VoucherResponse> vouchers = voucherService.getVoucherByName(voucherName);
+        if (vouchers.isEmpty()) {
+            return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không có voucher", null);
+        }
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", vouchers);
     }
+    @GetMapping("/findbydate")
+    public ApiResponse<?> findByDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(endDate.atStartOfDay());
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp));
+    }
+
 
 }

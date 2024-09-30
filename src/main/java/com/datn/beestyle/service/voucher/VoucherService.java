@@ -9,14 +9,20 @@ import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.VoucherMapper;
 import com.datn.beestyle.repository.VoucherRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +42,23 @@ public class VoucherService
         this.voucherRepository = voucherRepository;
         this.voucherMapper = voucherMapper;
     }
-
     @Override
-    public PageResponse<?> searchByName(Pageable pageable, String code,boolean deleted) {
-        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndDeleted(pageable, code,deleted);
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        Integer statusValue = null;
+        if (StringUtils.hasText(status)) {
+            statusValue = Status.valueOf(status.toUpperCase()).getValue();
+        }
+
+        // Tạo PageRequest với sort theo createdAt và id
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+
+        // Tìm kiếm theo name và status trong VoucherRepository
+        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
+
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
+
         return PageResponse.builder()
                 .pageNo(pageable.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
@@ -50,14 +68,17 @@ public class VoucherService
                 .build();
     }
 
-
     @Override
     public List<VoucherResponse> createVoucher(List<CreateVoucherRequest> requestList) {
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
-    public List<VoucherResponse> getVoucherByCode(String voucherCode) {
-        return voucherRepository.findByVoucherCode(voucherCode);
+    public List<VoucherResponse> getVoucherByName(String voucherName) {
+        return voucherRepository.findByVoucherName(voucherName);
+
+    }
+    public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
+        return voucherRepository.findByDateRange(startDate,endDate);
 
     }
     @Override
