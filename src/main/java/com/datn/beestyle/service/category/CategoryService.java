@@ -8,10 +8,13 @@ import com.datn.beestyle.dto.category.CategoryResponse;
 import com.datn.beestyle.dto.category.CreateCategoryRequest;
 import com.datn.beestyle.dto.category.UpdateCategoryRequest;
 import com.datn.beestyle.dto.category.UserCategoryResponse;
+import com.datn.beestyle.entity.BaseEntity;
 import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.CategoryMapper;
 import com.datn.beestyle.repository.CategoryRepository;
+import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -89,7 +92,7 @@ public class CategoryService
             categoryNames = null;
         } else {
             categoryNames = categoryRepository.findCategoryNameById(ids).stream()
-                    .collect(Collectors.toMap(objects -> (Integer) objects[0], objects -> (String) objects[1]));
+                    .collect(Collectors.toMap(object -> (Integer) object[0], object -> (String) object[1]));
         }
 
         if (categoryNames != null) {
@@ -127,7 +130,25 @@ public class CategoryService
 
     @Override
     protected void beforeCreate(CreateCategoryRequest request) {
-        request.setCategoryName(request.getCategoryName().trim());
+        String categoryName = request.getCategoryName().trim();
+        request.setCategoryName(categoryName);
+
+        if (categoryRepository.existsByCategoryName(request.getCategoryName()))
+            throw new InvalidDataException("Category name already exists");
+
+        if (request.getSlug() != null && request.getSlug().isBlank()) {
+            request.setSlug(request.getSlug().trim());
+            if (categoryRepository.existsBySlug(request.getSlug()))
+                throw new InvalidDataException("Category slug already exists");
+        } else {
+            String slug = AppUtils.toSlug(categoryName);
+            request.setSlug(slug);
+        }
+
+        if (request.getParentId() == null) request.setLevel(1);
+        else if (request.getLevel() == 1) request.setLevel(2);
+        else if (request.getLevel() == 2) request.setLevel(3);
+        else throw new InvalidDataException("Invalid level");
     }
 
     @Override
@@ -138,17 +159,27 @@ public class CategoryService
     @Override
     protected void afterConvertCreateRequest(CreateCategoryRequest request, Category entity) {
 
+
     }
 
     @Override
     protected void afterConvertUpdateRequest(UpdateCategoryRequest request, Category entity) {
+        Optional<Category> categoryByName = categoryRepository.findByCategoryName(request.getCategoryName());
+        if (categoryByName.isPresent() && !categoryByName.get().getId().equals(entity.getId())) {
+            throw new InvalidDataException("Category name already exists");
+        }
 
+        Optional<Category> categoryBySlug = categoryRepository.findBySlug(request.getSlug());
+        if (categoryBySlug.isPresent() && !categoryBySlug.get().getId().equals(entity.getId())) {
+            throw new InvalidDataException("Category slug already exists");
+        }
+
+        // change parent category
     }
 
     @Override
     protected String getEntityName() {
         return "Category";
     }
-
 
 }

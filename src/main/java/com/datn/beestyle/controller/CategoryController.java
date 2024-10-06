@@ -1,18 +1,17 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.enums.Status;
-import com.datn.beestyle.repository.CategoryRepository;
+import com.datn.beestyle.dto.category.CreateCategoryRequest;
+import com.datn.beestyle.dto.category.UpdateCategoryRequest;
 import com.datn.beestyle.service.category.ICategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -30,5 +29,24 @@ public class CategoryController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Categories",
                 categoryService.getAllForAdmin(pageable, name, status));
 
+    }
+
+    @PostMapping("/create")
+    public ApiResponse<?> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Category added successfully",
+                categoryService.create(request));
+    }
+
+    @PutMapping("/update/{id}")
+    public ApiResponse<?> updateCategory(@Min(1) @PathVariable int id,
+                                         @Valid @RequestBody UpdateCategoryRequest request) {
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Category updated successfully",
+                categoryService.update(id, request));
+    }
+
+
+    @GetMapping("/{id}")
+    public ApiResponse<?> getCategory(@Min(1) @PathVariable int id) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Category", categoryService.getDtoById(id));
     }
 }

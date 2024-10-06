@@ -18,7 +18,6 @@ public interface CategoryMapper
     CategoryResponse toEntityDto(Category entity);
 
     @Mapping(target = "parentCategory", ignore = true)
-    @Mapping(target = "level", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

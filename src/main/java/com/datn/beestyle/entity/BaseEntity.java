@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @MappedSuperclass
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract class BaseEntity<T extends Serializable> implements Serializable{

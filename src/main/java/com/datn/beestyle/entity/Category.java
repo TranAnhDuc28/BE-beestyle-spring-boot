@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category extends BaseEntity<Integer> {
-
     @Column(name = "category_name")
     String categoryName;
 
@@ -40,6 +39,7 @@ public class Category extends BaseEntity<Integer> {
 
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Category> categoryChildren = new ArrayList<>();
+
 
     public void addCategoryChildren(Category children) {
         if (children != null) {
