@@ -130,25 +130,35 @@ public class CategoryService
 
     @Override
     protected void beforeCreate(CreateCategoryRequest request) {
+        // Kiểm tra tên danh mục đã tồn tại chưa
         String categoryName = request.getCategoryName().trim();
+        if (categoryRepository.existsByCategoryName(categoryName))
+            throw new InvalidDataException("Category name already exists");
         request.setCategoryName(categoryName);
 
-        if (categoryRepository.existsByCategoryName(request.getCategoryName()))
-            throw new InvalidDataException("Category name already exists");
-
-        if (request.getSlug() != null && request.getSlug().isBlank()) {
-            request.setSlug(request.getSlug().trim());
-            if (categoryRepository.existsBySlug(request.getSlug()))
-                throw new InvalidDataException("Category slug already exists");
+        // Xử lý slug: nếu có `slug` thì kiểm tra, nếu không tự sinh từ tên danh mục
+        String slug = request.getSlug();
+        if (StringUtils.hasText(slug)) {
+            slug = slug.trim();
+            if (categoryRepository.existsBySlug(slug)) throw new InvalidDataException("Category slug already exists");
+            request.setSlug(slug.trim());
         } else {
-            String slug = AppUtils.toSlug(categoryName);
+            slug = AppUtils.toSlug(categoryName);
             request.setSlug(slug);
         }
 
-        if (request.getParentId() == null) request.setLevel(1);
-        else if (request.getLevel() == 1) request.setLevel(2);
-        else if (request.getLevel() == 2) request.setLevel(3);
-        else throw new InvalidDataException("Invalid level");
+        if (request.getParentId() == null) {
+            request.setLevel(1);
+        } else {
+            Optional<Category> parentCategory = categoryRepository.findById(request.getParentId());
+            if (parentCategory.isEmpty()) throw new InvalidDataException("Parent category not found");
+
+            // check level, tránh category cấp 4
+            int parentLevel = parentCategory.get().getLevel();
+            if (parentLevel >= 3) throw new InvalidDataException("Cannot add a child category to a level 3 category");
+
+            request.setLevel(parentLevel + 1);
+        }
     }
 
     @Override
@@ -164,18 +174,38 @@ public class CategoryService
 
     @Override
     protected void afterConvertUpdateRequest(UpdateCategoryRequest request, Category entity) {
+        // Kiểm tra tên danh mục trùng lặp (không tính chính danh mục đang cập nhật)
         Optional<Category> categoryByName = categoryRepository.findByCategoryName(request.getCategoryName());
         if (categoryByName.isPresent() && !categoryByName.get().getId().equals(entity.getId())) {
             throw new InvalidDataException("Category name already exists");
         }
 
+        // Kiểm tra slug trùng lặp (không tính chính danh mục đang cập nhật)
+        String slug = request.getSlug().trim().toLowerCase();
         Optional<Category> categoryBySlug = categoryRepository.findBySlug(request.getSlug());
         if (categoryBySlug.isPresent() && !categoryBySlug.get().getId().equals(entity.getId())) {
             throw new InvalidDataException("Category slug already exists");
         }
 
         // change parent category
+        if (request.getParentId() != null) {
+            Optional<Category> parentCategory = categoryRepository.findById(request.getParentId());
+            if (parentCategory.isEmpty()) throw new InvalidDataException("Parent category not found");
+
+            // Không cho phép thay đổi thành danh mục cha có cấp độ bằng hoặc nhỏ hơn
+            int parentLevel = parentCategory.get().getLevel();
+            if (parentLevel >= 3) throw new InvalidDataException("Cannot set a level 3 category as parent");
+
+            entity.setParentCategory(parentCategory.get());
+            entity.setLevel(parentLevel + 1);
+        } else {
+            entity.setParentCategory(null);
+            entity.setLevel(1);
+        }
+
+
     }
+
 
     @Override
     protected String getEntityName() {

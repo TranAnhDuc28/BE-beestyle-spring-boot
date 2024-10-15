@@ -41,7 +41,7 @@ public class BrandService
         Integer statusValue = null;
         if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1,
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
@@ -49,7 +49,7 @@ public class BrandService
         List<BrandResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageable.getPageNumber())
                 .pageSize(pageable.getPageSize())
                 .totalElements(materialPage.getTotalElements())
                 .totalPages(materialPage.getTotalPages())
