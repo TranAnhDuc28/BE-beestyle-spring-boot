@@ -98,7 +98,6 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
                 .orElseThrow(() -> new ResourceNotFoundException(this.getEntityName() + " not found."));
     }
 
-
     protected abstract List<C> beforeCreateEntities(List<C> requests);
     protected abstract List<U> beforeUpdateEntities(List<U> requests);
     protected abstract void beforeCreate(C request);
@@ -106,4 +105,5 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected abstract void afterConvertCreateRequest(C request, T entity);
     protected abstract void afterConvertUpdateRequest(U request, T entity);
     protected abstract String getEntityName();
+
 }

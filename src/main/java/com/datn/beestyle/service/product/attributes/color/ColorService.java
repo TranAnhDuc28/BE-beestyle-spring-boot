@@ -41,7 +41,7 @@ public class ColorService
         Integer statusValue = null;
         if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1,
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 

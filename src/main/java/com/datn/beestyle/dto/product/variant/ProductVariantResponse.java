@@ -1,6 +1,5 @@
-package com.datn.beestyle.dto.product;
+package com.datn.beestyle.dto.product.variant;
 
-import com.datn.beestyle.dto.category.UserCategoryResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -11,8 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductResponse extends UserProductResponse{
-    UserCategoryResponse category;
+public class ProductVariantResponse extends UserProductVariantResponse {
+
     String status;
     LocalDateTime createdAt;
     LocalDateTime updateAt;

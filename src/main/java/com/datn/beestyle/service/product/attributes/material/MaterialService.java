@@ -40,14 +40,15 @@ public class MaterialService
         Integer statusValue = null;
         if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1,
+                pageable.getPageSize()
+//                Sort.by(Sort.Direction.DESC, "createdAt", "id")
+        );
 
         Page<Material> materialPage = materialRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<MaterialResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageable.getPageNumber())
                 .pageSize(pageable.getPageSize())
                 .totalElements(materialPage.getTotalElements())
                 .totalPages(materialPage.getTotalPages())
