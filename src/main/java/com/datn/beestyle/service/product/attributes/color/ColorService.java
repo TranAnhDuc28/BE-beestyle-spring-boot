@@ -42,7 +42,10 @@ public class ColorService
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
         Integer statusValue = null;
-        if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
+        if(status != null) {
+            Status statusEnum = Status.fromString(status.toUpperCase());
+            if (statusEnum != null) statusValue = statusEnum.getValue();
+        }
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
