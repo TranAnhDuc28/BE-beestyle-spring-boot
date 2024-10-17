@@ -30,4 +30,13 @@ public enum Status {
         }
         return null;
     }
+
+    @Nullable
+    public static Status fromString(String status) {
+        try {
+            return Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
 }

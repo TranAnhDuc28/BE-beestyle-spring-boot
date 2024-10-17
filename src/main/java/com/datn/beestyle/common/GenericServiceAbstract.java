@@ -25,14 +25,16 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
 
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<T> entityPage = entityRepository.findAll(pageRequest);
         List<R> result = mapper.toEntityDtoList(entityPage.getContent());
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(entityPage.getTotalElements())
                 .totalPages(entityPage.getTotalPages())
