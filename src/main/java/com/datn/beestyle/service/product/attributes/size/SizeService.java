@@ -35,17 +35,19 @@ public class SizeService
     }
 
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
         Integer statusValue = null;
         if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1,
-                pageable.getPageSize(),
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<Size> materialPage = sizeRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<SizeResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber())
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(materialPage.getTotalElements())
                 .totalPages(materialPage.getTotalPages())

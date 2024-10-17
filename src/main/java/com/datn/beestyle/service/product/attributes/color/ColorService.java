@@ -38,18 +38,20 @@ public class ColorService
     }
 
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
         Integer statusValue = null;
         if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1,
-                pageable.getPageSize(),
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<Color> materialPage = colorRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<ColorResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(materialPage.getTotalElements())
                 .totalPages(materialPage.getTotalPages())

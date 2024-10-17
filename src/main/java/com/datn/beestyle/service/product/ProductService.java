@@ -53,11 +53,14 @@ public class ProductService
 
     @Override
     public PageResponse<List<UserProductResponse>> findAllByCategoryId(Pageable pageable, int categoryId) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize());
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
         Page<Product> productPages = productRepository.findAllForUserByCategoryId(pageRequest, categoryId);
         List<UserProductResponse> userProductResponses = productPages.get().map(productMapper::toUserProductResponse).toList();
         return PageResponse.<List<UserProductResponse>>builder()
-                .pageNo(pageable.getPageNumber())
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(productPages.getTotalElements())
                 .totalPages(productPages.getTotalPages())
