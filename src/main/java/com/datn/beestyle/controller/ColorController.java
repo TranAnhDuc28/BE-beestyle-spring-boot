@@ -56,11 +56,11 @@ public class ColorController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Colors updated successfully");
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteColor(@Min(1) @PathVariable int id) {
-        colorService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Color deleted successfully.");
-    }
+//    @DeleteMapping("/delete/{id}")
+//    public ApiResponse<?> deleteColor(@Min(1) @PathVariable int id) {
+//        colorService.delete(id);
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Color deleted successfully.");
+//    }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getColor(@Min(1) @PathVariable int id) {

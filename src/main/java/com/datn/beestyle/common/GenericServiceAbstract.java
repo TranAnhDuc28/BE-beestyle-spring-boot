@@ -25,14 +25,16 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
 
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<T> entityPage = entityRepository.findAll(pageRequest);
         List<R> result = mapper.toEntityDtoList(entityPage.getContent());
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(entityPage.getTotalElements())
                 .totalPages(entityPage.getTotalPages())
@@ -98,7 +100,6 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
                 .orElseThrow(() -> new ResourceNotFoundException(this.getEntityName() + " not found."));
     }
 
-
     protected abstract List<C> beforeCreateEntities(List<C> requests);
     protected abstract List<U> beforeUpdateEntities(List<U> requests);
     protected abstract void beforeCreate(C request);
@@ -106,4 +107,5 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected abstract void afterConvertCreateRequest(C request, T entity);
     protected abstract void afterConvertUpdateRequest(U request, T entity);
     protected abstract String getEntityName();
+
 }
