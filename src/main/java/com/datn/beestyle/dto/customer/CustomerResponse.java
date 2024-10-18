@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,10 +22,13 @@ public class CustomerResponse {
     Integer id;
     String fullName;
     LocalDate dateOfBirth;
+    String password;
     Gender gender;
     String phoneNumber;
     String email;
     short status;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 
 //    ShoppingCart shoppingCart;
     Set<Address> addresses;
