@@ -24,11 +24,11 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
     Page<Voucher> findByNameContainingAndStatus(Pageable pageable,
                                                 @Param("name") String name,
                                                 @Param("status") Integer status);
+    @Query("""
+            select v from Voucher v 
+            """)
+    Page<Voucher> findAll(Pageable pageable);
 
-    //    @Query("""
-//                select v from Voucher v where (:code is null or v.voucherCode like concat('%', :code, '%')) and v.deleted = :deleted
-//            """)
-//    Page<Voucher> findByNameContainingAndDeleted(Pageable pageable, String code, boolean deleted);
     @Query("""
             SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id,v.voucherName, v.voucherCode, v.discountType, v.discountValue,
                                                                      v.maxDiscount, v.minOrderValue, v.startDate, v.endDate,

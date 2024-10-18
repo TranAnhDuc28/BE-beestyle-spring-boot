@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/voucher")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class VoucherController {
     private final VoucherService voucherService;
 
@@ -29,7 +30,13 @@ public class VoucherController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
                 voucherService.getAllByNameAndStatus(pageable, name, status));
     }
+    @GetMapping("/vouchers")
+    public ApiResponse<?> getAllVouchers(
+            Pageable pageable) {
 
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
+                voucherService.getAll(pageable));
+    }
     @PostMapping("/create")
     public ApiResponse<?> createVoucher(@Valid @RequestBody CreateVoucherRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Voucher thêm thành công",

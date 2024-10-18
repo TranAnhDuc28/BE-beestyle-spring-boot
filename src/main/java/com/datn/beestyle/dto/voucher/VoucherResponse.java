@@ -24,5 +24,5 @@ public class VoucherResponse {
     Timestamp endDate;
     int usageLimit;
     int usagePerUser;
-    short status;;
+    short status;
 }

@@ -81,6 +81,19 @@ public class VoucherService
         return voucherRepository.findByDateRange(startDate,endDate);
 
     }
+    public PageResponse<?> getAll(Pageable pageable) {
+        Page<Voucher> voucherPage = voucherRepository.findAll(pageable); // Lấy tất cả voucher với phân trang
+
+        List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
+
+        return PageResponse.builder()
+                .pageNo(voucherPage.getNumber() + 1)
+                .pageSize(voucherPage.getSize())
+                .totalElements(voucherPage.getTotalElements())
+                .totalPages(voucherPage.getTotalPages())
+                .items(voucherResponseList)
+                .build();
+    }
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
         return null;
