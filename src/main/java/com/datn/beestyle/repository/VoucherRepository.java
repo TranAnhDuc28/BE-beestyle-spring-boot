@@ -29,14 +29,26 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
             """)
     Page<Voucher> findAll(Pageable pageable);
 
-    @Query("""
-            SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id,v.voucherName, v.voucherCode, v.discountType, v.discountValue,
-                                                                     v.maxDiscount, v.minOrderValue, v.startDate, v.endDate,
-                                                                     v.usageLimit, v.usagePerUser, v.status)
-            FROM Voucher v
-            WHERE (:name IS NULL OR v.voucherName LIKE CONCAT('%', :name, '%'))
-            """)
-    List<VoucherResponse> findByVoucherName(@Param("name") String name);
+//    @Query("""
+//            SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id,v.voucherName, v.voucherCode, v.discountType, v.discountValue,
+//                                                                     v.maxDiscount, v.minOrderValue, v.startDate, v.endDate,
+//                                                                     v.usageLimit, v.usagePerUser, v.status)
+//            FROM Voucher v
+//            WHERE (:name IS NULL OR v.voucherName LIKE CONCAT('%', :name, '%'))
+//            """)
+//    List<VoucherResponse> findByVoucherName(@Param("name") String name);
+@Query("""
+        SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id, v.voucherName, v.voucherCode, v.discountType, 
+                                                               v.discountValue, v.maxDiscount, v.minOrderValue, 
+                                                               v.startDate, v.endDate, v.usageLimit, v.usagePerUser, 
+                                                               v.status)
+        FROM Voucher v
+        WHERE (:searchTerm IS NULL OR :searchTerm = '' OR 
+              v.voucherName LIKE CONCAT('%', :searchTerm, '%') 
+              OR v.voucherCode LIKE CONCAT('%', :searchTerm, '%'))
+        """)
+Page<VoucherResponse> findByVoucherNameOrCode(@Param("searchTerm") String searchTerm, Pageable pageable);
+
 
     @Query("""
        SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id, v.voucherName, v.voucherCode, v.discountType, v.discountValue,

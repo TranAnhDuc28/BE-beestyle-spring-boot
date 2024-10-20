@@ -44,17 +44,18 @@ public class VoucherService
     }
     @Override
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
         Integer statusValue = null;
-        if (StringUtils.hasText(status)) {
-            statusValue = Status.valueOf(status.toUpperCase()).getValue();
+        if(status != null) {
+            Status statusEnum = Status.fromString(status.toUpperCase());
+            if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
-        // Tạo PageRequest với sort theo createdAt và id
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        // Tìm kiếm theo name và status trong VoucherRepository
         Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
 
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
@@ -73,17 +74,27 @@ public class VoucherService
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
-    public List<VoucherResponse> getVoucherByName(String voucherName) {
-        return voucherRepository.findByVoucherName(voucherName);
+    public Page<VoucherResponse> getVoucherByNameOrCode(String searchTerm, Pageable pageable) {
 
+//        if (searchTerm == null || searchTerm.isEmpty()) {
+//            return voucherRepository.get(pageable);
+//        }
+
+        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
     }
+
     public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
         return voucherRepository.findByDateRange(startDate,endDate);
 
     }
     public PageResponse<?> getAll(Pageable pageable) {
-        Page<Voucher> voucherPage = voucherRepository.findAll(pageable); // Lấy tất cả voucher với phân trang
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+
+        Page<Voucher> voucherPage = voucherRepository.findAll(pageRequest);
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
 
         return PageResponse.builder()
@@ -94,6 +105,7 @@ public class VoucherService
                 .items(voucherResponseList)
                 .build();
     }
+
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
         return null;

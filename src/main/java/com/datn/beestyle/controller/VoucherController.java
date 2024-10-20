@@ -7,6 +7,7 @@ import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.service.voucher.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ public class VoucherController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
                 voucherService.getAllByNameAndStatus(pageable, name, status));
     }
+
     @GetMapping("/vouchers")
     public ApiResponse<?> getAllVouchers(
             Pageable pageable) {
@@ -37,6 +39,7 @@ public class VoucherController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
                 voucherService.getAll(pageable));
     }
+
     @PostMapping("/create")
     public ApiResponse<?> createVoucher(@Valid @RequestBody CreateVoucherRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Voucher thêm thành công",
@@ -72,19 +75,18 @@ public class VoucherController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", voucherService.getDtoById(id));
     }
 
-//    @GetMapping("/voucherName/{voucherName}")
+    //    @GetMapping("/voucherName/{voucherName}")
 //    public ApiResponse<?> getVoucherByCode(@PathVariable String voucherName) {
 //        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher found", voucherService.getVoucherByName(voucherName));
 //    }
-    @GetMapping("/voucherName/{voucherName}")
-    public ApiResponse<?> getVoucherByName(@PathVariable("voucherName") String voucherName) {
-        List<VoucherResponse> vouchers = voucherService.getVoucherByName(voucherName);
-        if (vouchers.isEmpty()) {
-            return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Không có voucher", null);
-        }
-
-        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", vouchers);
+    @GetMapping("/search")
+    public ApiResponse<?> searchVouchers(
+            @RequestParam(required = false) String searchTerm,
+            Pageable pageable) {
+        Page<VoucherResponse> vouchers = voucherService.getVoucherByNameOrCode(searchTerm, pageable);
+        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", vouchers);
     }
+
     @GetMapping("/findbydate")
     public ApiResponse<?> findByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
