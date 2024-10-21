@@ -82,7 +82,7 @@ public class CategoryService
 
         Integer statusValue = null;
         if (status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+            Status statusEnum = Status.fromString(status);
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
@@ -155,18 +155,7 @@ public class CategoryService
         if (categoryRepository.existsBySlug(slug)) throw new InvalidDataException("Category slug already exists");
 
         // xử lý level
-        if (request.getParentCategoryId() == null) {
-            request.setLevel(1);
-        } else {
-            Optional<Category> parentCategory = categoryRepository.findById(request.getParentCategoryId());
-            if (parentCategory.isEmpty()) throw new InvalidDataException("Parent category not found");
-
-            // kiểm tra cấp danh mục, tránh category cấp 4
-            int parentLevel = parentCategory.get().getLevel();
-            if (parentLevel >= 3) throw new InvalidDataException("Cannot add a child category to a level 3 category");
-
-            request.setLevel(parentLevel + 1);
-        }
+        if (request.getParentCategoryId() == null) request.setLevel(1);
 
         long count = categoryRepository.countByLevelAndParentCategoryId(request.getLevel(), request.getParentCategoryId());
         if (count == 0) {
@@ -174,7 +163,6 @@ public class CategoryService
         } else {
             request.setPriority((int) (count + 1));
         }
-
     }
 
     @Override
@@ -194,7 +182,17 @@ public class CategoryService
 
     @Override
     protected void afterConvertCreateRequest(CreateCategoryRequest request, Category entity) {
+        if (request.getParentCategoryId() != null) {
+            Optional<Category> parentCategory = categoryRepository.findById(request.getParentCategoryId());
+            if (parentCategory.isEmpty()) throw new InvalidDataException("Parent category not found");
 
+            // kiểm tra cấp danh mục, tránh category cấp 4
+            int parentLevel = parentCategory.get().getLevel();
+            if (parentLevel >= 3) throw new InvalidDataException("Cannot add a child category to a level 3 category");
+
+            entity.setParentCategory(parentCategory.get());
+            entity.setLevel(parentLevel + 1);
+        }
     }
 
     @Override

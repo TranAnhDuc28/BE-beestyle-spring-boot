@@ -18,14 +18,13 @@ public interface CategoryMapper
         extends IGenericMapper<Category, CreateCategoryRequest, UpdateCategoryRequest, CategoryResponse> {
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
-    @Mapping(target = "parentCategoryId", source = "parentCategory.id")
     @Mapping(target = "parentCategoryName", ignore = true)
     @Override
     CategoryResponse toEntityDto(Category entity);
 
     @Mapping(target = "status", constant = "1")
-    @Mapping(target = "parentCategory.id", source = "parentCategoryId")
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "parentCategory", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "categoryChildren", ignore = true)
