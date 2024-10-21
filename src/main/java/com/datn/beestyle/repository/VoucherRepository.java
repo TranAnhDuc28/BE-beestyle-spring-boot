@@ -50,7 +50,7 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
 Page<VoucherResponse> findByVoucherNameOrCode(@Param("searchTerm") String searchTerm, Pageable pageable);
 
 
-    @Query("""
+    @Query(""" 
        SELECT new com.datn.beestyle.dto.voucher.VoucherResponse(v.id, v.voucherName, v.voucherCode, v.discountType, v.discountValue,
                                                                 v.maxDiscount, v.minOrderValue, v.startDate, v.endDate,
                                                                 v.usageLimit, v.usagePerUser, v.status)
@@ -58,6 +58,7 @@ Page<VoucherResponse> findByVoucherNameOrCode(@Param("searchTerm") String search
        WHERE (DATE(:startDate) IS NULL OR DATE(v.startDate) >= DATE(:startDate))
        AND (DATE(:endDate) IS NULL OR DATE(v.endDate) <= DATE(:endDate))
        """)
-    List<VoucherResponse> findByDateRange(@Param("startDate") Timestamp startDate,
-                                          @Param("endDate") Timestamp endDate);
+    Page<VoucherResponse> findByDateRange(@Param("startDate") Timestamp startDate,
+                                          @Param("endDate") Timestamp endDate,
+                                          Pageable pageable);
 }

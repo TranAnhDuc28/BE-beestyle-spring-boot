@@ -83,8 +83,8 @@ public class VoucherService
         return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
     }
 
-    public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
-        return voucherRepository.findByDateRange(startDate,endDate);
+    public Page<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate,Pageable pageable) {
+        return voucherRepository.findByDateRange(startDate,endDate,pageable);
 
     }
     public PageResponse<?> getAll(Pageable pageable) {

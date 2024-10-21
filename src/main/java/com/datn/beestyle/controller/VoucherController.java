@@ -90,11 +90,11 @@ public class VoucherController {
     @GetMapping("/findbydate")
     public ApiResponse<?> findByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,Pageable pageable) {
         Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
-        Timestamp endTimestamp = Timestamp.valueOf(endDate.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
 
-        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp,pageable));
     }
 
 
