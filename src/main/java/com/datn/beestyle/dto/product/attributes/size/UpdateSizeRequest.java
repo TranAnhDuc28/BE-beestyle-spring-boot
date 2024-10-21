@@ -1,5 +1,7 @@
 package com.datn.beestyle.dto.product.attributes.size;
 
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,8 +15,9 @@ public class UpdateSizeRequest {
 
     Integer id;
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên kích thước.")
     String sizeName;
 
+    @EnumValue(name = "Status", enumClass = Status.class)
     String status;
 }

@@ -15,7 +15,7 @@ public class UpdateBrandRequest {
 
     Integer id;
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên thương hiệu")
     String brandName;
 
     @EnumValue(name = "Status", enumClass = Status.class)

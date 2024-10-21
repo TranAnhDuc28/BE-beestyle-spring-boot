@@ -4,9 +4,7 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
 import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.attributes.Brand;
-import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -37,7 +35,6 @@ public interface BrandMapper extends IGenericMapper<Brand, CreateBrandRequest, U
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Override
     Brand toUpdateEntity(UpdateBrandRequest request);
 
     @Named("statusId")

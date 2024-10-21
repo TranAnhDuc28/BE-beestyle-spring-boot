@@ -17,9 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -88,7 +86,7 @@ public class BrandService
     }
 
     @Override
-    protected void beforeUpdate(UpdateBrandRequest request) {
+    protected void beforeUpdate(Integer id, UpdateBrandRequest request) {
 
     }
 

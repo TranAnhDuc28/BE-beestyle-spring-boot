@@ -1,7 +1,6 @@
 package com.datn.beestyle.common;
 
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +20,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected final IGenericRepository<T, ID> entityRepository;
     protected final IGenericMapper<T, C, U, R> mapper;
     protected final EntityManager entityManager;
+
 
 
     @Override
@@ -55,7 +55,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     @Override
     public R update(ID id, U request) {
         T entity = this.getById(id);
-        this.beforeUpdate(request);
+        this.beforeUpdate(id, request);
         mapper.toUpdateEntity(entity, request);
         this.afterConvertUpdateRequest(request, entity);
         return mapper.toEntityDto(entityRepository.save(entity));
@@ -103,7 +103,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected abstract List<C> beforeCreateEntities(List<C> requests);
     protected abstract List<U> beforeUpdateEntities(List<U> requests);
     protected abstract void beforeCreate(C request);
-    protected abstract void beforeUpdate(U request);
+    protected abstract void beforeUpdate(ID id, U request);
     protected abstract void afterConvertCreateRequest(C request, T entity);
     protected abstract void afterConvertUpdateRequest(U request, T entity);
     protected abstract String getEntityName();

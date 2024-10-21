@@ -1,3 +1,4 @@
+
 package com.datn.beestyle.service.product.attributes.material;
 
 import com.datn.beestyle.common.GenericServiceAbstract;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +85,7 @@ public class MaterialService
     }
 
     @Override
-    protected void beforeUpdate(UpdateMaterialRequest request) {
+    protected void beforeUpdate(Integer id, UpdateMaterialRequest request) {
 
     }
 

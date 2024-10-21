@@ -122,7 +122,7 @@ public class VoucherService
     }
 
     @Override
-    protected void beforeUpdate(UpdateVoucherRequest request) {
+    protected void beforeUpdate(Integer id, UpdateVoucherRequest request) {
         // Logic kiểm tra trước khi cập nhật voucher nếu cần
     }
 
