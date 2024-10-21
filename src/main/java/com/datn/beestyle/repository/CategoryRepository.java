@@ -18,15 +18,13 @@ public interface CategoryRepository extends IGenericRepository<Category, Integer
                 SELECT id, category_name, slug, parent_category_id, level, priority
                 FROM category
                 WHERE status = 1 AND parent_category_id IS NULL
-
                 UNION ALL
-                    
                 SELECT c.id, c.category_name, c.slug, c.parent_category_id, c.level, c.priority
                 FROM category AS c
                 INNER JOIN category_hierarchy ch ON c.parent_category_id = ch.id
                 WHERE c.status = 1 AND c.level <= 3
                 )
-                SELECT  id, category_name, slug, parent_category_id
+                SELECT id, category_name, slug, parent_category_id
                 ,level, priority 
                 FROM category_hierarchy
                 ORDER BY level, priority;
@@ -36,24 +34,56 @@ public interface CategoryRepository extends IGenericRepository<Category, Integer
     @Query("""
             select c from Category c 
             where 
-                (:name is null or c.categoryName like concat('%', :name, '%')) and
+                (:keyword is null or 
+                    c.categoryName like concat('%', :keyword, '%') or 
+                    c.slug like concat('%', :keyword, '%')) and
                 (:status is null or c.status = :status)
             """)
-    Page<Category> findAllByCategoryNameContainingAndStatus(Pageable pageable,
-                                                            @Param("name") String name,
-                                                            @Param("status") Integer status);
+    Page<Category> findAllByKeywordAndStatus(Pageable pageable,
+                                             @Param("keyword") String keyword,
+                                             @Param("status") Integer status);
 
     @Query("""
             select c.id, c.categoryName from Category c where c.id in (:ids)
             """)
     List<Object[]> findCategoryNameById(@Param("ids") Iterable<Integer> ids);
 
+    @Query("""
+            select c from Category c where c.parentCategory.id = :parentCategoryId
+            """)
+    List<Category> findByParentCategoryId(@Param("parentCategoryId") Integer parentCategoryId);
+
+    @Query("""
+            select count(c.id) from Category c
+            where  c.level = :level and (:parentCategoryId is null or c.parentCategory.id = :parentCategoryId)
+        """)
+    long countByLevelAndParentCategoryId(@Param("level") Integer level,
+                                         @Param("parentCategoryId") Integer parentCategoryId);
+
+    @Query(value = """
+                WITH RECURSIVE CategoryHierarchy AS (
+                    SELECT id, parent_category_id
+                    FROM category
+                    WHERE id = :updateCategoryId
+                    UNION ALL
+                    SELECT c.id, c.parent_category_id
+                    FROM category c
+                    INNER JOIN CategoryHierarchy ch ON ch.parent_category_id = c.id
+                )
+                SELECT count(*) > 0 FROM CategoryHierarchy where id = :parentCategoryId;
+            """, nativeQuery = true)
+    Long isParentChildLoop(@Param("updateCategoryId") Integer updateCategoryId,
+                              @Param("parentCategoryId") Integer parentCategoryId);
+
+    @Query("select count(c.id) > 0 from Category c where c.parentCategory.id = :categoryId")
+    boolean existsChildCategoryByParentId(@Param("categoryId") int categoryId);
+
     boolean existsByCategoryName(String name);
 
     boolean existsBySlug(String slug);
 
-    Optional<Category> findByCategoryName(String name);
+    Optional<Category> findByCategoryNameAndIdNot(String categoryName, Integer id);
 
-    Optional<Category> findBySlug(String slug);
+    Optional<Category> findBySlugAndIdNot(String slug, Integer id);
 }
 

@@ -18,6 +18,7 @@ public class CategoryResponse {
     String slug;
     Integer level;
     Integer priority;
+    Integer parentCategoryId;
     String parentCategoryName;
     String status;
     LocalDateTime createdAt;

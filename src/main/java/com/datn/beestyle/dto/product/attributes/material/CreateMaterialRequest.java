@@ -14,7 +14,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateMaterialRequest {
 
-    @NotBlank(message = "Vui lòng nhập tên chất liều")
-    @Size(min = 4, message = "Tên chất liệu lớn hơn 4 ký tự")
+    @NotBlank(message = "Vui lòng nhập tên chất liệu")
     String materialName;
 }

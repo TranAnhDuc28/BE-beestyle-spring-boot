@@ -3,6 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.category.CreateCategoryRequest;
 import com.datn.beestyle.dto.category.UpdateCategoryRequest;
+import com.datn.beestyle.repository.CategoryRepository;
 import com.datn.beestyle.service.category.ICategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,10 +25,10 @@ public class CategoryController {
 
     @GetMapping
     public ApiResponse<?> getCategories(Pageable pageable,
-                                        @RequestParam(required = false) String name,
+                                        @RequestParam(required = false) String keyword,
                                         @RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Categories",
-                categoryService.getAllForAdmin(pageable, name, status));
+                categoryService.getAllForAdmin(pageable, keyword, status));
 
     }
 

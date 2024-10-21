@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 public class AppUtils {
 
+    public static final int MAX_CATEGORY_LEVEL = 3;
     private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITE_SPACE = Pattern.compile("[\\s]");
     private static final Pattern EDGES_DASHES = Pattern.compile("(^-|-$)");
