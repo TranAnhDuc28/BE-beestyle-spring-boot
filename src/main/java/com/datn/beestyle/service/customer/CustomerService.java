@@ -4,14 +4,21 @@ package com.datn.beestyle.service.customer;
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
+import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.customer.CreateCustomerRequest;
 import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
+import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
 import com.datn.beestyle.entity.cart.ShoppingCart;
+import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.repository.CustomerRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +39,25 @@ public class CustomerService
     }
 
 
+    @Override
+    public PageResponse<?> getAll(Pageable pageable) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
+        PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+
+        Page<Customer> customerPage = customerRepository.findAll(pageRequest);
+        List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
+        return PageResponse.builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(customerPage.getTotalElements())
+                .totalPages(customerPage.getTotalPages())
+                .items(customerResponseList)
+                .build();
+
+    }
 
     @Override
     protected List<CreateCustomerRequest> beforeCreateEntities(List<CreateCustomerRequest> requests) {

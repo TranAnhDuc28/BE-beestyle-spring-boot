@@ -15,4 +15,6 @@ public interface ICategoryService
         extends IGenericService<Category, Integer, CreateCategoryRequest, UpdateCategoryRequest, CategoryResponse> {
     List<UserCategoryResponse> getAllForUser();
     PageResponse<List<CategoryResponse>> getAllForAdmin(Pageable pageable, String name, String status);
+
+
 }

@@ -26,13 +26,9 @@ public class UpdateProductRequest {
     @EnumValue(enumClass = Gender.class, name = "Gender", message = "Invalid value for Gender")
     Gender gender;
 
-    UserBrandResponse brand;
-
-    UserMaterialResponse material;
-
-    UserCategoryResponse category;
-
+    Integer brandId;
+    Integer materialId;
+    Integer categoryId;
     String description;
-
     String status;
 }
