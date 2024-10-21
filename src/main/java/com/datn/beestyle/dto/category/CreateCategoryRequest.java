@@ -1,41 +1,32 @@
 package com.datn.beestyle.dto.category;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateCategoryRequest {
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên danh mục.")
     String categoryName;
 
-    @NotBlank(message = "Không để trống trường")
     String slug;
 
-    Boolean deleted;
-
-    @NotNull(message = "Không để trống trường")
-    @Min(value = 1, message = "Giá trị phải lớn hơn 1")
+    @Min(value = 1, message = "Giá trị cấp danh mục phải lớn hơn 0.")
+    @Max(value = 3, message = "Giá trị cấp danh mục phải nhỏ hơn 3.")
     Integer level;
 
-    @NotNull(message = "Không để trống trường")
-    @Min(value = 1, message = "Giá trị phải lớn hơn 1")
+    @Min(value = 0, message = "Giá trị thứ tự ưu tiên phải không âm.")
     Integer priority;
 
-    @NotNull(message = "Không để trống trường")
-    @Min(value = 1, message = "Giá trị phải lớn hơn 1")
-    Integer parentId;
+    @Min(value = 1, message = "Giá trị id danh mục cha phải lớn hơn 0.")
+    Integer parentCategoryId;
 
-    List<CreateCategoryRequest> categoryChildrenRequest = new ArrayList<>();
-
+    String status;
 }

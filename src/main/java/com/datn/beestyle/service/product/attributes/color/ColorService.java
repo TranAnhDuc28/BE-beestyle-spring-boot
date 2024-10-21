@@ -17,10 +17,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -38,18 +38,23 @@ public class ColorService
     }
 
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
-        Integer statusValue = null;
-        if (StringUtils.hasText(status)) statusValue = Status.valueOf(status.toUpperCase()).getValue();
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        Integer statusValue = null;
+        if(status != null) {
+            Status statusEnum = Status.fromString(status.toUpperCase());
+            if (statusEnum != null) statusValue = statusEnum.getValue();
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<Color> materialPage = colorRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
         List<ColorResponse> materialResponseList = mapper.toEntityDtoList(materialPage.getContent());
 
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(materialPage.getTotalElements())
                 .totalPages(materialPage.getTotalPages())
@@ -80,7 +85,7 @@ public class ColorService
     }
 
     @Override
-    protected void beforeUpdate(UpdateColorRequest request) {
+    protected void beforeUpdate(Integer id, UpdateColorRequest request) {
 
     }
 
@@ -97,5 +102,10 @@ public class ColorService
     @Override
     protected String getEntityName() {
         return "Color";
+    }
+
+    @Override
+    public List<ColorResponse> getAllById(Set<Integer> integers) {
+        return null;
     }
 }

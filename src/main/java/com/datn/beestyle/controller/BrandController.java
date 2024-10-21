@@ -60,12 +60,12 @@ public class BrandController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Brands updated successfully");
     }
 
-    @Operation(summary = "Delete user permanently", description = "Send a request via this API to delete user permanently")
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteBrand(@Min(1) @PathVariable int id) {
-        brandService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Brand deleted successfully.");
-    }
+//    @Operation(summary = "Delete user permanently", description = "Send a request via this API to delete user permanently")
+//    @DeleteMapping("/delete/{id}")
+//    public ApiResponse<?> deleteBrand(@Min(1) @PathVariable int id) {
+//        brandService.delete(id);
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Brand deleted successfully.");
+//    }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getBrand(@Min(1) @PathVariable int id) {

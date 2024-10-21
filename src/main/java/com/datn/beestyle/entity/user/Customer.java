@@ -32,7 +32,7 @@ public class Customer extends BaseEntity<Long> {
     LocalDate dateOfBirth;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     Gender gender;
 
     @Column(name = "phone_number")
@@ -47,8 +47,8 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "status")
     short status;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
-    ShoppingCart shoppingCart;
+//    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
+//    ShoppingCart shoppingCart;
 
     @OneToMany(mappedBy = "customer", cascade = ALL, fetch = FetchType.LAZY)
     Set<Address> addresses = new HashSet<>();

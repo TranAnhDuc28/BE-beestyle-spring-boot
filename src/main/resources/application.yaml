@@ -1,8 +1,7 @@
 server:
   port: 8080
   servlet:
-    context-path: /api/v1
-
+      context-path: /api/v1
 
 spring:
   application:
@@ -18,9 +17,9 @@ spring:
       max-lifetime: 1800000
       pool-name: HikariConnPool
 
-    url: jdbc:mysql://localhost:3306/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3307/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
-    password: 1234
+    password: locnhph38787
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -60,5 +59,7 @@ openapi:
     serverUrl: http://localhost:${server.port}/api/v1
     serverName: server dev
     api-docs: api-services
+
+
 
 

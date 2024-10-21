@@ -42,7 +42,6 @@ public interface ColorMapper extends IGenericMapper<Color, CreateColorRequest, U
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Override
     Color toUpdateEntity(UpdateColorRequest request);
 
     @Named("statusId")

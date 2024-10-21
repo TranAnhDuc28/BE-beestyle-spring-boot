@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "brand")
+@Table(name = "`brand`")
 @Entity
 @Getter
 @Setter

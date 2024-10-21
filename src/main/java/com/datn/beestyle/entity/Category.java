@@ -1,5 +1,7 @@
 package com.datn.beestyle.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Category extends BaseEntity<Integer> {
-
     @Column(name = "category_name")
     String categoryName;
 
@@ -33,21 +34,12 @@ public class Category extends BaseEntity<Integer> {
     @Column(name = "status")
     short status;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
-    @OnDelete(action = OnDeleteAction.SET_NULL)
     Category parentCategory ;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Category> categoryChildren = new ArrayList<>();
-
-    public void addCategoryChildren(Category children) {
-        if (children != null) {
-            if (categoryChildren == null) {
-                categoryChildren = new ArrayList<>();
-            }
-            categoryChildren.add(children);
-            children.setParentCategory(this);
-        }
-    }
 }

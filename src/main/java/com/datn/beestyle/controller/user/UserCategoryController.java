@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/user/category")
+@RequestMapping("/category")
 @RequiredArgsConstructor
 @Tag(name = "User Category Controller")
 public class UserCategoryController {
@@ -22,6 +22,6 @@ public class UserCategoryController {
 
     @GetMapping
     public ApiResponse<?> getCategoriesForUser(Pageable pageable) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Categories", categoryService.getAllForUser());
+        return new ApiResponse<>(HttpStatus.OK.value(), "Categories", categoryService.getCategoryOptions());
     }
 }

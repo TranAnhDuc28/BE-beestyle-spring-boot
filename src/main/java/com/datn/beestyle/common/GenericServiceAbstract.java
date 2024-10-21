@@ -1,7 +1,6 @@
 package com.datn.beestyle.common;
 
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +22,19 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected final EntityManager entityManager;
 
 
+
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<T> entityPage = entityRepository.findAll(pageRequest);
         List<R> result = mapper.toEntityDtoList(entityPage.getContent());
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(entityPage.getTotalElements())
                 .totalPages(entityPage.getTotalPages())
@@ -53,7 +55,7 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     @Override
     public R update(ID id, U request) {
         T entity = this.getById(id);
-        this.beforeUpdate(request);
+        this.beforeUpdate(id, request);
         mapper.toUpdateEntity(entity, request);
         this.afterConvertUpdateRequest(request, entity);
         return mapper.toEntityDto(entityRepository.save(entity));
@@ -98,12 +100,12 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
                 .orElseThrow(() -> new ResourceNotFoundException(this.getEntityName() + " not found."));
     }
 
-
     protected abstract List<C> beforeCreateEntities(List<C> requests);
     protected abstract List<U> beforeUpdateEntities(List<U> requests);
     protected abstract void beforeCreate(C request);
-    protected abstract void beforeUpdate(U request);
+    protected abstract void beforeUpdate(ID id, U request);
     protected abstract void afterConvertCreateRequest(C request, T entity);
     protected abstract void afterConvertUpdateRequest(U request, T entity);
     protected abstract String getEntityName();
+
 }

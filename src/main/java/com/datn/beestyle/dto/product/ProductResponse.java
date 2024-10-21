@@ -13,10 +13,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductResponse extends UserProductResponse{
     UserCategoryResponse category;
-    Boolean deleted;
+    String status;
     LocalDateTime createdAt;
     LocalDateTime updateAt;
     Long createdBy;
     Long updatedBy;
-
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin("*")
 @Validated
 @RestController
 @RequestMapping("/admin/material")
@@ -57,11 +58,11 @@ public class MaterialController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials updated successfully");
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteMaterial(@Min(1) @PathVariable int id) {
-        materialService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Material deleted successfully.");
-    }
+//    @DeleteMapping("/delete/{id}")
+//    public ApiResponse<?> deleteMaterial(@Min(1) @PathVariable int id) {
+//        materialService.delete(id);
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Material deleted successfully.");
+//    }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getMaterial(@Min(1) @PathVariable int id) {

@@ -56,11 +56,11 @@ public class SizeController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Sizes updated successfully");
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteSize(@Min(1) @PathVariable int id) {
-        sizeService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Size deleted successfully.");
-    }
+//    @DeleteMapping("/delete/{id}")
+//    public ApiResponse<?> deleteSize(@Min(1) @PathVariable int id) {
+//        sizeService.delete(id);
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Size deleted successfully.");
+//    }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getSize(@Min(1) @PathVariable int id) {
