@@ -8,9 +8,6 @@ import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.customer.CreateCustomerRequest;
 import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
-import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
-import com.datn.beestyle.entity.cart.ShoppingCart;
-import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.repository.CustomerRepository;
 import jakarta.persistence.EntityManager;
@@ -94,7 +91,7 @@ public class CustomerService
     }
 
     @Override
-    protected void beforeUpdate(UpdateCustomerRequest request) {
+    protected void beforeUpdate(Integer id, UpdateCustomerRequest request) {
 
     }
 

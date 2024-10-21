@@ -46,7 +46,7 @@ public class StaffService
     }
 
     @Override
-    protected void beforeUpdate(UpdateStaffRequest request) {
+    protected void beforeUpdate(Integer id, UpdateStaffRequest request) {
 
     }
 
