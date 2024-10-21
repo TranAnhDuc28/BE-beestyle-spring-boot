@@ -21,6 +21,7 @@ import java.util.Set;
 public class Voucher extends Auditable<Long> {
     @Column(name = "voucher_name")
     String voucherName;
+
     @Column(name = "voucher_code")
     String voucherCode;
 
