@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.user.promotion;
+package com.datn.beestyle.service.promotion;
 
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
@@ -92,7 +92,7 @@ public class PromotionService
     }
 
     @Override
-    protected void beforeUpdate(UpdatePromotionRequest request) {
+    protected void beforeUpdate(Integer id, UpdatePromotionRequest request) {
         // Implement any logic before updating a promotion
     }
 

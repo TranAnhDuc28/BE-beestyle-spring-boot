@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.user.promotion;
+package com.datn.beestyle.service.promotion;
 
 import com.datn.beestyle.common.IGenericService;
 import com.datn.beestyle.dto.PageResponse;

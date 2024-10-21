@@ -3,7 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
-import com.datn.beestyle.service.user.promotion.IPromotionService;
+import com.datn.beestyle.service.promotion.IPromotionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

@@ -32,12 +32,6 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Override
     void toUpdateEntity(@MappingTarget Promotion entity, UpdatePromotionRequest request);
 
-    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Override
-    Promotion toUpdateEntity(UpdatePromotionRequest request);
-
     @Named("statusId")
     default int statusId(UpdatePromotionRequest request) {
         return Status.valueOf(request.getStatus()).getValue();
