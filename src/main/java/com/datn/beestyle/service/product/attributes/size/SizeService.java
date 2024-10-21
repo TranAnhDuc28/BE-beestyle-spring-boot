@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SizeService
@@ -98,5 +99,10 @@ public class SizeService
     @Override
     protected String getEntityName() {
         return "Size";
+    }
+
+    @Override
+    public List<SizeResponse> getAllById(Set<Integer> integers) {
+        return null;
     }
 }

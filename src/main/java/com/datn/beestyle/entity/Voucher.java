@@ -19,7 +19,8 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Voucher extends Auditable<Long> {
-
+    @Column(name = "voucher_name")
+    String voucherName;
     @Column(name = "voucher_code")
     String voucherCode;
 

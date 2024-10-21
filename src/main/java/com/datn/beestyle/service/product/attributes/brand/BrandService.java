@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -102,5 +103,10 @@ public class BrandService
     @Override
     protected String getEntityName() {
         return "Brand";
+    }
+
+    @Override
+    public List<BrandResponse> getAllById(Set<Integer> integers) {
+        return null;
     }
 }
