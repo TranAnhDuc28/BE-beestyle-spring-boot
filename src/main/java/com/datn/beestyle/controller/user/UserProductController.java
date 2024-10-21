@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/user/product")
+@RequestMapping("/product")
 @RequiredArgsConstructor
 @Tag(name = "User Product Controller")
 public class UserProductController {

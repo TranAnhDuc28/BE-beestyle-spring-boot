@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateSizeRequest {
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên kích thước.")
     String sizeName;
 
     String status;

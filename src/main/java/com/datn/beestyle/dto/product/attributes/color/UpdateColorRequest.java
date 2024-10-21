@@ -15,7 +15,7 @@ public class UpdateColorRequest {
 
     Integer id;
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên màu sắc")
     String colorName;
 
     @EnumValue(name = "Status", enumClass = Status.class)

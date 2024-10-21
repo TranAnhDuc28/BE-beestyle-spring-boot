@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +84,7 @@ public class ColorService
     }
 
     @Override
-    protected void beforeUpdate(UpdateColorRequest request) {
+    protected void beforeUpdate(Integer id, UpdateColorRequest request) {
 
     }
 

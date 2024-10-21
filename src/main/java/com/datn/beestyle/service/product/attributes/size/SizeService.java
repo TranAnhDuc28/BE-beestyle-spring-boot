@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +81,7 @@ public class SizeService
     }
 
     @Override
-    protected void beforeUpdate(UpdateSizeRequest request) {
+    protected void beforeUpdate(Integer id, UpdateSizeRequest request) {
 
     }
 

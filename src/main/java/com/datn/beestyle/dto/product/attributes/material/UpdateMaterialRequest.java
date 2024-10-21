@@ -15,7 +15,7 @@ public class UpdateMaterialRequest {
 
     Integer id;
 
-    @NotBlank(message = "Không để trống trường")
+    @NotBlank(message = "Vui lòng nhập tên chất liệu")
     String materialName;
 
     @EnumValue(name = "Status", enumClass = Status.class)
