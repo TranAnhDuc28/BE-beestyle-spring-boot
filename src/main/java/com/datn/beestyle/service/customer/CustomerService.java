@@ -114,5 +114,21 @@ public class CustomerService
     }
 
 
+    @Override
+    public PageResponse<?> getAllByFullName(Pageable pageable, String fullName) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+        Page<Customer> customerPage = customerRepository.findByNameContaining(pageRequest,fullName);
+        List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
 
+        return PageResponse.builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(customerPage.getTotalElements())
+                .totalPages(customerPage.getTotalPages())
+                .items(customerResponseList)
+                .build();
+    }
 }
