@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
     Long id;
-    CustomerResponse customer;
+    String customerName;
+    String phoneNumber;
     BigDecimal totalAmount;
     short paymentMethod;
     short status;

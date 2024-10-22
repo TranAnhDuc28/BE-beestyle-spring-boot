@@ -35,7 +35,7 @@ public class Category extends BaseEntity<Integer> {
     short status;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_category_id", referencedColumnName = "id")
     Category parentCategory ;
 
