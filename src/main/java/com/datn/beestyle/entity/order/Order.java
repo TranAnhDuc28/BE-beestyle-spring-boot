@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-@Table(name = "order")
+@Table(name = "`order`")
 @Entity
 @Getter
 @Setter
@@ -40,11 +40,10 @@ public class Order extends Auditable<Long> {
     Timestamp paymentDate;
 
     @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod;
+    short paymentMethod;
 
     @Column(name = "order_channel")
-    OrderChannel orderChannel;
+    short orderChannel;
 
     @Column(name = "status")
     short status;
