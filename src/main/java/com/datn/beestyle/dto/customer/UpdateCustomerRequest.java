@@ -3,6 +3,8 @@ package com.datn.beestyle.dto.customer;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -34,7 +36,8 @@ public class UpdateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    short status;
+    @EnumValue(name = "Status", enumClass = Status.class)
+    String status;
 
 //    ShoppingCart shoppingCart;
 

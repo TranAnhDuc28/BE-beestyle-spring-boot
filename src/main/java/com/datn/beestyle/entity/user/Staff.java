@@ -31,7 +31,7 @@ public class Staff extends Auditable<Long> {
     LocalDate dateOfBirth;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     Gender gender;
 
     @Column(name = "phone_number")

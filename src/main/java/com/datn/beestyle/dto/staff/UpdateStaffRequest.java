@@ -1,6 +1,8 @@
 package com.datn.beestyle.dto.staff;
 
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +42,7 @@ public class UpdateStaffRequest {
     @NotBlank(message = "Khong duoc de trong")
     String password;
 
-    @NotNull(message = "Khong duoc de trong")
-    short status;
+    @EnumValue(name = "Status", enumClass = Status.class)
+    String status;
 
 }

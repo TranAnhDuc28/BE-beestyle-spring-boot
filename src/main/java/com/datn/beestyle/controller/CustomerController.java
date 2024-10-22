@@ -22,9 +22,10 @@ public class CustomerController {
     private final ICustomerService customerService;
 
     @GetMapping
-    public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String name) {
+    public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String name
+            ,@RequestParam(required = false) String status) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer",
-                customerService.getAllByFullName(pageable, name));
+                customerService.getAllByFullName(pageable, name,status));
     }
 
     @PostMapping("/create")

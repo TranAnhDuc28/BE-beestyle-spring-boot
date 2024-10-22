@@ -39,7 +39,5 @@ public class CreateStaffRequest {
     @NotBlank(message = "Khong duoc de trong")
     String password;
 
-    @NotNull(message = "Khong duoc de trong")
-    short status;
 
 }

@@ -20,10 +20,11 @@ public class StaffController {
     private final IStaffService staffService;
 
     @GetMapping
-    public ApiResponse<?> getStaffs(Pageable pageable
-                                      ) {
+    public ApiResponse<?> getStaffs(Pageable pageable,
+             @RequestParam(required = false) String name
+            ,@RequestParam(required = false) String status ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Staff",
-                staffService.getAll(pageable));
+                staffService.getAllByFullName(pageable, name, status));
     }
 
     @PostMapping("/create")

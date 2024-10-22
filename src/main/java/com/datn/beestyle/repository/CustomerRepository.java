@@ -12,8 +12,10 @@ public interface CustomerRepository extends IGenericRepository<Customer,Integer>
     @Query("""
             select c from Customer c 
             where 
-                (:name is null or c.fullName like concat('%', :name, '%')) 
+                (:name is null or c.fullName like concat('%', :name, '%')) and
+                (:status is null or c.status = :status)
             """)
-    Page<Customer> findByNameContaining(Pageable pageable,
-                                                 @Param("name") String name);
+    Page<Customer> findByNameContainingAndStatus(Pageable pageable,
+                                                 @Param("name") String name,
+                                        @Param("status") Integer status);
 }
