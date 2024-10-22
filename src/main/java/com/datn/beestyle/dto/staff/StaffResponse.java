@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,7 +17,8 @@ import java.time.LocalDate;
 public class StaffResponse {
     Long id;
     String fullName;
-
+    String username;
+    String password;
     LocalDate dateOfBirth;
 
     Gender gender;
@@ -30,5 +32,7 @@ public class StaffResponse {
     String address;
 
     String status;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
 
 }
