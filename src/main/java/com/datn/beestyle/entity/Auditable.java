@@ -23,5 +23,5 @@ public abstract class Auditable<T extends Serializable> extends BaseEntity<T> {
     // user update cuối cùng
     @LastModifiedBy
     @Column(name = "updated_by", insertable = false)
-    T updateBy;
+    T updatedBy;
 }

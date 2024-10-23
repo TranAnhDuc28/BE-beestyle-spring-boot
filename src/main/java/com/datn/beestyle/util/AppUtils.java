@@ -31,6 +31,7 @@ public class AppUtils {
         return slug.toLowerCase(Locale.ENGLISH);
     }
 
+
     public static void main(String[] args) {
         System.out.println(toSlug("Đây là một ví dụ về Slug!"));
     }

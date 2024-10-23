@@ -21,8 +21,16 @@ public class ProductController {
     private final IProductService productService;
 
     @GetMapping
-    public ApiResponse<?> getProducts(Pageable pageable) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Products", productService.getAll(pageable));
+    public ApiResponse<?> getProducts(Pageable pageable,
+                                      @RequestParam(required = false) String keyword,
+                                      @RequestParam(required = false) String category,
+                                      @RequestParam(required = false) String gender,
+                                      @RequestParam(required = false) String brand,
+                                      @RequestParam(required = false) String material,
+                                      @RequestParam(required = false) String status
+                                      ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Products",
+                productService.getProductsByFields(pageable, keyword, category, gender, brand, material, status));
     }
 
     @PostMapping("/create")
