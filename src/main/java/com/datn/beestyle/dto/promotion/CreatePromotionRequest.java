@@ -34,7 +34,5 @@ public class CreatePromotionRequest {
 
     @NotBlank(message = "Description name cannot be blank")
     String description;
-    @NotNull(message = "CreatedBy cannot be blank")
-    Integer createdBy;
 
 }

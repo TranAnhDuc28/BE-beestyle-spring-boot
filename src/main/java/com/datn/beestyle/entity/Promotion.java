@@ -26,7 +26,7 @@ public class Promotion extends Auditable<Integer> {
     String promotionName;
 
     @Column(name = "discount_type")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     DiscountType discountType;
 
     @Column(name = "discount_value")

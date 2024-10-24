@@ -7,7 +7,11 @@ import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
+import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Promotion;
+import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.PromotionRepository;
 import jakarta.persistence.EntityManager;
@@ -36,28 +40,38 @@ public class PromotionService
     }
 
     @Override
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
-        Integer statusValue = null;
-        if (StringUtils.hasText(status)) {
-            statusValue = Status.valueOf(status.toUpperCase()).getValue();
-        }
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(),
-                pageable.getPageSize(),
+        Integer statusValue = null;
+        if(status != null) {
+            Status statusEnum = Status.fromString(status.toUpperCase());
+            if (statusEnum != null) statusValue = statusEnum.getValue();
+        }
+        DiscountType discountTypeValue = null;
+        if (discountType != null) {
+            discountTypeValue = DiscountType.fromString(discountType.toUpperCase());
+        }
+        PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
+        Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
         List<PromotionResponse> promotionResponseList = mapper.toEntityDtoList(promotionPage.getContent());
 
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(promotionPage.getTotalElements())
                 .totalPages(promotionPage.getTotalPages())
                 .items(promotionResponseList)
                 .build();
     }
-
+//    @Override
+//    public List<PromotionResponse> createPromotion(List<CreatePromotionRequest> requestList) {
+//        List<Promotion> promotionList = mapper.toCreateEntityList(requestList);
+//        return mapper.toEntityDtoList(promotionRepository.saveAll(promotionList));
+//    }
 
     @Override
     protected List<CreatePromotionRequest> beforeCreateEntities(List<CreatePromotionRequest> requests) {

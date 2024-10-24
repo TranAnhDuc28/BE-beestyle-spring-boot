@@ -25,7 +25,7 @@ public class Voucher extends Auditable<Long> {
     String voucherCode;
 
     @Column(name = "discount_type")
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     DiscountType discountType;
 
     @Column(name = "discount_value")
@@ -52,5 +52,6 @@ public class Voucher extends Auditable<Long> {
     int usagePerUser;
 
     @Column(name = "status")
+//    @Enumerated(EnumType.ORDINAL)
     short status;
 }

@@ -20,4 +20,5 @@ public interface MaterialRepository extends IGenericRepository<Material, Integer
                                                  @Param("name") String name,
                                                  @Param("status") Integer status);
 
+
 }
