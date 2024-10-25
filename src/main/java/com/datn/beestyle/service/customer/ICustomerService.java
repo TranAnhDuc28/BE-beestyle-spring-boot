@@ -9,5 +9,5 @@ import com.datn.beestyle.entity.user.Customer;
 import org.springframework.data.domain.Pageable;
 
 public interface ICustomerService extends IGenericService<Customer,Integer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
-    PageResponse<?> getAllByFullNameAndStatusAndGender(Pageable pageable, String fullName,String status,String gender);
+    PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable,String status,String gender,String keyword);
 }

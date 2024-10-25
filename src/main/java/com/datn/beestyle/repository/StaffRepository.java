@@ -3,6 +3,7 @@ package com.datn.beestyle.repository;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
+import com.datn.beestyle.enums.Gender;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -12,10 +13,13 @@ public interface StaffRepository extends IGenericRepository<Staff,Integer> {
     @Query("""
             select s from Staff s 
             where 
-                (:name is null or s.fullName like concat('%', :name, '%')) and
-                (:status is null or s.status = :status)
+                (:keyword is null or 
+                    s.fullName like concat('%', :keyword, '%') or 
+                    s.phoneNumber like concat('%', :keyword, '%') or
+                    s.email like concat('%', :keyword,'%')) and
+                (:status is null or s.status = :status) and
+                (:gender is null or s.gender = :gender)
             """)
-    Page<Staff> findByNameContainingAndStatus(Pageable pageable,
-                                                 @Param("name") String name,
-                                                 @Param("status") Integer status);
+    Page<Staff> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status,
+                                                          @Param("gender") Gender gender, @Param("keyword") String keyword);
 }

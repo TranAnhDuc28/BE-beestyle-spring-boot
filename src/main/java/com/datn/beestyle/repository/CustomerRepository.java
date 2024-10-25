@@ -1,7 +1,7 @@
 package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
-import com.datn.beestyle.entity.product.attributes.Material;
+
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.Gender;
 import org.springframework.data.domain.Page;
@@ -13,10 +13,16 @@ public interface CustomerRepository extends IGenericRepository<Customer,Integer>
     @Query("""
             select c from Customer c 
             where 
-                (:name is null or c.fullName like concat('%', :name, '%')) and
+                (:keyword is null or 
+                    c.fullName like concat('%', :keyword, '%') or 
+                    c.phoneNumber like concat('%', :keyword, '%') or
+                    c.email like concat('%', :keyword,'%')) and
                 (:status is null or c.status = :status) and
                  (:gender is null or c.gender = :gender)
             """)
-    Page<Customer> findByNameContainingAndStatusAndGender(Pageable pageable, @Param("name") String name,
-                                        @Param("status") Integer status, @Param("gender") Gender gender);
+    Page<Customer> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status, @Param("gender") Gender gender
+            , @Param("keyword") String keyword);
+
 }
+
+

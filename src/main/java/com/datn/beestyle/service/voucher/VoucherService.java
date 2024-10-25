@@ -74,19 +74,19 @@ public class VoucherService
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
-    public Page<VoucherResponse> getVoucherByNameOrCode(String searchTerm, Pageable pageable) {
-
-//        if (searchTerm == null || searchTerm.isEmpty()) {
-//            return voucherRepository.get(pageable);
-//        }
-
-        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
-    }
-
-    public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
-        return voucherRepository.findByDateRange(startDate,endDate);
-
-    }
+//    public Page<VoucherResponse> getVoucherByNameOrCode(String searchTerm, Pageable pageable) {
+//
+////        if (searchTerm == null || searchTerm.isEmpty()) {
+////            return voucherRepository.get(pageable);
+////        }
+//
+//        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
+//    }
+//
+//    public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
+//        return voucherRepository.findByDateRange(startDate,endDate);
+//
+//    }
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;

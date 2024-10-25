@@ -94,7 +94,7 @@ public class CustomerService
 
 
     @Override
-    public PageResponse<?> getAllByFullNameAndStatusAndGender(Pageable pageable, String fullName,String status,String gender) {
+    public PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable,String status,String gender,String keyword) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -109,7 +109,7 @@ public class CustomerService
         }
         PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
-        Page<Customer> customerPage = customerRepository.findByNameContainingAndStatusAndGender(pageRequest,fullName,statusValue,genderEnum);
+        Page<Customer> customerPage = customerRepository.findByKeywordContainingAndStatusAndGender(pageRequest,statusValue,genderEnum,keyword);
         List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
 
         return PageResponse.builder()

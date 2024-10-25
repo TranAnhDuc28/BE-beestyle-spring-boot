@@ -11,6 +11,7 @@ import com.datn.beestyle.dto.staff.StaffResponse;
 import com.datn.beestyle.dto.staff.UpdateStaffRequest;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
+import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.StaffRepository;
 import jakarta.persistence.EntityManager;
@@ -74,7 +75,7 @@ public class StaffService
     }
 
     @Override
-    public PageResponse<?> getAllByFullName(Pageable pageable, String fullName, String status) {
+    public PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable, String status,String gender,String keyword) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -83,9 +84,13 @@ public class StaffService
             Status statusEnum = Status.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
+        Gender genderEnum = null;
+        if (gender != null && !gender.isEmpty()) {
+            genderEnum = Gender.fromString(gender.toUpperCase());
+        }
         PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
-        Page<Staff> staffPage = staffRepository.findByNameContainingAndStatus(pageRequest,fullName,statusValue);
+        Page<Staff> staffPage = staffRepository.findByKeywordContainingAndStatusAndGender(pageRequest,statusValue,genderEnum,keyword);
         List<StaffResponse> staffResponseList = mapper.toEntityDtoList(staffPage.getContent());
 
         return PageResponse.builder()

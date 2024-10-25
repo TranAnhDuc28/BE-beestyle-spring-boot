@@ -21,10 +21,10 @@ public class StaffController {
 
     @GetMapping
     public ApiResponse<?> getStaffs(Pageable pageable,
-             @RequestParam(required = false) String name
+             @RequestParam(required = false) String keyword, @RequestParam(required = false) String gender
             ,@RequestParam(required = false) String status ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Staff",
-                staffService.getAllByFullName(pageable, name, status));
+                staffService.getAllByKeywordAndStatusAndGender(pageable,status,gender,keyword));
     }
 
     @PostMapping("/create")

@@ -23,10 +23,10 @@ public class CustomerController {
     private final ICustomerService customerService;
 
     @GetMapping
-    public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String name
-            ,@RequestParam(required = false) String status,@RequestParam(required = false) String gender) {
+    public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String status,@RequestParam(required = false) String gender
+            ,@RequestParam(required = false) String keyword) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer",
-                customerService.getAllByFullNameAndStatusAndGender(pageable, name,status,gender));
+                customerService.getAllByKeywordAndStatusAndGender(pageable,status,gender,keyword));
     }
 
 
