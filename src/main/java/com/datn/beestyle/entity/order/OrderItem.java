@@ -2,6 +2,7 @@ package com.datn.beestyle.entity.order;
 
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.product.ProductVariant;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -33,6 +34,7 @@ public class OrderItem {
 
     @Column(name = "note")
     String note;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "id")

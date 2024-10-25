@@ -39,4 +39,15 @@ public enum Status {
             return null;
         }
     }
+
+    @Nullable
+    public static String fromInteger(Integer value) {
+        if (value == null) return null;
+        try {
+            Status status = Status.resolve(value);
+            return status != null ? status.name() : null;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
 }

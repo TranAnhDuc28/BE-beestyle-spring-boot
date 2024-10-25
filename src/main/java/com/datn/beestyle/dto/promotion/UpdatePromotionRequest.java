@@ -25,7 +25,7 @@ public class UpdatePromotionRequest {
     String promotionName;
 
     @NotNull(message = "Discount type cannot be null")
-    DiscountType discountType;
+    String discountType;
 
     @NotNull(message = "Discount value cannot be null")
     @Positive(message = "Discount value must be positive")

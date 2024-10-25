@@ -20,5 +20,5 @@ public class Color extends BaseEntity<Integer> {
     String colorName;
 
     @Column(name = "status")
-    short status;
+    int status;
 }

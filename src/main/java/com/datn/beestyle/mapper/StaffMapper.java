@@ -12,6 +12,9 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface StaffMapper extends IGenericMapper<Staff, CreateStaffRequest, UpdateStaffRequest, StaffResponse> {
 
+    @Override
+    StaffResponse toEntityDto(Staff entity);
+
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

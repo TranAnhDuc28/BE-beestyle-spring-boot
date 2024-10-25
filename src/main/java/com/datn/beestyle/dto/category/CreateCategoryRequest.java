@@ -1,5 +1,7 @@
 package com.datn.beestyle.dto.category;
 
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +29,4 @@ public class CreateCategoryRequest {
 
     @Min(value = 1, message = "Giá trị id danh mục cha phải lớn hơn 0.")
     Integer parentCategoryId;
-
-    String status;
 }

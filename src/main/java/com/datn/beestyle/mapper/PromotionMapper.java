@@ -15,6 +15,7 @@ import org.mapstruct.Named;
 public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
+    @Mapping(target = "discountType", ignore = true)
     @Override
     PromotionResponse toEntityDto(Promotion entity);
 
