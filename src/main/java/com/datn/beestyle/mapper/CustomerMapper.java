@@ -11,6 +11,9 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
+    @Override
+    CustomerResponse toEntityDto(Customer entity);
+
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)

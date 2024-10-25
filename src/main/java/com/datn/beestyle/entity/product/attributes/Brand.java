@@ -7,7 +7,9 @@ import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Table(name = "`brand`")
+import java.time.LocalDateTime;
+
+@Table(name = "brand")
 @Entity
 @Getter
 @Setter
@@ -20,6 +22,10 @@ public class Brand extends BaseEntity<Integer> {
     String brandName;
 
     @Column(name = "status")
-    short status;
+    int status;
 
+    public Brand(Integer id, String brandName) {
+        super(id);
+        this.brandName = brandName;
+    }
 }
