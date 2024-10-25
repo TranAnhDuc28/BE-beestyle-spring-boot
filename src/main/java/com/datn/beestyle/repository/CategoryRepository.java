@@ -16,7 +16,7 @@ public interface CategoryRepository extends IGenericRepository<Category, Integer
     @Query(value = """
                 WITH RECURSIVE category_hierarchy AS (
                 SELECT id, category_name, slug, parent_category_id, level, priority
-                FROM category
+                FROM category 
                 WHERE status = 1 AND parent_category_id IS NULL
                 UNION ALL
                 SELECT c.id, c.category_name, c.slug, c.parent_category_id, c.level, c.priority
@@ -70,7 +70,7 @@ public interface CategoryRepository extends IGenericRepository<Category, Integer
                     FROM category c
                     INNER JOIN CategoryHierarchy ch ON ch.parent_category_id = c.id
                 )
-                SELECT count(*) > 0 FROM CategoryHierarchy where id = :parentCategoryId;
+                SELECT count(*) > 0 FROM CategoryHierarchy WHERE id = :parentCategoryId
             """, nativeQuery = true)
     Long isParentChildLoop(@Param("updateCategoryId") Integer updateCategoryId,
                               @Param("parentCategoryId") Integer parentCategoryId);

@@ -82,13 +82,13 @@ public class VoucherController {
 //    public ApiResponse<?> getVoucherByCode(@PathVariable String voucherName) {
 //        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher found", voucherService.getVoucherByName(voucherName));
 //    }
-    @GetMapping("/search")
-    public ApiResponse<?> searchVouchers(
-            @RequestParam(required = false) String searchTerm,
-            Pageable pageable) {
-        Page<VoucherResponse> vouchers = voucherService.getVoucherByNameOrCode(searchTerm, pageable);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", vouchers);
-    }
+//    @GetMapping("/search")
+//    public ApiResponse<?> searchVouchers(
+//            @RequestParam(required = false) String searchTerm,
+//            Pageable pageable) {
+//        Page<VoucherResponse> vouchers = voucherService.getVoucherByNameOrCode(searchTerm, pageable);
+//        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", vouchers);
+//    }
 
     @GetMapping("/findbydate")
     public ApiResponse<?> findByDateRange(

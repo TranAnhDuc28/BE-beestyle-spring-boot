@@ -1,8 +1,5 @@
 package com.datn.beestyle.dto.product;
 
-import com.datn.beestyle.dto.category.UserCategoryResponse;
-import com.datn.beestyle.dto.product.attributes.brand.UserBrandResponse;
-import com.datn.beestyle.dto.product.attributes.material.UserMaterialResponse;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;

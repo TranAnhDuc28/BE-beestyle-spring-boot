@@ -12,9 +12,12 @@ import java.time.LocalDateTime;
 @Getter
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class VoucherResponse extends UserVoucherResponse{
 
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+
 }
