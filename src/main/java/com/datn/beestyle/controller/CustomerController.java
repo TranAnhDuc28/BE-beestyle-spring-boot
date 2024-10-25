@@ -3,6 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.customer.CreateCustomerRequest;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
+import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.service.customer.ICustomerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -23,10 +24,12 @@ public class CustomerController {
 
     @GetMapping
     public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String name
-            ,@RequestParam(required = false) String status) {
+            ,@RequestParam(required = false) String status,@RequestParam(required = false) String gender) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Customer",
-                customerService.getAllByFullName(pageable, name,status));
+                customerService.getAllByFullNameAndStatusAndGender(pageable, name,status,gender));
     }
+
+
 
     @PostMapping("/create")
     public ApiResponse<?> createCustomer(@Valid @RequestBody CreateCustomerRequest request){

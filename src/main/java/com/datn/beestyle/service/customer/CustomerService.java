@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.customer.CreateCustomerRequest;
 import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
 import com.datn.beestyle.entity.user.Customer;
+import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.CustomerRepository;
 import jakarta.persistence.EntityManager;
@@ -93,7 +94,7 @@ public class CustomerService
 
 
     @Override
-    public PageResponse<?> getAllByFullName(Pageable pageable, String fullName,String status) {
+    public PageResponse<?> getAllByFullNameAndStatusAndGender(Pageable pageable, String fullName,String status,String gender) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -102,9 +103,13 @@ public class CustomerService
             Status statusEnum = Status.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
+        Gender genderEnum = null;
+        if (gender != null && !gender.isEmpty()) {
+            genderEnum = Gender.fromString(gender.toUpperCase());
+        }
         PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
-        Page<Customer> customerPage = customerRepository.findByNameContainingAndStatus(pageRequest,fullName,statusValue);
+        Page<Customer> customerPage = customerRepository.findByNameContainingAndStatusAndGender(pageRequest,fullName,statusValue,genderEnum);
         List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
 
         return PageResponse.builder()
