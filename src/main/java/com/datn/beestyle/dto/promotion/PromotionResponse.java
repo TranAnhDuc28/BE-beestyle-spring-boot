@@ -13,10 +13,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PromotionResponse extends UserPromotionResponse {
-
     String status;
-
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-
 }

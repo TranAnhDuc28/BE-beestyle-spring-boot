@@ -23,13 +23,13 @@ public class CreateVoucherRequest {
     private String voucherCode;
 
     @NotNull(message = "Loại giảm giá không được để trống")
-    private DiscountType discountType;
+    private String discountType;
 
     @Min(value = 0, message = "Giá trị giảm giá phải lớn hơn hoặc bằng 0")
-    private int discountValue;
+    private Integer discountValue;
 
     @Min(value = 0, message = "Giới hạn giảm giá tối đa phải lớn hơn hoặc bằng 0")
-    private int maxDiscount;
+    private Integer maxDiscount;
 
     @NotNull(message = "Giá trị đơn hàng tối thiểu không được để trống")
     @DecimalMin(value = "0.0", inclusive = false, message = "Giá trị đơn hàng tối thiểu phải lớn hơn 0")
@@ -42,10 +42,10 @@ public class CreateVoucherRequest {
     private Timestamp endDate;
 
     @Min(value = 0, message = "Giới hạn sử dụng phải lớn hơn hoặc bằng 0")
-    private int usageLimit;
+    private Integer usageLimit;
 
     @Min(value = 0, message = "Giới hạn sử dụng cho mỗi người dùng phải lớn hơn hoặc bằng 0")
-    private int usagePerUser;
+    private Integer usagePerUser;
 
-    private short status;
+    private Integer status;
 }

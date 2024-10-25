@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
-
     Integer id;
     String categoryName;
     String slug;

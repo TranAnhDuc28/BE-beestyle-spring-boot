@@ -10,6 +10,7 @@ public enum Gender {
     OTHER(2);
 
     private final int value;
+
     Gender(int value) {
         this.value = value;
     }
@@ -40,4 +41,16 @@ public enum Gender {
             return null;
         }
     }
+
+    @Nullable
+    public static String fromInteger(Integer value) {
+        if (value == null) return null;
+        try {
+            Gender gender = Gender.resolve(value);
+            return gender != null ? gender.name() : null;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
+
 }

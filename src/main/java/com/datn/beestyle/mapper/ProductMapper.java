@@ -75,12 +75,14 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
 
     @Named("statusName")
     default String statusName(Product product) {
-        return Status.valueOf(product.getStatus()).name();
+        Status status = Status.resolve(product.getStatus());
+        return status != null ? status.name() : null;
     }
 
     @Named("genderName")
     default String genderName(Product product) {
-        return Gender.valueOf(product.getGender()).name();
+        Gender gender = Gender.resolve(product.getStatus());
+        return gender != null ? gender.name() : null;
     }
 
 

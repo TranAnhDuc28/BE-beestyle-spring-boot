@@ -40,13 +40,13 @@ public class Order extends Auditable<Long> {
     Timestamp paymentDate;
 
     @Column(name = "payment_method")
-    short paymentMethod;
+    int paymentMethod;
 
     @Column(name = "order_channel")
-    short orderChannel;
+    int orderChannel;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @Column(name = "note")
     String note;

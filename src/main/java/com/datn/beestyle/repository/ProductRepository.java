@@ -6,6 +6,7 @@ import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -25,7 +26,11 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
     Page<Product> findAllForUserByCategoryId(Pageable pageable, @Param("categoryId") int categoryId);
 
     @Query(value = """
-            select p from Product p
+            select new com.datn.beestyle.dto.product.ProductResponse(
+                p.id, p.productName, p.imageUrl, p.gender, p.brand.id, p.brand.brandName, p.material.id, 
+                p.material.materialName, p.description, p.category.id, p.category.categoryName, p.status, p.createdAt,
+                p.updatedAt, p.createdBy, p.updatedBy)
+            from Product p 
             where 
                 (:keyword is null or p.productName like concat('%', :keyword, '%')) and
                 (:categoryId is null or p.category.id = :categoryId) and
@@ -34,7 +39,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
                 (:materialIds is null or p.material.id in (:materialIds)) and
                 (:status is null or p.status = :status)
             """)
-    Page<Product> findAllByFields(Pageable pageable, @Param("keyword") String keyword,
+    Page<ProductResponse> findAllByFields(Pageable pageable, @Param("keyword") String keyword,
                                           @Param("categoryId") Integer categoryId,
                                           @Param("gender") Integer gender,
                                           @Param("brandIds") List<Integer> brandIds,

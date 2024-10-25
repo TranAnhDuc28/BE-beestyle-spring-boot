@@ -16,13 +16,13 @@ public class VoucherResponse {
     Long id;
     String voucherName;
     String voucherCode;
-    DiscountType discountType;
-    int discountValue;
-    int maxDiscount;
+    String discountType;
+    Integer discountValue;
+    Integer maxDiscount;
     BigDecimal minOrderValue;
     Timestamp startDate;
     Timestamp endDate;
-    int usageLimit;
-    int usagePerUser;
-    short status;
+    Integer usageLimit;
+    Integer usagePerUser;
+    Integer status;
 }

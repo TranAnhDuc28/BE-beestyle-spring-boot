@@ -25,5 +25,4 @@ public class ProductImage {
     @JoinColumn(name = "product_variant_id", referencedColumnName = "id")
     ProductVariant productVariant;
 
-
 }

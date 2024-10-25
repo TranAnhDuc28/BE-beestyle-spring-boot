@@ -130,15 +130,14 @@ public class ProductService
         }
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
-        Page<Product> productPages = productRepository.findAllByFields(pageRequest, keyword, categoryId, genderValue,
+        Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId, genderValue,
                 brandIdList, materialIdList, statusValue);
-        List<ProductResponse> productResponses = productPages.get().map(productMapper::toEntityDto).toList();
         return PageResponse.<List<ProductResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
-                .totalElements(productPages.getTotalElements())
-                .totalPages(productPages.getTotalPages())
-                .items(productResponses)
+                .totalElements(productResponsePages.getTotalElements())
+                .totalPages(productResponsePages.getTotalPages())
+                .items(productResponsePages.getContent())
                 .build();
     }
 

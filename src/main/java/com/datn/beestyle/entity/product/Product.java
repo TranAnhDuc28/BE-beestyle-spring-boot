@@ -36,27 +36,24 @@ public class Product extends Auditable<Long> {
     String imageUrl;
 
     @Column(name = "gender")
-    short gender;
+    int gender;
 
     @Column(name = "description")
     String description;
 
     @Column(name = "status")
-    short status;
+    int status;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {ALL})
+    @ManyToOne(cascade = {ALL})
     @JoinColumn(name = "category_id", referencedColumnName = "id")
-    @Fetch(FetchMode.JOIN)
     Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {ALL})
+    @ManyToOne(cascade = {ALL})
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
-    @Fetch(FetchMode.JOIN)
     Brand brand;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {ALL})
+    @ManyToOne(cascade = {ALL})
     @JoinColumn(name = "material_id", referencedColumnName = "id")
-    @Fetch(FetchMode.JOIN)
     Material material;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {ALL})

@@ -25,7 +25,7 @@ public class UpdateStaffRequest {
     LocalDate dateOfBirth;
 
     @NotNull(message = "Khong duoc de trong")
-    Gender gender;
+    String gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;
@@ -41,6 +41,6 @@ public class UpdateStaffRequest {
     String password;
 
     @NotNull(message = "Khong duoc de trong")
-    short status;
+    Integer status;
 
 }

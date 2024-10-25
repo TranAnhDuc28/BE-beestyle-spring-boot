@@ -20,5 +20,5 @@ public class Size extends BaseEntity<Integer> {
     String sizeName;
 
     @Column(name = "status")
-    short status;
+    int status;
 }

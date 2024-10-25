@@ -26,8 +26,7 @@ public class Promotion extends Auditable<Integer> {
     String promotionName;
 
     @Column(name = "discount_type")
-    @Enumerated(EnumType.STRING)
-    DiscountType discountType;
+    int discountType;
 
     @Column(name = "discount_value")
     int discountValue;
@@ -44,7 +43,7 @@ public class Promotion extends Auditable<Integer> {
     String description;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @OneToMany(mappedBy = "promotion", cascade = {PERSIST, MERGE}, fetch = FetchType.LAZY)
     List<ProductVariant> productVariants = new ArrayList<>();

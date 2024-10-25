@@ -26,7 +26,7 @@ public class CreateCustomerRequest {
     LocalDate dateOfBirth;
 
     @NotNull(message = "Khong duoc de trong")
-    Gender gender;
+    String gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;
@@ -35,7 +35,7 @@ public class CreateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    short status;
+    Integer status;
 
 //    ShoppingCart shoppingCart;
 

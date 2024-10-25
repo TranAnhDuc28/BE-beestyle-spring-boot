@@ -31,8 +31,7 @@ public class Staff extends Auditable<Long> {
     LocalDate dateOfBirth;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.STRING)
-    Gender gender;
+    int gender;
 
     @Column(name = "phone_number")
     String phoneNumber;
@@ -50,7 +49,7 @@ public class Staff extends Auditable<Long> {
     String password;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @ManyToMany
     @JoinTable(name = "user_has_role",
