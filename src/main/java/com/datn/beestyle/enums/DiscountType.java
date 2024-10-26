@@ -30,17 +30,7 @@ public enum DiscountType {
         }
         return null;
     }
-//    public static DiscountType fromString(String type) {
-//        if (type != null) {
-//            switch (type.toUpperCase()) {
-//                case "PERCENTAGE":
-//                    return PERCENTAGE;
-//                case "CASH":
-//                    return CASH;
-//            }
-//        }
-//        return null;
-//    }
+
     public static DiscountType fromString(String discountType) {
         try {
             return DiscountType.valueOf(discountType.toUpperCase());
@@ -48,4 +38,6 @@ public enum DiscountType {
             return null;
         }
     }
+
+
 }
