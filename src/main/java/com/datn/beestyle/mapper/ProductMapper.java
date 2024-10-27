@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,7 +20,7 @@ import org.mapstruct.Named;
 public interface ProductMapper extends IGenericMapper<Product, CreateProductRequest, UpdateProductRequest, ProductResponse> {
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
-    @Mapping(target = "gender", source = ".", qualifiedByName = "genderName")
+    @Mapping(target = "genderProduct", source = ".", qualifiedByName = "genderProductName")
     @Mapping(target = "materialId", source = "material.id")
     @Mapping(target = "materialName", source = "material.materialName")
     @Mapping(target = "categoryId", source = "category.id")
@@ -30,7 +31,7 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
     ProductResponse toEntityDto(Product entity);
 
 
-    @Mapping(target = "gender", source = ".", qualifiedByName = "genderIdCreate")
+    @Mapping(target = "gender", source = ".", qualifiedByName = "genderProductIdCreate")
     @Mapping(target = "material", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "brand", ignore = true)
@@ -44,7 +45,7 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
     Product toCreateEntity(CreateProductRequest request);
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
-    @Mapping(target = "gender", source = ".", qualifiedByName = "genderIdUpdate")
+    @Mapping(target = "gender", source = ".", qualifiedByName = "genderProductIdUpdate")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "material", ignore = true)
     @Mapping(target = "category", ignore = true)
@@ -63,14 +64,14 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
         return Status.valueOf(request.getStatus()).getValue();
     }
 
-    @Named("genderIdUpdate")
-    default int genderIdUpdate(UpdateProductRequest request) {
-        return Gender.valueOf(request.getGender()).getValue();
+    @Named("genderProductIdUpdate")
+    default int genderProductIdUpdate(UpdateProductRequest request) {
+        return GenderProduct.valueOf(request.getGenderProduct()).getValue();
     }
 
-    @Named("genderIdCreate")
-    default int genderIdCreate(CreateProductRequest request) {
-        return Gender.valueOf(request.getStatus()).getValue();
+    @Named("genderProductIdCreate")
+    default int genderProductIdCreate(CreateProductRequest request) {
+        return GenderProduct.valueOf(request.getGenderProduct()).getValue();
     }
 
     @Named("statusName")
@@ -79,15 +80,9 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
         return status != null ? status.name() : null;
     }
 
-    @Named("genderName")
+    @Named("genderProductName")
     default String genderName(Product product) {
-        Gender gender = Gender.resolve(product.getStatus());
-        return gender != null ? gender.name() : null;
+        GenderProduct genderProduct = GenderProduct.resolve(product.getStatus());
+        return genderProduct != null ? genderProduct.name() : null;
     }
-
-
-
-
-
-
 }

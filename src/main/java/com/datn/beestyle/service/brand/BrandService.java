@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.product.attributes.brand;
+package com.datn.beestyle.service.brand;
 
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;

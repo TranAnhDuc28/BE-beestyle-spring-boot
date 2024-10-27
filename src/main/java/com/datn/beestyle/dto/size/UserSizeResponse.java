@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.size;
+package com.datn.beestyle.dto.size;
 
 import lombok.AccessLevel;
 import lombok.Getter;

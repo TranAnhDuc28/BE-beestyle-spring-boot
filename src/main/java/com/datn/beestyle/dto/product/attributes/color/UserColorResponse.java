@@ -10,5 +10,6 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserColorResponse {
     Integer id;
+    String colorCode;
     String colorName;
 }

@@ -1,9 +1,9 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
-import com.datn.beestyle.service.product.attributes.material.IMaterialService;
+import com.datn.beestyle.dto.material.CreateMaterialRequest;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
+import com.datn.beestyle.service.material.IMaterialService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

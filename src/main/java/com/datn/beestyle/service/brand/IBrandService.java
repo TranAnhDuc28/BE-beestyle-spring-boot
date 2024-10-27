@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.product.attributes.brand;
+package com.datn.beestyle.service.brand;
 
 import com.datn.beestyle.common.IGenericService;
 import com.datn.beestyle.dto.PageResponse;
