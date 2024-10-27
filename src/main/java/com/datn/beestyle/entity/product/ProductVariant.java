@@ -4,6 +4,8 @@ import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.entity.product.attributes.Size;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,16 +30,17 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "sku")
     String sku;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "color_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     Color color;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "size_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     Size size;
@@ -54,10 +57,10 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "status")
     short status;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
 
-    @OneToMany(mappedBy = "productVariant", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productVariant", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.EAGER)
     List<ProductImage> productImages = new ArrayList<>();
 }

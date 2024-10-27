@@ -9,8 +9,10 @@ import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
-import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.entity.user.Customer;
+import com.datn.beestyle.enums.*;
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.OrderRepository;
 import jakarta.persistence.EntityManager;
@@ -21,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -48,8 +52,6 @@ public class OrderService
 
     public PageResponse<List<OrderResponse>> getOrdersDTO(
             Pageable pageable, String search, String status
-//            String dateStart,
-//            String dateEnd
     ) {
 
         Map<Long, String> customerNames;
@@ -67,12 +69,8 @@ public class OrderService
 
         Page<Order> orderPages = this.orderRepository.findAllByKeywordAndStatus(search, status, pageRequest);
 
-//        LocalDate start = dateStart != null ? LocalDate.parse(dateStart) : null;
-//        LocalDate end = dateEnd != null ? LocalDate.parse(dateEnd) : null;
-
         List<Long> ids = orderPages.get().map(order ->
                 order.getCustomer() != null ? order.getCustomer().getId() : null).distinct().toList();
-        System.out.println(ids);
 
         if (ids.isEmpty()) {
             customerNames = null;
@@ -80,7 +78,6 @@ public class OrderService
             customerNames = this.orderRepository.findCustomerNameById(ids).stream()
                     .collect(Collectors.toMap(object -> (Long) object[0], object -> (String) object[1]));
         }
-        System.out.println(customerNames);
 
         if (customerNames != null) {
             orderResponses = orderPages.get().map(order -> {
@@ -105,6 +102,50 @@ public class OrderService
                 .items(orderResponses)
                 .build();
     }
+
+    public void createBill() {
+        final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        final int RANDOM_PART_LENGTH = 5;
+        final int SEQUENTIAL_PART_LENGTH = 5;
+
+        StringBuilder randomPart = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < RANDOM_PART_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            randomPart.append(CHARACTERS.charAt(index));
+        }
+
+        String uniquePart = String.valueOf(System.currentTimeMillis()).substring(5, 10);
+        String trackingNumber = "#" + randomPart + uniquePart;
+
+        Order order = new Order();
+        order.initializeOrder(trackingNumber, 1L);
+
+        this.orderRepository.save(order);
+    }
+
+    public void updateBill(UpdateOrderRequest order, Long id) {
+        Order o = this.orderRepository.findById(id).get();
+        if (order != null) {
+            o.setPhoneNumber(order.getPhoneNumber());
+            o.setPaymentMethod(order.getPaymentMethod());
+            o.setCustomer(o.getCustomer());
+            o.setOrderChannel(o.getOrderChannel());
+            o.setTotalAmount(o.getTotalAmount());
+            o.setShippingFee(o.getShippingFee());
+            o.setStatus(o.getStatus());
+            o.setVoucher(o.getVoucher());
+            o.setShippingAddress(o.getShippingAddress());
+            o.setUpdateBy(null);
+            o.setPaymentDate(
+                    Timestamp.valueOf(LocalDateTime.now())
+            );
+            o.setUpdatedAt(LocalDateTime.now());
+        }
+        this.orderRepository.save(o);
+    }
+
 
     @Override
     protected List<CreateOrderRequest> beforeCreateEntities(List<CreateOrderRequest> requests) {

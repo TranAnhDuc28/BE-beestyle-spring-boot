@@ -9,6 +9,7 @@ public enum PaymentMethod {
     BANK_TRANSFER(1);
 
     private final int value;
+
     PaymentMethod(int value) {
         this.value = value;
     }
@@ -16,7 +17,7 @@ public enum PaymentMethod {
     public static PaymentMethod valueOf(int value) {
         PaymentMethod paymentMethod = resolve(value);
         if (paymentMethod == null) {
-            throw new IllegalArgumentException("No matching constant for [" + value + "]");
+            throw new IllegalArgumentException("No matching PaymentMethod for value [" + value + "]");
         }
         return paymentMethod;
     }

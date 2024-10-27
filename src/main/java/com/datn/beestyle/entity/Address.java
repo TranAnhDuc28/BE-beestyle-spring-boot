@@ -1,6 +1,7 @@
 package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.user.Customer;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

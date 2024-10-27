@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.attributes.Brand;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -27,9 +28,6 @@ public class Product extends Auditable<Long> {
 
     @Column(name = "product_name")
     String productName;
-
-    @Column(name = "image_url")
-    String imageUrl;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)
@@ -56,6 +54,7 @@ public class Product extends Auditable<Long> {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     Material material;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     List<ProductVariant> productVariants = new ArrayList<>();
 

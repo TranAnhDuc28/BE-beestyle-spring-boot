@@ -7,17 +7,21 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
+import com.datn.beestyle.enums.Status;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Table(name = "`order`")
 @Entity
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -40,13 +44,16 @@ public class Order extends Auditable<Long> {
     Timestamp paymentDate;
 
     @Column(name = "payment_method")
-    short paymentMethod;
+    @Enumerated(EnumType.ORDINAL)
+    PaymentMethod paymentMethod;
 
     @Column(name = "order_channel")
-    short orderChannel;
+    @Enumerated(EnumType.ORDINAL)
+    OrderChannel orderChannel;
 
     @Column(name = "status")
-    short status;
+    @Enumerated(EnumType.ORDINAL)
+    OrderStatus status;
 
     @Column(name = "note")
     String note;
@@ -62,4 +69,20 @@ public class Order extends Auditable<Long> {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
     Address shippingAddress;
+
+    public void initializeOrder(String trackingNumber, Long createdBy) {
+        this.voucher = null;
+        this.shippingAddress = null;
+        this.paymentDate = null;
+        this.customer = null;
+        this.phoneNumber = "";
+        this.totalAmount = BigDecimal.ZERO;
+        this.shippingFee = BigDecimal.ZERO;
+        this.paymentMethod = PaymentMethod.CASH_ON_DELIVERY;
+        this.status = OrderStatus.PENDING;
+        this.orderChannel = OrderChannel.OFFLINE;
+        this.orderTrackingNumber = trackingNumber;
+        this.setCreatedAt(LocalDateTime.now());
+        this.setCreatedBy(createdBy);
+    }
 }

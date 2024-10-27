@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.BaseEntity;
 import com.datn.beestyle.entity.author.Role;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

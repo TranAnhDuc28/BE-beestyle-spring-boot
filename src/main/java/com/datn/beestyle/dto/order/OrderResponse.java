@@ -15,11 +15,14 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
     Long id;
+    String orderTrackingNumber;
     String customerName;
     String phoneNumber;
+    String orderChannel;
+    BigDecimal shippingFee;
     BigDecimal totalAmount;
-    short paymentMethod;
-    short status;
-    int totalField;
-    LocalDateTime createAt;
+    String paymentMethod;
+    String status;
+    LocalDateTime paymentDate;
+    LocalDateTime createdAt;
 }
