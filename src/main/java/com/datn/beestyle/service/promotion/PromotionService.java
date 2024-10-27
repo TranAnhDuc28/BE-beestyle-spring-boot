@@ -49,9 +49,10 @@ public class PromotionService
             Status statusEnum = Status.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
-        DiscountType discountTypeValue = null;
+        Integer discountTypeValue = null;
         if (discountType != null) {
-            discountTypeValue = DiscountType.fromString(discountType.toUpperCase());
+            DiscountType discountTypeEnum = DiscountType.fromString(discountType.toUpperCase());
+            if (discountTypeEnum != null) discountTypeValue = discountTypeEnum.getValue();
         }
         PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));

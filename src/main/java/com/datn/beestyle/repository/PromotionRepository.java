@@ -32,6 +32,6 @@ public interface PromotionRepository extends IGenericRepository<Promotion, Integ
     Page<Promotion> findByNameContainingAndStatus(Pageable pageable,
                                                 @Param("name") String name,
                                                 @Param("status") Integer status,
-                                                @Param("discountType") DiscountType discountType);
+                                                @Param("discountType") Integer discountType);
 
 }

@@ -38,6 +38,15 @@ public enum DiscountType {
             return null;
         }
     }
-
+    @Nullable
+    public static String fromInteger(Integer value) {
+        if (value == null) return null;
+        try {
+            DiscountType discountType = DiscountType.resolve(value);
+            return discountType != null ? discountType.name() : null;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
 
 }

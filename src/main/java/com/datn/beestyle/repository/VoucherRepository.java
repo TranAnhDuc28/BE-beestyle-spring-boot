@@ -27,7 +27,7 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
     Page<Voucher> findByNameContainingAndStatus(Pageable pageable,
                                                 @Param("name") String name,
                                                 @Param("status") Integer status,
-                                                @Param("discountType") DiscountType discountType);
+                                                @Param("discountType") Integer discountType);
 
     @Query("""
             select v from Voucher v 
