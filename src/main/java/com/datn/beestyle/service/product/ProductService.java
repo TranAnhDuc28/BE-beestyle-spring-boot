@@ -9,14 +9,14 @@ import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
 import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
-import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.ProductMapper;
 import com.datn.beestyle.repository.ProductRepository;
 import com.datn.beestyle.service.category.ICategoryService;
-import com.datn.beestyle.service.product.attributes.brand.IBrandService;
-import com.datn.beestyle.service.product.attributes.material.IMaterialService;
+import com.datn.beestyle.service.brand.IBrandService;
+import com.datn.beestyle.service.material.IMaterialService;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -72,7 +72,7 @@ public class ProductService
 
     @Override
     public PageResponse<List<ProductResponse>> getProductsByFields(Pageable pageable, String keyword,
-                                                                   String category, String gender, String brandIds,
+                                                                   String category, String genderProduct, String brandIds,
                                                                    String materialIds, String status) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
@@ -92,10 +92,10 @@ public class ProductService
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
-        Integer genderValue = null;
-        if (gender != null) {
-            Gender genderEnum = Gender.fromString(gender);
-            if (genderEnum != null) genderValue = genderEnum.getValue();
+        Integer genderProductValue = null;
+        if (genderProduct != null) {
+            GenderProduct genderProductEnum = GenderProduct.fromString(genderProduct);
+            if (genderProductEnum != null) genderProductValue = genderProductEnum.getValue();
         }
 
         List<Integer> brandIdList = null;
@@ -130,8 +130,8 @@ public class ProductService
         }
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
-        Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId, genderValue,
-                brandIdList, materialIdList, statusValue);
+        Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId,
+                genderProductValue, brandIdList, materialIdList, statusValue);
         return PageResponse.<List<ProductResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())

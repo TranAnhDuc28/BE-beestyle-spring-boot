@@ -1,7 +1,7 @@
 package com.datn.beestyle.dto.product.variant;
 
 import com.datn.beestyle.dto.product.attributes.color.UserColorResponse;
-import com.datn.beestyle.dto.product.attributes.size.UserSizeResponse;
+import com.datn.beestyle.dto.size.UserSizeResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
