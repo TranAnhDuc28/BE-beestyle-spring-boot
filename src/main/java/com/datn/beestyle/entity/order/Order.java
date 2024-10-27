@@ -7,12 +7,17 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Table(name = "`order`")
 @Entity
@@ -62,4 +67,8 @@ public class Order extends Auditable<Long> {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
     Address shippingAddress;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "order", cascade = ALL, fetch = FetchType.LAZY)
+    List<OrderItem> orderItems = new ArrayList<>();
 }

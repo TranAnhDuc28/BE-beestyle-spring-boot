@@ -1,19 +1,9 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
-import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.color.CreateColorRequest;
-import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
-import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
-import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
-import com.datn.beestyle.dto.product.attributes.size.CreateSizeRequest;
-import com.datn.beestyle.dto.product.attributes.size.SizeResponse;
-import com.datn.beestyle.dto.product.attributes.size.UpdateSizeRequest;
-import com.datn.beestyle.entity.product.attributes.Brand;
-import com.datn.beestyle.entity.product.attributes.Color;
-import com.datn.beestyle.entity.product.attributes.Material;
+import com.datn.beestyle.dto.size.CreateSizeRequest;
+import com.datn.beestyle.dto.size.SizeResponse;
+import com.datn.beestyle.dto.size.UpdateSizeRequest;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;

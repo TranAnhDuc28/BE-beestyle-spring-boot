@@ -1,6 +1,7 @@
 package com.datn.beestyle.dto.product;
 
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
@@ -21,8 +22,8 @@ public class UpdateProductRequest {
 
     String imageUrl;
 
-    @EnumValue(enumClass = Gender.class, name = "Gender", message = "Invalid value for Gender")
-    String gender;
+    @EnumValue(enumClass = GenderProduct.class, name = "GenderProduct", message = "Invalid value for Gender")
+    String genderProduct;
 
     Integer brandId;
     Integer materialId;

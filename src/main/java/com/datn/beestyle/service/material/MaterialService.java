@@ -1,13 +1,13 @@
 
-package com.datn.beestyle.service.product.attributes.material;
+package com.datn.beestyle.service.material;
 
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
-import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
+import com.datn.beestyle.dto.material.CreateMaterialRequest;
+import com.datn.beestyle.dto.material.MaterialResponse;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.MaterialRepository;

@@ -3,7 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
 import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
-import com.datn.beestyle.service.product.attributes.brand.IBrandService;
+import com.datn.beestyle.service.brand.IBrandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

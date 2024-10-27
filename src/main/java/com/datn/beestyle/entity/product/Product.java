@@ -32,9 +32,6 @@ public class Product extends Auditable<Long> {
     @Column(name = "product_name")
     String productName;
 
-    @Column(name = "image_url")
-    String imageUrl;
-
     @Column(name = "gender")
     int gender;
 
@@ -56,9 +53,21 @@ public class Product extends Auditable<Long> {
     @JoinColumn(name = "material_id", referencedColumnName = "id")
     Material material;
 
+    @OneToMany(mappedBy = "product", cascade = {ALL}, fetch = FetchType.LAZY)
+    List<ProductImage> productImages = new ArrayList<>();
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {ALL})
     List<ProductVariant> productVariants = new ArrayList<>();
 
+    public void addProductImage(ProductImage productImage) {
+        if (productImage != null) {
+            if (productVariants == null) {
+                productImages = new ArrayList<>();
+            }
+            productImages.add(productImage);
+            productImage.setProduct(this);
+        }
+    }
     public void addProductVariant(ProductVariant productVariant) {
         if (productVariant != null) {
             if (productVariants == null) {
@@ -68,5 +77,4 @@ public class Product extends Auditable<Long> {
             productVariant.setProduct(this);
         }
     }
-
 }
