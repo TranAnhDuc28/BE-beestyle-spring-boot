@@ -20,5 +20,5 @@ public class Material extends BaseEntity<Integer> {
     String materialName;
 
     @Column(name = "status")
-    short status;
+    int status;
 }

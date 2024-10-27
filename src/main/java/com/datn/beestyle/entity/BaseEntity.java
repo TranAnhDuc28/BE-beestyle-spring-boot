@@ -33,4 +33,8 @@ public abstract class BaseEntity<T extends Serializable> implements Serializable
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime updatedAt;
+
+    public BaseEntity(T id) {
+        this.id = id;
+    }
 }

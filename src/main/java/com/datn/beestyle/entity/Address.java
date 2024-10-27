@@ -20,11 +20,20 @@ public class Address extends BaseEntity<Long> {
     @Column(name = "address_name")
     String addressName;
 
+    @Column(name = "city_code")
+    Integer cityCode;
+
     @Column(name = "city")
     String city;
 
+    @Column(name = "district_code")
+    String districtCode;
+
     @Column(name = "district")
     String district;
+
+    @Column(name = "commune_code")
+    String communeCode;
 
     @Column(name = "commune")
     String commune;

@@ -3,12 +3,8 @@ package com.datn.beestyle.dto.customer;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,20 +12,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@SuperBuilder
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerResponse {
     Integer id;
     String fullName;
     LocalDate dateOfBirth;
     String password;
-    Gender gender;
+    String gender;
     String phoneNumber;
     String email;
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-
-//    ShoppingCart shoppingCart;
+    //    ShoppingCart shoppingCart;
     Set<Address> addresses;
 }

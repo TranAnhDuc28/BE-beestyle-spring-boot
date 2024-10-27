@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class UserPromotionResponse {
     Integer id;
     String promotionName;
-    DiscountType discountType;
+    String discountType;
     Integer discountValue;
     Timestamp startDate;
     Timestamp endDate;

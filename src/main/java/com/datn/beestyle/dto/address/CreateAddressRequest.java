@@ -13,10 +13,13 @@ import lombok.experimental.FieldDefaults;
 public class CreateAddressRequest {
     String addressName;
 
+    Integer cityCode;
     String city;
 
+    Integer districtCode;
     String district;
 
+    Integer communeCode;
     String commune;
 
     boolean isDefault;

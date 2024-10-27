@@ -21,5 +21,5 @@ public interface StaffRepository extends IGenericRepository<Staff,Integer> {
                 (:gender is null or s.gender = :gender)
             """)
     Page<Staff> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status,
-                                                          @Param("gender") Gender gender, @Param("keyword") String keyword);
+                                                          @Param("gender") Integer gender, @Param("keyword") String keyword);
 }

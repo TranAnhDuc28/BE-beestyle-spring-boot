@@ -14,5 +14,8 @@ import java.util.List;
 public interface IProductService
         extends IGenericService<Product, Long, CreateProductRequest, UpdateProductRequest, ProductResponse> {
 
-    PageResponse<List<UserProductResponse>> findAllByCategoryId(Pageable pageable, int categoryId);
+    PageResponse<List<UserProductResponse>> getAllByCategoryId(Pageable pageable, int categoryId);
+    PageResponse<List<ProductResponse>> getProductsByFields(Pageable pageable, String keyword,
+                                                            String category, String gender, String brandIds,
+                                                            String materialIds, String status);
 }

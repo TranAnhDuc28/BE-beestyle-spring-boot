@@ -26,7 +26,7 @@ public class CreateCustomerRequest {
     LocalDate dateOfBirth;
 
     @NotNull(message = "Khong duoc de trong")
-    Gender gender;
+    String gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;

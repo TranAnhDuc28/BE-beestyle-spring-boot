@@ -52,7 +52,7 @@ public class ProductVariant extends Auditable<Long> {
     int quantityInStock;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")

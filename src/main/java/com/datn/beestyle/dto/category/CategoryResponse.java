@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
-
     Integer id;
     String categoryName;
     String slug;
@@ -24,10 +23,6 @@ public class CategoryResponse {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-    public CategoryResponse(Integer id, String categoryName) {
-        this.id = id;
-        this.categoryName = categoryName;
-    }
 }
 
 

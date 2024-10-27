@@ -1,6 +1,5 @@
 package com.datn.beestyle.dto.staff;
 
-import com.datn.beestyle.enums.Gender;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,22 +16,15 @@ import java.time.LocalDateTime;
 public class StaffResponse {
     Long id;
     String fullName;
+    LocalDate dateOfBirth;
     String username;
     String password;
-    LocalDate dateOfBirth;
-
-    Gender gender;
-
+    String gender;
     String phoneNumber;
-
     String email;
-
     String avatar;
-
     String address;
-
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-
 }

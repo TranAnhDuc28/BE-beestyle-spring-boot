@@ -34,7 +34,7 @@ public class Category extends BaseEntity<Integer> {
     int priority;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, cascade = {MERGE, PERSIST})

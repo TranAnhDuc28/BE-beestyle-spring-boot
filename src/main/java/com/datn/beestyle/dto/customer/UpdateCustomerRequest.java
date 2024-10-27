@@ -27,7 +27,7 @@ public class UpdateCustomerRequest {
     LocalDate dateOfBirth;
 
     @NotNull(message = "Khong duoc de trong")
-    Gender gender;
+    String gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;
@@ -36,7 +36,7 @@ public class UpdateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    @EnumValue(name = "Status", enumClass = Status.class)
+
     String status;
 
 //    ShoppingCart shoppingCart;

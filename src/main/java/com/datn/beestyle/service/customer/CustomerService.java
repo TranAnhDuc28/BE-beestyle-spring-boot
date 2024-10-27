@@ -99,17 +99,19 @@ public class CustomerService
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
         Integer statusValue = null;
-        if(status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+        if (status != null) {
+            Status statusEnum = Status.fromString(status);
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
-        Gender genderEnum = null;
-        if (gender != null && !gender.isEmpty()) {
-            genderEnum = Gender.fromString(gender.toUpperCase());
+        Integer genderValue = null;
+        if (gender != null) {
+            Gender genderEnum = Gender.fromString(gender);
+            if(genderEnum!=null) genderValue = genderEnum.getValue();
         }
         PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
-        Page<Customer> customerPage = customerRepository.findByKeywordContainingAndStatusAndGender(pageRequest,statusValue,genderEnum,keyword);
+        Page<Customer> customerPage =
+                customerRepository.findByKeywordContainingAndStatusAndGender(pageRequest,statusValue,genderValue,keyword);
         List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
 
         return PageResponse.builder()

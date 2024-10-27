@@ -20,6 +20,5 @@ public class OrderResponse {
     BigDecimal totalAmount;
     short paymentMethod;
     short status;
-    int totalField;
-    LocalDateTime createAt;
+    LocalDateTime createdAt;
 }

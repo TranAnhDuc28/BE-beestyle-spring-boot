@@ -36,8 +36,7 @@ public class Customer extends BaseEntity<Long> {
     LocalDate dateOfBirth;
 
     @Column(name = "gender")
-    @Enumerated(EnumType.ORDINAL)
-    Gender gender;
+    int gender;
 
     @Column(name = "phone_number")
     String phoneNumber;
@@ -49,7 +48,7 @@ public class Customer extends BaseEntity<Long> {
     String password;
 
     @Column(name = "status")
-    short status;
+    int status;
 
 //    @OneToOne(fetch = FetchType.LAZY, cascade = ALL)
 //    ShoppingCart shoppingCart;

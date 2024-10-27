@@ -20,7 +20,7 @@ public interface CustomerRepository extends IGenericRepository<Customer,Integer>
                 (:status is null or c.status = :status) and
                  (:gender is null or c.gender = :gender)
             """)
-    Page<Customer> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status, @Param("gender") Gender gender
+    Page<Customer> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status, @Param("gender") Integer gender
             , @Param("keyword") String keyword);
 
 }

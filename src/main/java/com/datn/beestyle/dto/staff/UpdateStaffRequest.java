@@ -19,6 +19,7 @@ import java.time.LocalDate;
 public class UpdateStaffRequest {
 
     @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Khong duoc de trong")
     String username;
 
     @NotBlank(message = "Khong duoc de trong")
@@ -27,7 +28,7 @@ public class UpdateStaffRequest {
     LocalDate dateOfBirth;
 
     @NotNull(message = "Khong duoc de trong")
-    Gender gender;
+    String gender;
 
     @NotBlank(message = "Khong duoc de trong")
     String phoneNumber;
@@ -42,7 +43,7 @@ public class UpdateStaffRequest {
     @NotBlank(message = "Khong duoc de trong")
     String password;
 
-    @EnumValue(name = "Status", enumClass = Status.class)
+    @NotNull(message = "Khong duoc de trong")
     String status;
 
 }
