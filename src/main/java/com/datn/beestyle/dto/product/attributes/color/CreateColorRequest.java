@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateColorRequest {
 
+    String colorCode;
+
     @NotBlank(message = "Vui lòng nhập tên màu sắc.")
     String colorName;
 }

@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.material;
+package com.datn.beestyle.dto.material;
 
 import lombok.AccessLevel;
 import lombok.Getter;
