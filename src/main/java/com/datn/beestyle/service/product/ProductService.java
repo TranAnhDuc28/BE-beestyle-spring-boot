@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +94,8 @@ public class ProductService
                                                                    String materialIds, String status) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Integer categoryId = null;
         if (category != null) {
@@ -145,7 +148,6 @@ public class ProductService
             }
         }
 
-        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
         Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId,
                 genderProductValue, brandIdList, materialIdList, statusValue);
         return PageResponse.<List<ProductResponse>>builder()

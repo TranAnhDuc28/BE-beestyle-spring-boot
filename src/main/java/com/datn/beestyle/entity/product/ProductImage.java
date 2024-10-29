@@ -22,7 +22,7 @@ public class ProductImage {
     String imageUrl;
 
     @Column(name = "is_default")
-    boolean isDefault;
+    Boolean isDefault;
 
     @ManyToOne(fetch = FetchType.LAZY)
     Product product;
