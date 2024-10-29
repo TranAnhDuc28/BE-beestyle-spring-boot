@@ -1,6 +1,8 @@
 package com.datn.beestyle.dto.staff;
 
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateStaffRequest {
 
+    @NotBlank(message = "Khong duoc de trong")
     @NotBlank(message = "Khong duoc de trong")
     String username;
 
@@ -41,6 +44,6 @@ public class UpdateStaffRequest {
     String password;
 
     @NotNull(message = "Khong duoc de trong")
-    Integer status;
+    String status;
 
 }
