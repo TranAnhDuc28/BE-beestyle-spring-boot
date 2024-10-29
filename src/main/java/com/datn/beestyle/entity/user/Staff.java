@@ -57,5 +57,5 @@ public class Staff extends Auditable<Long> {
             inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
     private Set<Role> roles = new HashSet<>();
 
-    
+
 }

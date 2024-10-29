@@ -33,14 +33,16 @@ public enum Gender {
         return null;
     }
 
+
     @Nullable
-    public static Gender fromString(String status) {
+    public static Gender fromString(String gender) {
         try {
-            return Gender.valueOf(status.toUpperCase());
+            return Gender.valueOf(gender.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }
     }
+
 
     @Nullable
     public static String fromInteger(Integer value) {

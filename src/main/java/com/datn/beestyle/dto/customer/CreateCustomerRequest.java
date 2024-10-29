@@ -35,7 +35,6 @@ public class CreateCustomerRequest {
 
     @NotBlank(message = "Khong duoc de trong")
     String password;
-    Integer status;
 
 //    ShoppingCart shoppingCart;
 
