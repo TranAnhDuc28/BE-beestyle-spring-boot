@@ -43,7 +43,7 @@ public class Promotion extends Auditable<Integer> {
     String description;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @OneToMany(mappedBy = "promotion", cascade = {PERSIST, MERGE}, fetch = FetchType.LAZY)
     List<ProductVariant> productVariants = new ArrayList<>();
