@@ -30,14 +30,15 @@ public class PromotionController {
     @GetMapping
     public ApiResponse<?> getPromotions(Pageable pageable,
                                         @RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String status) {
+                                        @RequestParam(required = false) String status,
+                                        @RequestParam(required = false) String discountType) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Promotions",
-                promotionService.getAllByNameAndStatus(pageable, name, status));
+                promotionService.getAllByNameAndStatus(pageable, name, status,discountType));
     }
 
     @PostMapping("/create")
     public ApiResponse<?> createPromotion(@Valid @RequestBody CreatePromotionRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Promotion added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm đợt khuyến mại thành công!",
                 promotionService.create(request));
     }
 
@@ -50,7 +51,7 @@ public class PromotionController {
     @PutMapping("/update/{id}")
     public ApiResponse<?> updatePromotion(@Min(1) @PathVariable int id,
                                           @Valid @RequestBody UpdatePromotionRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Promotion updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Sửa đợt khuyến mại thành công!",
                 promotionService.update(id, request));
     }
 
@@ -63,7 +64,7 @@ public class PromotionController {
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deletePromotion(@Min(1) @PathVariable int id) {
         promotionService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Promotion deleted successfully.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Xóa đợt khuyến mại thành công!");
     }
 
     @GetMapping("/{id}")

@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
+import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.service.voucher.VoucherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,12 @@ public class VoucherController {
     @GetMapping
     public ApiResponse<?> getVouchers(Pageable pageable,
                                       @RequestParam(required = false) String name,
-                                      @RequestParam(required = false) String status) {
+                                      @RequestParam(required = false) String status,
+                                      @RequestParam(required = false) String discountType) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
-                voucherService.getAllByNameAndStatus(pageable, name, status));
+                voucherService.getAllByNameAndStatus(pageable, name, status, discountType));
     }
+
 
     @GetMapping("/vouchers")
     public ApiResponse<?> getAllVouchers(
@@ -87,15 +90,15 @@ public class VoucherController {
 //        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", vouchers);
 //    }
 
-//    @GetMapping("/findbydate")
-//    public ApiResponse<?> findByDateRange(
-//            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-//            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-//        Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
-//        Timestamp endTimestamp = Timestamp.valueOf(endDate.atStartOfDay());
-//
-//        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp));
-//    }
+    @GetMapping("/findbydate")
+    public ApiResponse<?> findByDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,Pageable pageable) {
+        Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp,pageable));
+    }
 
 
 }

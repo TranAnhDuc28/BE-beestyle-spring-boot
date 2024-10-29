@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.VoucherMapper;
 import com.datn.beestyle.repository.VoucherRepository;
@@ -43,31 +44,39 @@ public class VoucherService
         this.voucherMapper = voucherMapper;
     }
     @Override
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
         Integer statusValue = null;
-        if(status != null) {
+        if (status != null) {
             Status statusEnum = Status.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
+        Integer discountTypeValue = null;
+        if (discountType != null) {
+            DiscountType discountTypeEnum = DiscountType.fromString(discountType.toUpperCase());
+            if (discountTypeEnum != null) discountTypeValue = discountTypeEnum.getValue();
+        }
+        System.out.println("Discount Type Value: " + discountTypeValue);
+
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue);
+        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
 
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
 
         return PageResponse.builder()
-                .pageNo(pageable.getPageNumber() + 1)
+                .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(voucherPage.getTotalElements())
                 .totalPages(voucherPage.getTotalPages())
                 .items(voucherResponseList)
                 .build();
     }
+
 
     @Override
     public List<VoucherResponse> createVoucher(List<CreateVoucherRequest> requestList) {
@@ -82,11 +91,11 @@ public class VoucherService
 //
 //        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
 //    }
-//
-//    public List<VoucherResponse> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate) {
-//        return voucherRepository.findByDateRange(startDate,endDate);
-//
-//    }
+
+    public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate,Pageable pageable) {
+        return voucherRepository.findByDateRange(startDate,endDate,pageable);
+
+    }
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
@@ -105,6 +114,18 @@ public class VoucherService
                 .items(voucherResponseList)
                 .build();
     }
+//    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
+//        if (discountType != null) {
+//            if (discountType.equals("PERCENTAGE")) {
+//                return voucherRepository.findVouchersByDiscountType(DiscountType.PERCENTAGE, pageable);
+//            } else if (discountType.equals("CASH")) {
+//                return voucherRepository.findVouchersByDiscountType(DiscountType.CASH, pageable);
+//            }
+//        }
+//        // Nếu không có discountType, trả về tất cả
+//        return voucherRepository.findAll(pageable);
+//    }
+
 
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
