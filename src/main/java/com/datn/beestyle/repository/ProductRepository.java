@@ -30,13 +30,13 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
     @Query(value = """
             select new com.datn.beestyle.dto.product.ProductResponse(
                 p.id, p.productName, pi.imageUrl, p.gender, b.id, b.brandName, m.id, 
-                m.materialName, p.description, p.category.id, p.category.categoryName, p.status, p.createdAt,
+                m.materialName, p.description, c.id, c.categoryName, p.status, p.createdAt,
                 p.updatedAt, p.createdBy, p.updatedBy)
             from Product p
-                left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
                 left join Category c on p.category.id = c.id
                 left join Brand b on p.brand.id = b.id
                 left join Material m on p.material.id = m.id 
+                left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
             where 
                 (:keyword is null or p.productName like concat('%', :keyword, '%')) and
                 (:categoryId is null or p.category.id = :categoryId) and

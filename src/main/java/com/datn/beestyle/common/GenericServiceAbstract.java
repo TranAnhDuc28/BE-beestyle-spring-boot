@@ -22,7 +22,6 @@ public abstract class GenericServiceAbstract<T, ID, C, U, R> implements IGeneric
     protected final EntityManager entityManager;
 
 
-
     @Override
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;

@@ -40,8 +40,8 @@ public class ProductController {
 
     @PostMapping("/create")
     public ApiResponse<?> createProduct(@Valid @RequestBody CreateProductRequest request) {
-        productService.create(request);
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Product added successfully");
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Product added successfully",
+                productService.create(request));
     }
     @GetMapping("/productVariant")
     public List<Object[]> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
