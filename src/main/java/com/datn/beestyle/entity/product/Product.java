@@ -56,7 +56,7 @@ public class Product extends Auditable<Long> {
     @OneToMany(mappedBy = "product", cascade = {ALL}, fetch = FetchType.LAZY)
     List<ProductImage> productImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = {ALL})
+    @OneToMany(mappedBy = "product", cascade = {ALL}, fetch = FetchType.LAZY)
     List<ProductVariant> productVariants = new ArrayList<>();
 
     public void addProductImage(ProductImage productImage) {
