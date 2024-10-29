@@ -6,6 +6,7 @@ import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
 import com.datn.beestyle.dto.product.UserProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +19,5 @@ public interface IProductService
     PageResponse<List<ProductResponse>> getProductsByFields(Pageable pageable, String keyword,
                                                             String category, String gender, String brandIds,
                                                             String materialIds, String status);
+    List<Object[]> getAllProductsWithDetails(List<Long> productIds);
 }

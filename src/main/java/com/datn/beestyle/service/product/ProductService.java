@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
 import com.datn.beestyle.dto.product.UserProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
@@ -199,5 +200,8 @@ public class ProductService
         return "Product";
     }
 
+    public List<Object[]> getAllProductsWithDetails(List<Long> productIds) {
+        return productRepository.findAllProductsWithDetails(productIds);
+    }
 
 }

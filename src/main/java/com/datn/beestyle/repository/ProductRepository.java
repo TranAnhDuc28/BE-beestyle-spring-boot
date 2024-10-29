@@ -2,6 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
@@ -54,4 +55,32 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
     boolean existsByProductName(String name);
 
     Optional<Product> findByProductName(String name);
+
+    @Query(value = """
+            SELECT 
+                p.id AS productId, 
+                p.productName AS productName, 
+                b.brandName AS brandName, 
+                m.materialName AS materialName, 
+                pv.id AS productVariantId, 
+                pv.sku AS sku, 
+                c.colorName AS colorName, 
+                s.sizeName AS sizeName, 
+                pv.originalPrice AS originalPrice, 
+                pv.quantityInStock AS quantityInStock,
+                pi.imageUrl AS imageUrl
+            FROM Product p
+            LEFT JOIN p.brand b
+            LEFT JOIN p.material m
+            LEFT JOIN p.productVariants pv
+            LEFT JOIN pv.color c
+            LEFT JOIN pv.size s
+            LEFT JOIN p.productImages pi
+            WHERE p.id IN :productIds
+            """)
+    List<Object[]> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
+
+//    List<Product> findAllProductsWithDetails();
+
+
 }

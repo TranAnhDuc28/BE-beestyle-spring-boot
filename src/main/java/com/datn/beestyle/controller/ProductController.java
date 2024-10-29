@@ -2,14 +2,19 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.CreateProductRequest;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
+import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.service.product.IProductService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Validated
 @RestController
@@ -38,5 +43,8 @@ public class ProductController {
         productService.create(request);
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Product added successfully");
     }
-
+    @GetMapping("/productVariant")
+    public List<Object[]> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
+        return productService.getAllProductsWithDetails(productIds);
+    }
 }
