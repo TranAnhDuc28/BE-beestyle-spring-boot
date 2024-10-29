@@ -11,8 +11,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
 
@@ -55,6 +53,5 @@ public class ProductVariant extends Auditable<Long> {
     int status;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
-    @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
 }

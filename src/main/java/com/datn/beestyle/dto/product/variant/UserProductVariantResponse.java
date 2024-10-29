@@ -13,13 +13,13 @@ import java.math.BigDecimal;
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProductVariantResponse {
-
     Long id;
     String sku;
     String productName;
-    UserColorResponse userColorResponse;
-    UserSizeResponse userSizeResponse;
+    Integer colorId;
+    String colorName;
+    Integer sizeId;
+    Integer sizeName;
     BigDecimal salePrice;
     Integer quantityInStock;
-
 }

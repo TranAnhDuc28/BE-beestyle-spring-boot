@@ -20,4 +20,6 @@ public interface ColorRepository extends IGenericRepository<Color, Integer> {
     Page<Color> findByNameContainingAndStatus(Pageable pageable,
                                                @Param("name") String name,
                                                @Param("status") Integer status);
+
+
 }
