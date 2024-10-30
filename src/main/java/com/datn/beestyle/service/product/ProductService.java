@@ -4,15 +4,18 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
 import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
+import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.entity.product.ProductImage;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.product.attributes.Color;
+import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
@@ -34,10 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -177,6 +177,7 @@ public class ProductService
     protected List<UpdateProductRequest> beforeUpdateEntities(List<UpdateProductRequest> requests) {
         return null;
     }
+
 
 
     @Override

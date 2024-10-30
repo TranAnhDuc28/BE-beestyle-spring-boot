@@ -11,6 +11,7 @@ import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IProductService
         extends IGenericService<Product, Long, CreateProductRequest, UpdateProductRequest, ProductResponse> {
@@ -19,5 +20,5 @@ public interface IProductService
     PageResponse<List<ProductResponse>> getProductsByFields(Pageable pageable, String keyword,
                                                             String category, String gender, String brandIds,
                                                             String materialIds, String status);
-    List<Object[]> getAllProductsWithDetails(List<Long> productIds);
+
 }
