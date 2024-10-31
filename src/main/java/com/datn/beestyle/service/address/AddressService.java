@@ -116,7 +116,8 @@ implements IAddressService{
 
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+                Sort.by(Sort.Direction.DESC, "isDefault")
+                        .and(Sort.by(Sort.Direction.DESC, "createdAt", "id")));
 
         Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest,customerId);
         List<AddressResponse> addressResponseList = mapper.toEntityDtoList(addressPage.getContent());
