@@ -11,6 +11,8 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper extends IGenericMapper<Address, CreateAddressRequest, UpdateAddressRequest, AddressResponse> {
+
+
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -22,4 +24,10 @@ public interface AddressMapper extends IGenericMapper<Address, CreateAddressRequ
     @Mapping(target = "createdAt", ignore = true)
     @Override
     void toUpdateEntity(@MappingTarget Address entity, UpdateAddressRequest request);
+
+//    // Phương thức kiểm tra và thiết lập giá trị isDefault
+//    default boolean checkAndSetDefault(CreateAddressRequest request) {
+//        boolean existsDefaultAddress = addressRepository.existsByIsDefaultTrue();
+//        return !existsDefaultAddress; // Nếu chưa có bản ghi nào có isDefault = true, trả về true
+//    }
 }
