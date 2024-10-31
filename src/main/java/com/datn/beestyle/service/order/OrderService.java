@@ -51,7 +51,7 @@ public class OrderService
     }
 
     public PageResponse<List<OrderResponse>> getOrdersDTO(
-            Pageable pageable, String search, String status
+            Pageable pageable, String q, String status
     ) {
 
         Map<Long, String> customerNames;
@@ -67,7 +67,7 @@ public class OrderService
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by("id").descending());
 
-        Page<Order> orderPages = this.orderRepository.findAllByKeywordAndStatus(search, status, pageRequest);
+        Page<Order> orderPages = this.orderRepository.findAllByKeywordAndStatus(q, status, pageRequest);
 
         List<Long> ids = orderPages.get().map(order ->
                 order.getCustomer() != null ? order.getCustomer().getId() : null).distinct().toList();
@@ -137,7 +137,6 @@ public class OrderService
             o.setStatus(o.getStatus());
             o.setVoucher(o.getVoucher());
             o.setShippingAddress(o.getShippingAddress());
-            o.setUpdateBy(null);
             o.setPaymentDate(
                     Timestamp.valueOf(LocalDateTime.now())
             );

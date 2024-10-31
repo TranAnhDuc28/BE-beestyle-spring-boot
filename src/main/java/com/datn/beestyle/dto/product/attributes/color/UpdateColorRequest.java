@@ -15,6 +15,8 @@ public class UpdateColorRequest {
 
     Integer id;
 
+    String colorCode;
+
     @NotBlank(message = "Vui lòng nhập tên màu sắc")
     String colorName;
 

@@ -21,7 +21,7 @@ public class CreatePromotionRequest {
     String promotionName;
 
     @NotNull(message = "Discount type cannot be null")
-    DiscountType discountType;
+    Integer discountType;
 
     @NotNull(message = "Discount value cannot be null")
     Integer discountValue;
@@ -34,6 +34,7 @@ public class CreatePromotionRequest {
 
     @NotBlank(message = "Description name cannot be blank")
     String description;
+
     @NotNull(message = "CreatedBy cannot be blank")
     Integer createdBy;
 

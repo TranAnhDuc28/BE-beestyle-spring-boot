@@ -1,7 +1,6 @@
-package com.datn.beestyle.dto.product.attributes.size;
+package com.datn.beestyle.dto.material;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
@@ -11,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SizeResponse extends UserSizeResponse{
+public class MaterialResponse extends UserMaterialResponse{
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

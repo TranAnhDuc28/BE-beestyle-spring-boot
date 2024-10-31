@@ -22,7 +22,7 @@ public enum OrderChannel {
     }
 
     @Nullable
-    public static OrderChannel resolve(int value) {
+    public static OrderChannel resolve(Integer value) {
         for (OrderChannel orderChannel : OrderChannel.values()) {
             if (orderChannel.value == value) {
                 return orderChannel;

@@ -23,13 +23,12 @@ public class CustomerResponse {
     String fullName;
     LocalDate dateOfBirth;
     String password;
-    Gender gender;
+    String gender;
     String phoneNumber;
     String email;
-    short status;
+    Integer status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-
 //    ShoppingCart shoppingCart;
     Set<Address> addresses;
 }

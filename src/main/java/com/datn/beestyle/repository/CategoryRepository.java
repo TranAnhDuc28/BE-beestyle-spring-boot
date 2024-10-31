@@ -70,7 +70,7 @@ public interface CategoryRepository extends IGenericRepository<Category, Integer
                     FROM category c
                     INNER JOIN CategoryHierarchy ch ON ch.parent_category_id = c.id
                 )
-                SELECT count(*) > 0 FROM CategoryHierarchy where id = :parentCategoryId;
+                SELECT count(*) > 0 FROM CategoryHierarchy WHERE id = :parentCategoryId
             """, nativeQuery = true)
     Long isParentChildLoop(@Param("updateCategoryId") Integer updateCategoryId,
                               @Param("parentCategoryId") Integer parentCategoryId);

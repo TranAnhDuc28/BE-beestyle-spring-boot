@@ -55,12 +55,9 @@ public class ProductVariant extends Auditable<Long> {
     int quantityInStock;
 
     @Column(name = "status")
-    short status;
+    int status;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
-
-    @OneToMany(mappedBy = "productVariant", cascade = {PERSIST, MERGE, REMOVE}, fetch = FetchType.EAGER)
-    List<ProductImage> productImages = new ArrayList<>();
 }

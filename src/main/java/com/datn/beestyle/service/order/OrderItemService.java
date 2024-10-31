@@ -8,10 +8,13 @@ import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.CreateOrderItemRequest;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
 import com.datn.beestyle.dto.order.item.UpdateOrderItemRequest;
+import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
+import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.OrderItemMapper;
+import com.datn.beestyle.mapper.ProductMapper;
 import com.datn.beestyle.repository.OrderItemRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -32,38 +35,28 @@ public class OrderItemService extends GenericServiceAbstract<OrderItem, Long, Cr
         implements IOrderItemService {
     private final OrderItemRepository orderItemRepository;
     private final OrderItemMapper orderItemMapper;
+    private final ProductMapper productMapper;
 
     public OrderItemService(IGenericRepository<OrderItem, Long> entityRepository,
                             IGenericMapper<OrderItem, CreateOrderItemRequest, UpdateOrderItemRequest,
                                     OrderItemResponse> mapper, EntityManager entityManager,
-                            OrderItemRepository orderItemRepository, OrderItemMapper orderItemMapper) {
+                            OrderItemRepository orderItemRepository, OrderItemMapper orderItemMapper, ProductMapper productMapper) {
         super(entityRepository, mapper, entityManager);
         this.orderItemRepository = orderItemRepository;
         this.orderItemMapper = orderItemMapper;
+        this.productMapper = productMapper;
     }
 
     public PageResponse<List<OrderItemResponse>> getOrderItemsDTO(
-            Pageable pageable, String search, Long id
+            Pageable pageable,
+            Long id
     ) {
-        Map<Long, String> productNames;
         List<OrderItemResponse> orderItemResponses;
 
         int page = pageable.getPageNumber() > 0 ? pageable.getPageNumber() - 1 : 0;
-        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(), Sort.by("id").descending());
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(), Sort.by("id").ascending());
 
-        Page<OrderItem> orderItemPage = this.orderItemRepository.findAllByKeywordAndId(id, pageRequest);
-
-        List<Long> ids = orderItemPage.stream()
-                .map(orderItem -> orderItem.getProductVariant() != null ? orderItem.getProductVariant().getId() : null)
-                .distinct()
-                .toList();
-
-        if (ids.isEmpty()) {
-            productNames = null;
-        } else {
-            productNames = this.orderItemRepository.findOrderItemByProduct(ids).stream()
-                    .collect(Collectors.toMap(object -> (Long) object[0], object -> (String) object[1]));
-        }
+        Page<OrderItem> orderItemPage = this.orderItemRepository.findAllById(id, pageRequest);
 
         orderItemResponses = orderItemPage.stream().map(item -> {
             OrderItemResponse orderItemResponse = orderItemMapper.toEntityDto(item);
@@ -73,6 +66,19 @@ public class OrderItemService extends GenericServiceAbstract<OrderItem, Long, Cr
                 orderItemResponse.setProductVariant(item.getProductVariant());
             } else {
                 orderItemResponse.setProductVariant(null);
+            }
+
+            if (item.getProductVariant().getProduct() != null) {
+                Long ids = item.getProductVariant().getProduct().getId();
+                List<Product> products = this.orderItemRepository.findProductById(ids);
+                UserProductResponse productResponse = new UserProductResponse();
+                for (Product product : products) {
+                    productResponse =
+                            this.productMapper.toEntityDto(product);
+                }
+                orderItemResponse.setProductResponse(productResponse);
+            } else {
+                orderItemResponse.setProductResponse(null);
             }
             return orderItemResponse;
         }).toList();

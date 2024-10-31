@@ -4,39 +4,39 @@ import lombok.Getter;
 import org.springframework.lang.Nullable;
 
 @Getter
-public enum Gender {
+public enum GenderProduct {
     MALE(0),
     FEMALE(1),
-    OTHER(2);
+    UNISEX(2);
 
     private final int value;
 
-    Gender(int value) {
+    GenderProduct(int value) {
         this.value = value;
     }
 
-    public static Gender valueOf(int value) {
-        Gender gender = resolve(value);
-        if (gender == null) {
+    public static GenderProduct valueOf(int value) {
+        GenderProduct genderProduct = resolve(value);
+        if (genderProduct == null) {
             throw new IllegalArgumentException("No matching constant for [" + value + "]");
         }
-        return gender;
+        return genderProduct;
     }
 
     @Nullable
-    public static Gender resolve(int value) {
-        for (Gender gender : Gender.values()) {
-            if (gender.value == value) {
-                return gender;
+    public static GenderProduct resolve(int value) {
+        for (GenderProduct genderProduct : GenderProduct.values()) {
+            if (genderProduct.value == value) {
+                return genderProduct;
             }
         }
         return null;
     }
 
     @Nullable
-    public static Gender fromString(String status) {
+    public static GenderProduct fromString(String status) {
         try {
-            return Gender.valueOf(status.toUpperCase());
+            return GenderProduct.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }
@@ -46,8 +46,8 @@ public enum Gender {
     public static String fromInteger(Integer value) {
         if (value == null) return null;
         try {
-            Gender gender = Gender.resolve(value);
-            return gender != null ? gender.name() : null;
+            GenderProduct genderProduct = GenderProduct.resolve(value);
+            return genderProduct != null ? genderProduct.name() : null;
         } catch (IllegalArgumentException | NullPointerException e) {
             return null;
         }

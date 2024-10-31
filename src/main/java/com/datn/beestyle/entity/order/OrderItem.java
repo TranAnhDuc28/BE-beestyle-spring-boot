@@ -1,11 +1,7 @@
 package com.datn.beestyle.entity.order;
 
-import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -38,11 +34,12 @@ public class OrderItem {
     @Column(name = "note")
     String note;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_variant_id", referencedColumnName = "id")
     ProductVariant productVariant;
 }

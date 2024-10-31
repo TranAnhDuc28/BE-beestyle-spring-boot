@@ -7,8 +7,7 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
-import com.datn.beestyle.enums.Status;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +15,10 @@ import lombok.experimental.FieldDefaults;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.CascadeType.ALL;
 
 @Table(name = "`order`")
 @Entity
@@ -85,4 +88,8 @@ public class Order extends Auditable<Long> {
         this.setCreatedAt(LocalDateTime.now());
         this.setCreatedBy(createdBy);
     }
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "order", cascade = ALL, fetch = FetchType.LAZY)
+    List<OrderItem> orderItems = new ArrayList<>();
 }

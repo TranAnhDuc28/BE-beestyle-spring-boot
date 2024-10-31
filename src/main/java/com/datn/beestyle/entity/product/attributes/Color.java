@@ -16,9 +16,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Color extends BaseEntity<Integer> {
 
+    @Column(name = "color_code")
+    String colorCode;
+
     @Column(name = "color_name")
     String colorName;
 
     @Column(name = "status")
-    short status;
+    int status;
 }

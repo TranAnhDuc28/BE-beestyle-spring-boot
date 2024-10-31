@@ -35,9 +35,9 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
 
     @Query(
             value = """
-                    SELECT o FROM Order o 
-                    WHERE :keyword IS NULL OR  o.customer.fullName LIKE CONCAT('%', :keyword, '%') OR 
-                            o.customer.phoneNumber LIKE CONCAT('%', :keyword, '%') AND 
+                    SELECT o FROM Order o \s
+                    WHERE :keyword IS NULL OR  o.customer.fullName LIKE CONCAT('%', :keyword, '%') OR \s
+                            o.customer.phoneNumber LIKE CONCAT('%', :keyword, '%') AND \s
                         (:status IS NULL OR o.status = :status)
                     """
     )
@@ -46,6 +46,7 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
             @Param("status") String status,
             Pageable pageable
     );
+
 
     @Query(
             value = """

@@ -2,6 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.entity.order.OrderItem;
+import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -18,17 +19,20 @@ public interface OrderItemRepository extends IGenericRepository<OrderItem, Long>
                     WHERE oi.order.id = :id
                     """
     )
-    Page<OrderItem> findAllByKeywordAndId(
+    Page<OrderItem> findAllById(
             @Param("id") Long id,
             Pageable pageable
     );
 
     @Query(
             value = """
-                    SELECT oi.id, oi.order.phoneNumber FROM OrderItem oi WHERE oi.id IN (:ids)
+                    SELECT p FROM Product p
+                    WHERE p.id = :id
                     """
     )
-    List<Object[]> findOrderItemByProduct(@Param("ids") Iterable<Long> ids);
+    List<Product> findProductById(
+            @Param("id") Long id
+    );
 
     @Query(
             value = """

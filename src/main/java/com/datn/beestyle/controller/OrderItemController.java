@@ -22,11 +22,10 @@ public class OrderItemController {
     @GetMapping
     public ApiResponse<?> getOrderItems(
             Pageable pageable,
-            @RequestParam(name = "q", required = false) String search,
             @RequestParam(name = "id", required = false) Long id
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "OrderItem",
-                this.orderItemService.getOrderItemsDTO(pageable, search, id)
+                this.orderItemService.getOrderItemsDTO(pageable, id)
         );
     }
 }

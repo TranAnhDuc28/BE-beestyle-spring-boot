@@ -1,17 +1,15 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
-import com.datn.beestyle.dto.product.attributes.material.CreateMaterialRequest;
-import com.datn.beestyle.dto.product.attributes.material.MaterialResponse;
-import com.datn.beestyle.dto.product.attributes.material.UpdateMaterialRequest;
+import com.datn.beestyle.dto.material.CreateMaterialRequest;
+import com.datn.beestyle.dto.material.MaterialResponse;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialRequest, UpdateMaterialRequest, MaterialResponse> {

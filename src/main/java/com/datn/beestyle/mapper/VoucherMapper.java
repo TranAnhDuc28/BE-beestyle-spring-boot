@@ -15,6 +15,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse> {
+
     // Mapping khi tạo mới Voucher từ CreateVoucherRequest
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
@@ -42,10 +43,6 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     // Mapping từ Voucher sang VoucherResponse
     @Override
     VoucherResponse toEntityDto(Voucher entity);
-
-    // Mapping danh sách Voucher sang VoucherResponse
-    @Override
-    List<VoucherResponse> toEntityDtoList(List<Voucher> entityList);
 
     // Mapping status từ entity sang response (ví dụ: từ status ID sang status Name)
     @Named("statusId")

@@ -14,19 +14,11 @@ import java.time.LocalDate;
 public class StaffResponse {
     Long id;
     String fullName;
-
     LocalDate dateOfBirth;
-
-    Gender gender;
-
+    String gender;
     String phoneNumber;
-
     String email;
-
     String avatar;
-
     String address;
-
-    short status;
-
+    String status;
 }
