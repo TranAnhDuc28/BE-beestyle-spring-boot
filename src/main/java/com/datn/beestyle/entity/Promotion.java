@@ -2,6 +2,7 @@ package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -48,4 +49,11 @@ public class Promotion extends Auditable<Integer> {
     @OneToMany(mappedBy = "promotion", cascade = {PERSIST, MERGE}, fetch = FetchType.LAZY)
     List<ProductVariant> productVariants = new ArrayList<>();
 
+//    public Status getStatus() {
+//        return Status.resolve(this.status);
+//    }
+//
+//    public void setStatus(Status status) {
+//        this.status = (status != null) ? status.getValue() : Status.INACTIVE.getValue();
+//    }
 }
