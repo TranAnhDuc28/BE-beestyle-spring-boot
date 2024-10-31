@@ -3,10 +3,7 @@ package com.datn.beestyle.dto.customer;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
@@ -17,6 +14,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerResponse {
     Integer id;
@@ -26,9 +25,9 @@ public class CustomerResponse {
     String gender;
     String phoneNumber;
     String email;
-    Integer status;
+    String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-//    ShoppingCart shoppingCart;
+    //    ShoppingCart shoppingCart;
     Set<Address> addresses;
 }

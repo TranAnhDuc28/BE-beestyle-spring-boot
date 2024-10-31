@@ -3,26 +3,21 @@ package com.datn.beestyle.dto.voucher;
 import com.datn.beestyle.enums.DiscountType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VoucherResponse {
-    Long id;
-    String voucherName;
-    String voucherCode;
-    String discountType;
-    Integer discountValue;
-    Integer maxDiscount;
-    BigDecimal minOrderValue;
-    Timestamp startDate;
-    Timestamp endDate;
-    Integer usageLimit;
-    Integer usagePerUser;
-    Integer status;
+@NoArgsConstructor
+public class VoucherResponse extends UserVoucherResponse{
+
+    String status;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+
+
 }

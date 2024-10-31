@@ -5,6 +5,8 @@ import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
 import com.datn.beestyle.entity.Promotion;
+import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +17,7 @@ import org.mapstruct.Named;
 public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
-    @Mapping(target = "discountType", ignore = true)
+    @Mapping(target = "discountType", source = ".", qualifiedByName = "discountTypeName")
     @Override
     PromotionResponse toEntityDto(Promotion entity);
 
@@ -23,6 +25,7 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "discountType", source = "discountType", qualifiedByName = "discountTypeId")
     @Override
     Promotion toCreateEntity(CreatePromotionRequest request);
 
@@ -30,6 +33,7 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "discountType", source = "discountType", qualifiedByName = "discountTypeId")
     @Override
     void toUpdateEntity(@MappingTarget Promotion entity, UpdatePromotionRequest request);
 
@@ -40,6 +44,18 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
 
     @Named("statusName")
     default String statusName(Promotion promotion) {
-        return Status.valueOf(promotion.getStatus()).name();
+        Status status = Status.resolve(promotion.getStatus());
+        return status != null ? status.name() : null;
+    }
+
+    @Named("discountTypeName")
+    default String discountTypeName(Promotion promotion) {
+        DiscountType discountType = DiscountType.resolve(promotion.getDiscountType());
+        return discountType != null ? discountType.name() : null;
+    }
+    @Named("discountTypeId")
+    default Integer discountTypeId(String discountType) {
+        DiscountType type = DiscountType.fromString(discountType);
+        return type != null ? type.getValue() : null;
     }
 }

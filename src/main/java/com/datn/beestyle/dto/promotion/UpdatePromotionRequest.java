@@ -37,9 +37,6 @@ public class UpdatePromotionRequest {
     @NotNull(message = "End date cannot be null")
     Timestamp endDate;
 
-    @NotNull(message = "Updated by cannot be null")
-    Integer updatedBy;
-
     String description;
     @EnumValue(name = "Status", enumClass = Status.class)
     String status;

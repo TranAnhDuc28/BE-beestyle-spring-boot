@@ -1,10 +1,8 @@
 package com.datn.beestyle.dto.product;
 
+import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
 import com.datn.beestyle.entity.product.ProductImage;
-import com.datn.beestyle.entity.product.ProductVariant;
-import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.GenderProduct;
-import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,11 +31,8 @@ public class CreateProductRequest {
     Integer categoryId;
     String description;
 
-    @EnumValue(enumClass = Status.class, name = "Status", message = "Invalid value for Status")
-    String status;
-
     List<ProductImage> productImages = new ArrayList<>();
 
-    List<ProductVariant> productVariants = new ArrayList<>();
+    List<CreateProductVariantRequest> productVariants = new ArrayList<>();
 
 }

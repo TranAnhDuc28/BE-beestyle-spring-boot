@@ -32,10 +32,9 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
 
 
     @Mapping(target = "gender", source = ".", qualifiedByName = "genderProductIdCreate")
-    @Mapping(target = "material", ignore = true)
-    @Mapping(target = "category", ignore = true)
-    @Mapping(target = "brand", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "productImages", ignore = true)
+    @Mapping(target = "productVariants", ignore = true)
     @Mapping(target = "status", constant = "1")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -44,12 +43,11 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
     @Override
     Product toCreateEntity(CreateProductRequest request);
 
-    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "gender", source = ".", qualifiedByName = "genderProductIdUpdate")
+    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "material", ignore = true)
-    @Mapping(target = "category", ignore = true)
-    @Mapping(target = "brand", ignore = true)
+    @Mapping(target = "productImages", ignore = true)
+    @Mapping(target = "productVariants", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

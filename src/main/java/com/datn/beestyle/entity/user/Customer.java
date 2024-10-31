@@ -2,10 +2,8 @@ package com.datn.beestyle.entity.user;
 
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.BaseEntity;
-import com.datn.beestyle.entity.author.Role;
-import com.datn.beestyle.entity.cart.ShoppingCart;
-import com.datn.beestyle.enums.Gender;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +21,7 @@ import static jakarta.persistence.CascadeType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Customer extends BaseEntity<Long> {
 
     @Column(name = "full_name")

@@ -33,7 +33,6 @@ public interface CategoryMapper
     Category toCreateEntity(CreateCategoryRequest request);
 
     @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
-    @Mapping(target = "parentCategory", ignore = true)
     @Mapping(target = "level", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
