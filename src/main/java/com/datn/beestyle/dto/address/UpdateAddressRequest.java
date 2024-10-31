@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateAddressRequest {
+    Long id;
     String addressName;
 
     String city;
@@ -19,6 +20,4 @@ public class UpdateAddressRequest {
     String commune;
 
     boolean isDefault;
-
-    Customer customer;
 }
