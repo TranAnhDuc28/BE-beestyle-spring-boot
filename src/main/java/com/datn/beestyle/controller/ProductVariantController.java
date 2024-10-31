@@ -29,5 +29,5 @@ public class ProductVariantController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants",
                 productVariantService.getProductsByFieldsByProductId(pageable, productId, keyword, color, size, status));
     }
-}
+}   
 
