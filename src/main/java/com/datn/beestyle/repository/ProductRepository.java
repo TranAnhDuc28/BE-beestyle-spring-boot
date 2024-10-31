@@ -2,6 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
@@ -54,4 +55,5 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
     boolean existsByProductName(String name);
 
     Optional<Product> findByProductName(String name);
+
 }

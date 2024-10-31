@@ -1,6 +1,8 @@
 package com.datn.beestyle.util;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -29,6 +31,24 @@ public class AppUtils {
 
         // Chuyển đổi thành chữ thường
         return slug.toLowerCase(Locale.ENGLISH);
+    }
+
+    public static List<Integer> handleStringIdsToIntegerIdList(String StringIds) {
+        List<Integer> integerIdList = null;
+        String[] colorIdsStr = StringIds != null ? StringIds.split(",") : null;
+        if (colorIdsStr != null) {
+            integerIdList = new ArrayList<>();
+            for (String strId : colorIdsStr) {
+                int id;
+                try {
+                    id = Integer.parseInt(strId);
+                } catch (Exception e) {
+                    continue;
+                }
+                integerIdList.add(id);
+            }
+        }
+        return integerIdList;
     }
 
 

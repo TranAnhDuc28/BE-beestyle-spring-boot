@@ -2,6 +2,7 @@ package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -53,4 +54,12 @@ public class Voucher extends Auditable<Long> {
 
     @Column(name = "status")
     int status;
+
+//    public Status getStatus() {
+//        return Status.resolve(this.status);
+//    }
+//
+//    public void setStatus(Status status) {
+//        this.status = (status != null) ? status.getValue() : Status.INACTIVE.getValue();
+//    }
 }

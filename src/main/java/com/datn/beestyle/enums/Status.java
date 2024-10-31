@@ -1,8 +1,9 @@
 package com.datn.beestyle.enums;
 
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.lang.Nullable;
-
+@Log4j2
 @Getter
 public enum Status {
 
@@ -16,7 +17,8 @@ public enum Status {
     public static Status valueOf(int value) {
         Status status = resolve(value);
         if (status == null) {
-            throw new IllegalArgumentException("No matching constant for [" + value + "]");
+            log.error("No matching constant for [" + value + "]");
+            return null;
         }
         return status;
     }
@@ -50,4 +52,6 @@ public enum Status {
             return null;
         }
     }
+
+
 }
