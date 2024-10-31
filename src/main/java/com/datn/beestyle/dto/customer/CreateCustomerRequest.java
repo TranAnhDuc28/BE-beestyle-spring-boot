@@ -33,7 +33,6 @@ public class CreateCustomerRequest {
 
     String email;
 
-    @NotBlank(message = "Khong duoc de trong")
     String password;
 
 //    ShoppingCart shoppingCart;

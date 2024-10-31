@@ -12,6 +12,7 @@ import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -81,9 +84,31 @@ public class ProductVariantService
 
     @Override
     protected List<UpdateProductVariantRequest> beforeUpdateEntities(List<UpdateProductVariantRequest> requests) {
-        return null;
-    }
+        List<UpdateProductVariantRequest> validRequests = requests.stream()
+                .filter(dto -> dto.getId() != null)
+                .toList();
+        if (validRequests.isEmpty()) return Collections.emptyList();
 
+        List<Long> ids = validRequests.stream()
+                .map(dto -> dto.getId().longValue())
+                .toList();
+
+        // Lấy các ID đã tồn tại từ repository
+        List<Long> existingIds = productVariantRepository.findAllById(ids).stream()
+                .map(ProductVariant::getId)
+                .toList();
+
+        if (existingIds.isEmpty()) return Collections.emptyList();
+
+        return validRequests.stream()
+                .filter(dto -> existingIds.contains(dto.getId()))
+                .toList();
+    }
+    @Override
+    @Transactional
+    public void updateProductVariant(Integer promotionId, List<Integer> ids) {
+        productVariantRepository.updatePromotionForVariants(promotionId, ids);
+    }
     @Override
     protected void beforeCreate(CreateProductVariantRequest request) {
 
@@ -108,6 +133,9 @@ public class ProductVariantService
     protected String getEntityName() {
         return "Product variant";
     }
-
+    @Override
+    public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
+        return productVariantRepository.findAllProductsWithDetails(productIds);
+    }
 
 }

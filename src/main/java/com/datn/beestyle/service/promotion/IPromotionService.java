@@ -11,6 +11,6 @@ import org.springframework.data.domain.Pageable;
 public interface IPromotionService
         extends IGenericService<Promotion, Integer, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
     PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType);
-//    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status);
+
 
 }

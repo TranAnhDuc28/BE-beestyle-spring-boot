@@ -9,6 +9,7 @@ import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IProductVariantService
         extends IGenericService<ProductVariant, Long, CreateProductVariantRequest, UpdateProductVariantRequest, ProductVariantResponse> {
@@ -16,4 +17,6 @@ public interface IProductVariantService
     PageResponse<List<ProductVariantResponse>> getProductsByFieldsByProductId(Pageable pageable, String productIdStr,
                                                                               String keyword, String colorIds,
                                                                               String sizeIds, String status);
+    Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
+    void updateProductVariant(Integer promotionId, List<Integer> ids);
 }

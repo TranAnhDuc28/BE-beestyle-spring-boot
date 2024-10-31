@@ -12,10 +12,13 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+
+
 @Mapper(componentModel = "spring")
 public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
     @Mapping(target = "gender", source = ".", qualifiedByName = "genderName")
+    @Mapping(target = "addresses",source = "addresses")
     @Override
     CustomerResponse toEntityDto(Customer entity);
 
@@ -23,6 +26,7 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status",constant = "1")
+    @Mapping(target = "addresses",source = "addresses")
     @Override
     Customer toCreateEntity(CreateCustomerRequest request);
 
