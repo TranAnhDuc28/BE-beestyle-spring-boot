@@ -1,15 +1,13 @@
 package com.datn.beestyle.controller;
 
-
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
-import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
-import com.datn.beestyle.service.product.IProductService;
-import com.datn.beestyle.service.product.variant.IProductVariantService;
+import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,32 +18,44 @@ import java.util.Optional;
 
 @Validated
 @RestController
-@RequestMapping("/admin/productVariant")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
-@Tag(name = "ProductVariant Controller")
+@Tag(name = "Product Variant Controller")
 public class ProductVariantController {
 
-    private final IProductVariantService iProductVariantService;
-    @GetMapping
+    private final ProductVariantService productVariantService;
+
+    @GetMapping("/product/{productId}/variant")
+    public ApiResponse<?> getProductVariantsByProductId(Pageable pageable,
+                                                        @PathVariable("productId") String productId,
+                                                        @RequestParam(required = false) String keyword,
+                                                        @RequestParam(required = false) String color,
+                                                        @RequestParam(required = false) String size,
+                                                        @RequestParam(name = "status",required = false) String status
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Product variants",
+                productVariantService.getProductsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+    }
+    @GetMapping("/productVariant")
     public Optional<Object[]> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
-        return iProductVariantService.getAllProductsWithDetails(productIds);
+        return productVariantService.getAllProductsWithDetails(productIds);
     }
-    @PutMapping("/update/{id}")
+    @PutMapping("/productVariant/update/{id}")
     public ApiResponse<?> updateProducrVariant(@Min(1) @PathVariable long id,
-                                          @Valid @RequestBody UpdateProductVariantRequest request) {
+                                               @Valid @RequestBody UpdateProductVariantRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Sửa chi tiets sp thành công!",
-                iProductVariantService.update(id, request));
+                productVariantService.update(id, request));
     }
-//    @PatchMapping("/updates")
+    //    @PatchMapping("/updates")
 //    public ApiResponse<?> updateProductVariant(@RequestBody List<@Valid UpdateProductVariantRequest> requestList) {
 //        iProductVariantService.updateEntities(requestList);
 //        return new ApiResponse<>(HttpStatus.CREATED.value(), "ProductVariant cập nhật thành công");
 //    }
-    @PutMapping("/updates")
+    @PutMapping("/productVariant/updates")
     public ResponseEntity<ApiResponse<String>> updateProductVariant(@Valid @RequestBody UpdateProductVariantRequest request) {
         System.out.println(request);
-        iProductVariantService.updateProductVariant(request.getPromotionId(), request.getVariantIds());
+        productVariantService.updateProductVariant(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!", null));
     }
-
 }
+

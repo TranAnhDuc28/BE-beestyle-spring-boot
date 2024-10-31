@@ -28,6 +28,7 @@ import com.datn.beestyle.repository.SizeRepository;
 import com.datn.beestyle.service.category.ICategoryService;
 import com.datn.beestyle.service.brand.IBrandService;
 import com.datn.beestyle.service.material.IMaterialService;
+import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -106,46 +107,19 @@ public class ProductService
             }
         }
 
-        Integer statusValue = null;
-        if (status != null) {
-            Status statusEnum = Status.fromString(status);
-            if (statusEnum != null) statusValue = statusEnum.getValue();
-        }
-
         Integer genderProductValue = null;
         if (genderProduct != null) {
             GenderProduct genderProductEnum = GenderProduct.fromString(genderProduct);
             if (genderProductEnum != null) genderProductValue = genderProductEnum.getValue();
         }
 
-        List<Integer> brandIdList = null;
-        String[] brandIdsStr = brandIds != null ? brandIds.split(",") : null;
-        if (brandIdsStr != null) {
-            brandIdList = new ArrayList<>();
-            for (String strId : brandIdsStr) {
-                int id;
-                try {
-                    id = Integer.parseInt(strId);
-                } catch (Exception e) {
-                    continue;
-                }
-                brandIdList.add(id);
-            }
-        }
+        List<Integer> brandIdList = AppUtils.handleStringIdsToIntegerIdList(brandIds);
+        List<Integer> materialIdList = AppUtils.handleStringIdsToIntegerIdList(materialIds);
 
-        List<Integer> materialIdList = null;
-        String[] materialIdsStr = materialIds != null ? materialIds.split(",") : null;
-        if (materialIdsStr != null) {
-            materialIdList = new ArrayList<>();
-            for (String strId : materialIdsStr) {
-                int id;
-                try {
-                    id = Integer.parseInt(strId);
-                } catch (Exception e) {
-                    continue;
-                }
-                materialIdList.add(id);
-            }
+        Integer statusValue = null;
+        if (status != null) {
+            Status statusEnum = Status.fromString(status);
+            if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
         Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId,
