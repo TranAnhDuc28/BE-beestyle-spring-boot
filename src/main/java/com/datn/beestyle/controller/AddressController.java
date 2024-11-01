@@ -37,13 +37,12 @@ public class AddressController {
     }
     @PutMapping("/{id}")
     public ApiResponse<?> setIsDefault(@PathVariable("id") Long id, @RequestBody UpdateAddressRequest request) {
-        addressService.beforeUpdateIsDefault(id,request);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Address updated to isDefault successfully", addressService.update(id,request));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Address updated to isDefault successfully",
+                addressService.setUpdateIsDefault(id,request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateAddress(@Min(1) @PathVariable Long id,
                                       @Valid @RequestBody UpdateAddressRequest request) {
-
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Address updated successfully",
                 addressService.update(id, request));
     }
