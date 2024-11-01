@@ -8,11 +8,13 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateProductVariantRequest {
+    Integer id;
     String sku;
     Integer productId;
     Integer colorId;
@@ -23,4 +25,8 @@ public class UpdateProductVariantRequest {
 
     @EnumValue(enumClass = Status.class, name = "Status", message = "Invalid value for Status")
     String status;
+
+    private Integer promotionId;
+    private List<Integer> variantIds;
+
 }
