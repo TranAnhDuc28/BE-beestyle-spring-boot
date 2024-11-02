@@ -21,7 +21,7 @@ public class StatusUpdateScheduler {
         this.voucherRepository = voucherRepository;
     }
 
-    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());

@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.product.attributes.color.CreateColorRequest;
 import com.datn.beestyle.dto.product.attributes.color.UpdateColorRequest;
 import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.ColorRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,12 @@ public class ColorService
                 .items(materialResponseList)
                 .build();
     }
+
+    @Override
+    public List<ColorResponse> getAllByStatusIsActive() {
+        return colorRepository.findAllByStatusIsActive();
+    }
+
     @Override
     protected List<CreateColorRequest> beforeCreateEntities(List<CreateColorRequest> requests) {
         return requests;
@@ -81,7 +88,10 @@ public class ColorService
 
     @Override
     protected void beforeCreate(CreateColorRequest request) {
-
+        String colorName = request.getColorName().trim();
+        if (colorRepository.existsByColorName(colorName))
+            throw new InvalidDataException("Tên màu sắc đã tồn tại.");
+        request.setColorName(colorName);
     }
 
     @Override

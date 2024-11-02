@@ -140,7 +140,7 @@ public class CategoryService
         // Kiểm tra tên danh mục đã tồn tại chưa
         String categoryName = request.getCategoryName().trim();
         if (categoryRepository.existsByCategoryName(categoryName))
-            throw new InvalidDataException("Category name already exists");
+            throw new InvalidDataException("Tên danh mục đã tồn tại.");
         request.setCategoryName(categoryName);
 
         // Xử lý slug: nếu không nhập tự sinh từ tên danh mục
@@ -152,7 +152,7 @@ public class CategoryService
             slug = AppUtils.toSlug(categoryName);
             request.setSlug(slug);
         }
-        if (categoryRepository.existsBySlug(slug)) throw new InvalidDataException("Category slug already exists");
+        if (categoryRepository.existsBySlug(slug)) throw new InvalidDataException("Slug danh mục đã tồn tại.");
 
         // xử lý level
         if (request.getParentCategoryId() == null) request.setLevel(1);

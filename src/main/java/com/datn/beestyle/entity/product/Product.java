@@ -29,6 +29,9 @@ import static jakarta.persistence.CascadeType.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Product extends Auditable<Long> {
 
+    @Column(name = "product_code")
+    String productCode;
+
     @Column(name = "product_name")
     String productName;
 
