@@ -4,11 +4,12 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.size.CreateSizeRequest;
-import com.datn.beestyle.dto.size.SizeResponse;
-import com.datn.beestyle.dto.size.UpdateSizeRequest;
+import com.datn.beestyle.dto.product.attributes.size.CreateSizeRequest;
+import com.datn.beestyle.dto.product.attributes.size.SizeResponse;
+import com.datn.beestyle.dto.product.attributes.size.UpdateSizeRequest;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.SizeRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -59,6 +60,11 @@ public class SizeService
     }
 
     @Override
+    public List<SizeResponse> getAllByStatusIsActive() {
+        return sizeRepository.findAllByStatusIsActive();
+    }
+
+    @Override
     protected List<CreateSizeRequest> beforeCreateEntities(List<CreateSizeRequest> requests) {
         return requests;
     }
@@ -78,7 +84,10 @@ public class SizeService
 
     @Override
     protected void beforeCreate(CreateSizeRequest request) {
-
+        String sizeName = request.getSizeName().trim();
+        if (sizeRepository.existsBySizeName(sizeName))
+            throw new InvalidDataException("Tên kích thước đã tồn tại.");
+        request.setSizeName(sizeName);
     }
 
     @Override

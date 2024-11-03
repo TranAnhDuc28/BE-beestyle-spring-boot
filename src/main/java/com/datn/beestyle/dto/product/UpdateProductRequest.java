@@ -20,6 +20,8 @@ public class UpdateProductRequest {
     @Size(max = 255)
     String productName;
 
+    String productCode;
+
     String imageUrl;
 
     @EnumValue(enumClass = GenderProduct.class, name = "GenderProduct", message = "Invalid value for Gender")

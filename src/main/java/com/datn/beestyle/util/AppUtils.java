@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public class AppUtils {
 
+    private static final String PRODUCT_CODE_PREFIX = "SP";
     public static final int MAX_CATEGORY_LEVEL = 3;
     private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITE_SPACE = Pattern.compile("[\\s]");
@@ -51,6 +52,9 @@ public class AppUtils {
         return integerIdList;
     }
 
+    public static String generateProductCode(Long id) {
+        return String.format("%s%06d", PRODUCT_CODE_PREFIX, id);
+    }
 
     public static void main(String[] args) {
         System.out.println(toSlug("Đây là một ví dụ về Slug!"));

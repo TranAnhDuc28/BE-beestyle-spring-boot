@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.Scheduler;
+package com.datn.beestyle.service.scheduler;
 
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ public class StatusUpdateScheduler {
         this.voucherRepository = voucherRepository;
     }
 
-    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());

@@ -4,11 +4,12 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
-import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
+import com.datn.beestyle.dto.brand.BrandResponse;
+import com.datn.beestyle.dto.brand.CreateBrandRequest;
+import com.datn.beestyle.dto.brand.UpdateBrandRequest;
 import com.datn.beestyle.entity.product.attributes.Brand;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.BrandRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,12 @@ public class BrandService
                 .items(materialResponseList)
                 .build();
     }
+
+    @Override
+    public List<BrandResponse> getAllByStatusIsActive() {
+        return brandRepository.findAllByStatusIsActive();
+    }
+
     @Override
     protected List<CreateBrandRequest> beforeCreateEntities(List<CreateBrandRequest> requests) {
         return requests;
@@ -82,7 +89,10 @@ public class BrandService
 
     @Override
     protected void beforeCreate(CreateBrandRequest request) {
-
+        String brandName = request.getBrandName().trim();
+        if (brandRepository.existsByBrandName(brandName))
+            throw new InvalidDataException("Tên thương hiệu đã tồn tại.");
+        request.setBrandName(brandName);
     }
 
     @Override
