@@ -177,7 +177,6 @@ public class CategoryService
             slug = AppUtils.toSlug(request.getCategoryName().trim());
             request.setSlug(slug);
         }
-
     }
 
     @Override

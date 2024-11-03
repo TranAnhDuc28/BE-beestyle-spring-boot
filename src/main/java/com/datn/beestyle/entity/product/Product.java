@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.attributes.Brand;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -71,6 +72,7 @@ public class Product extends Auditable<Long> {
             productImage.setProduct(this);
         }
     }
+
     public void addProductVariant(ProductVariant productVariant) {
         if (productVariant != null) {
             if (productVariants == null) {
@@ -78,6 +80,13 @@ public class Product extends Auditable<Long> {
             }
             productVariants.add(productVariant);
             productVariant.setProduct(this);
+        }
+    }
+
+    @PostPersist
+    public void prePersist() {
+        if (this.productCode == null || this.productCode.isBlank()) {
+            this.productCode = AppUtils.generateProductCode(this.getId());
         }
     }
 }

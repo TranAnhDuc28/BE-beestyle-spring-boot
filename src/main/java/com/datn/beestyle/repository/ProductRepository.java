@@ -55,7 +55,8 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
                                           @Param("status") Integer status);
 
     boolean existsByProductName(String name);
+    boolean existsByProductCode(String code);
 
-    Optional<Product> findByProductName(String name);
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 
 }

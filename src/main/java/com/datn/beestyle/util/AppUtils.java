@@ -52,7 +52,7 @@ public class AppUtils {
         return integerIdList;
     }
 
-    private String generateProductCode(Integer id) {
+    public static String generateProductCode(Long id) {
         return String.format("%s%06d", PRODUCT_CODE_PREFIX, id);
     }
 
