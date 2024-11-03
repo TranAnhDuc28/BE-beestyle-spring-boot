@@ -1,5 +1,6 @@
 package com.datn.beestyle.dto.voucher;
 
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
@@ -49,6 +50,6 @@ public class UpdateVoucherRequest {
     @Min(value = 0, message = "Giới hạn sử dụng cho mỗi người dùng phải lớn hơn hoặc bằng 0")
     private Integer usagePerUser;
 
-    @EnumValue(name = "Status", enumClass = Status.class)
+    @EnumValue(name = "Status", enumClass = DiscountStatus.class)
     String status;
 }

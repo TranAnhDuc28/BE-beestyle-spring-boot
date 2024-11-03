@@ -2,6 +2,7 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Validated
@@ -56,11 +58,23 @@ public class ProductVariantController {
 //    }
   
     @PutMapping("/productVariant/updates")
-    public ResponseEntity<ApiResponse<String>> updateProductVariant(@Valid @RequestBody UpdateProductVariantRequest request) {
+    public ResponseEntity<ApiResponse<String>> updateProductVariantCreate(@Valid @RequestBody UpdateProductVariantRequest request) {
         System.out.println(request);
-        productVariantService.updateProductVariant(request.getPromotionId(), request.getVariantIds());
+        productVariantService.updateProductVariantCreate(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
     }
+    @PutMapping("/productVariant/updatess")
+    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
+        System.out.println(request);
+        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
+        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
+    }
+    @GetMapping("/products/{promotionId}")
+    public ResponseEntity<Map<String, List<Long>>> getProductsByPromotionId(@PathVariable Long promotionId) {
+        Map<String, List<Long>> productAndDetailIds = productVariantService.getProductAndDetailIdsByPromotionId(promotionId);
+        return ResponseEntity.ok(productAndDetailIds);
+    }
+
 }
 
 

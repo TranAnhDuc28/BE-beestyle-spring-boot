@@ -7,20 +7,18 @@ import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
-import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
-import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Promotion;
-import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
-import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.repository.PromotionRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,13 +28,15 @@ public class PromotionService
         extends GenericServiceAbstract<Promotion, Integer, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse>
         implements IPromotionService {
     private final PromotionRepository promotionRepository;
+    private final ProductVariantRepository productVariantRepository;
 
     public PromotionService(IGenericRepository<Promotion, Integer> entityRepository,
                             IGenericMapper<Promotion, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> mapper,
                             EntityManager entityManager,
-                            PromotionRepository promotionRepository) {
+                            PromotionRepository promotionRepository, ProductVariantRepository productVariantRepository) {
         super(entityRepository, mapper, entityManager);
         this.promotionRepository = promotionRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PromotionService
 
         Integer statusValue = null;
         if(status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+            DiscountStatus statusEnum = DiscountStatus.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
         Integer discountTypeValue = null;
@@ -124,6 +124,13 @@ public class PromotionService
     @Override
     protected String getEntityName() {
         return "Promotion";
+    }
+    @Transactional
+    public void deletePromotion(Integer id) {
+        // Cập nhật các bản ghi trong product_variant trước khi xóa promotion
+        productVariantRepository.updateProductVariantToNullByPromotionId(id);
+        // Sau đó, xóa promotion
+        promotionRepository.deleteById(id);
     }
 
 

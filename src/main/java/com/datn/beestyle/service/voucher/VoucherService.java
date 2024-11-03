@@ -9,6 +9,7 @@ import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.VoucherMapper;
@@ -50,7 +51,7 @@ public class VoucherService
 
         Integer statusValue = null;
         if (status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+            DiscountStatus statusEnum = DiscountStatus.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
