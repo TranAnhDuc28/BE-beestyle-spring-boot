@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.Scheduler;
+package com.datn.beestyle.service.scheduler;
 
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
@@ -24,7 +24,7 @@ public class StatusUpdateScheduler {
         this.productVariantRepository = productVariantRepository;
     }
 
-    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 

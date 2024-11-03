@@ -37,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -153,18 +154,29 @@ public class ProductService
     }
 
 
-
     @Override
     protected void beforeCreate(CreateProductRequest request) {
         String productName = request.getProductName().trim();
         if (productRepository.existsByProductName(productName))
-            throw new InvalidDataException("Product name already exists");
+            throw new InvalidDataException("Tên sản phẩm đã tồn tại.");
         request.setProductName(productName);
+
+        String productCode = request.getProductCode();
+        if (StringUtils.hasText(productCode)) {
+            productCode = productCode.trim();
+            if (productRepository.existsByProductCode(productCode))
+                throw new InvalidDataException("Mã sản phẩm đã tồn tại.");
+            request.setProductCode(productCode);
+        } else {
+            request.setProductCode(null);
+        }
+
+
     }
 
     @Override
     protected void beforeUpdate(Long id, UpdateProductRequest request) {
-
+        request.setProductName(request.getProductName().trim());
     }
 
     @Override
@@ -219,20 +231,19 @@ public class ProductService
     }
 
     @Override
-    protected void afterConvertUpdateRequest(UpdateProductRequest request, Product product) {
-        Optional<Product> productByName = productRepository.findByProductName(request.getProductName());
-        if (productByName.isPresent() && !productByName.get().getId().equals(product.getId())) {
-            throw new InvalidDataException("Product name already exists");
-        }
+    protected void afterConvertUpdateRequest(UpdateProductRequest request, Product productUpdate) {
+        Optional<Product> productByName =
+                productRepository.findByProductNameAndIdNot(request.getProductName(), productUpdate.getId());
+        if (productByName.isPresent()) throw new InvalidDataException("Tên sản phẩm đã tồn tại.");
 
         Integer brandId = request.getBrandId();
-        if (brandId != null) product.setBrand(brandService.getById(brandId));
+        if (brandId != null) productUpdate.setBrand(brandService.getById(brandId));
 
         Integer materialId = request.getMaterialId();
-        if (materialId != null) product.setMaterial(materialService.getById(materialId));
+        if (materialId != null) productUpdate.setMaterial(materialService.getById(materialId));
 
         Integer categoryId = request.getCategoryId();
-        if (categoryId != null) product.setCategory(categoryService.getById(categoryId));
+        if (categoryId != null) productUpdate.setCategory(categoryService.getById(categoryId));
     }
 
     @Override

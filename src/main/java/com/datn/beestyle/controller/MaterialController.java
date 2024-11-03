@@ -33,6 +33,12 @@ public class MaterialController {
                 materialService.getAllByNameAndStatus(pageable, name, status));
     }
 
+    @GetMapping("/material-options")
+    public ApiResponse<?> getOptionMaterials() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Material options", materialService.getAllByStatusIsActive());
+    }
+
+
     @PostMapping("/create")
     public ApiResponse<?> createMaterial(@Valid @RequestBody CreateMaterialRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Material added successfully",
