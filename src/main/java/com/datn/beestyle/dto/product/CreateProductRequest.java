@@ -23,6 +23,8 @@ public class CreateProductRequest {
     @Size(max = 255)
     String productName;
 
+    String productCode;
+
     @EnumValue(enumClass = GenderProduct.class, name = "GenderProduct", message = "Invalid value for Gender")
     String genderProduct;
 

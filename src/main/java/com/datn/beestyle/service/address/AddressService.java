@@ -7,10 +7,7 @@ import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.address.CreateAddressRequest;
 import com.datn.beestyle.dto.address.UpdateAddressRequest;
-import com.datn.beestyle.dto.product.attributes.brand.BrandResponse;
 import com.datn.beestyle.entity.Address;
-import com.datn.beestyle.entity.product.attributes.Brand;
-import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import com.datn.beestyle.repository.AddressRepository;
 import jakarta.persistence.EntityManager;
@@ -20,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

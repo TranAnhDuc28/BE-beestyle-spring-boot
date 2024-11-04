@@ -21,11 +21,11 @@ public class ProductResponse extends UserProductResponse {
     Long createdBy;
     Long updatedBy;
 
-    public ProductResponse(Long id, String productName, String imageUrl, Integer genderProduct, Integer brandId,
-                           String brandName, Integer materialId, String materialName, String description,
+    public ProductResponse(Long id, String productCode, String productName, String imageUrl, Integer genderProduct,
+                           Integer brandId, String brandName, Integer materialId, String materialName, String description,
                            Integer categoryId, String categoryName, Integer status, LocalDateTime createdAt,
                            LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
-        super(id, productName, imageUrl, genderProduct, brandId, brandName, materialId, materialName, description);
+        super(id, productCode, productName, imageUrl, genderProduct, brandId, brandName, materialId, materialName, description);
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.status = Status.fromInteger(status);

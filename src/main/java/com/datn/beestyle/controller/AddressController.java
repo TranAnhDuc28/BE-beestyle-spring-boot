@@ -1,11 +1,8 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.address.CreateAddressRequest;
 import com.datn.beestyle.dto.address.UpdateAddressRequest;
-import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
-import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.service.address.IAddressService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

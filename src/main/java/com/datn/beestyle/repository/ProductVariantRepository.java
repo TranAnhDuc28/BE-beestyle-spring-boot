@@ -66,7 +66,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 
     @Modifying
     @Transactional
-    @Query("UPDATE ProductVariant pv SET pv.promotion.id = :promotionId WHERE pv.id IN :ids")
+    @Query("update ProductVariant pv set pv.promotion.id = :promotionId where pv.id in :ids")
     int updatePromotionForVariants(@Param("promotionId") Integer promotionId, @Param("ids") List<Integer> ids);
 
 }

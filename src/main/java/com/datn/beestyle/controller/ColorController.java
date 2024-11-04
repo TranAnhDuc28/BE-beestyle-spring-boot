@@ -32,6 +32,11 @@ public class ColorController {
                 colorService.getAllByNameAndStatus(pageable, name, status));
     }
 
+    @GetMapping("/color-options")
+    public ApiResponse<?> getOptionBrands() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Color options", colorService.getAllByStatusIsActive());
+    }
+
     @PostMapping("/create")
     public ApiResponse<?> createColor(@Valid @RequestBody CreateColorRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Color added successfully",
