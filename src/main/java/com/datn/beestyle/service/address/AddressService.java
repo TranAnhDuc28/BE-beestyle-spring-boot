@@ -60,7 +60,7 @@ implements IAddressService{
     }
 
 
-    @Transactional
+
     public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
         // Kiểm tra nếu yêu cầu đặt địa chỉ này làm mặc định
         if (request.isDefault()) {

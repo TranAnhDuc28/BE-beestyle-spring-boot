@@ -34,7 +34,6 @@ public class UpdateCustomerRequest {
 
     String email;
 
-    @NotBlank(message = "Khong duoc de trong")
     String password;
 
     String status;
