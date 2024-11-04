@@ -16,16 +16,16 @@ import java.util.List;
 public interface OrderRepository extends IGenericRepository<Order, Long> {
     @Query(value = """
                 WITH RECURSIVE order_hierarchy AS (
-                SELECT * FROM `order` 
-                WHERE status = 1 AND order_id IS NULL
-                UNION ALL
-                SELECT *
+                SELECT * FROM `order`\s
+                WHERE status = 1 AND order_id IS NULL\s
+                UNION ALL\s
+                SELECT *\s
                 FROM `order` AS o 
                 INNER JOIN order_hierarchy oh ON o.order_id = o.id 
-                WHERE o.status = 1 AND o.level <= 3
+                WHERE o.status = 1 AND o.level <= 3 
                 )
                 SELECT * FROM order_hierarchy 
-                ORDER BY level, priority;
+                ORDER BY level, priority; 
             """,
             nativeQuery = true
     )
