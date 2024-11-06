@@ -63,7 +63,7 @@ public class PromotionController {
 
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deletePromotion(@Min(1) @PathVariable int id) {
-        promotionService.delete(id);
+        promotionService.deletePromotion(id);
         return new ApiResponse<>(HttpStatus.OK.value(), "Xóa đợt khuyến mại thành công!");
     }
 

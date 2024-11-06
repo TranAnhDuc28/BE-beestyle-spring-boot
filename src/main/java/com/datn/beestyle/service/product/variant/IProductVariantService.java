@@ -18,5 +18,6 @@ public interface IProductVariantService
                                                                               String keyword, String colorIds,
                                                                               String sizeIds, String status);
     Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
-    void updateProductVariant(Integer promotionId, List<Integer> ids);
+    void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
+    void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
 }

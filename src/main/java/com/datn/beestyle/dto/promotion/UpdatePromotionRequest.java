@@ -1,5 +1,6 @@
 package com.datn.beestyle.dto.promotion;
 
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
@@ -38,6 +39,6 @@ public class UpdatePromotionRequest {
     Timestamp endDate;
 
     String description;
-    @EnumValue(name = "Status", enumClass = Status.class)
-    String status;
+//    @EnumValue(name = "Status", enumClass = DiscountStatus.class)
+//    String status;
 }
