@@ -1,8 +1,8 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.product.attributes.brand.CreateBrandRequest;
-import com.datn.beestyle.dto.product.attributes.brand.UpdateBrandRequest;
+import com.datn.beestyle.dto.brand.CreateBrandRequest;
+import com.datn.beestyle.dto.brand.UpdateBrandRequest;
 import com.datn.beestyle.service.brand.IBrandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +34,12 @@ public class BrandController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Brands",
                 brandService.getAllByNameAndStatus(pageable, name, status));
     }
+
+    @GetMapping("/brand-options")
+    public ApiResponse<?> getOptionBrands() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Brand options", brandService.getAllByStatusIsActive());
+    }
+
 
     @PostMapping("/create")
     public ApiResponse<?> createBrand(@Valid @RequestBody CreateBrandRequest request) {

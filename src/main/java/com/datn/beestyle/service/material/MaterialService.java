@@ -10,6 +10,7 @@ import com.datn.beestyle.dto.material.MaterialResponse;
 import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.MaterialRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,11 @@ public class MaterialService
     }
 
     @Override
+    public List<MaterialResponse> getAllByStatusIsActive() {
+        return materialRepository.findAllByStatusIsActive();
+    }
+
+    @Override
     protected List<CreateMaterialRequest> beforeCreateEntities(List<CreateMaterialRequest> requests) {
         return requests;
     }
@@ -81,7 +87,10 @@ public class MaterialService
 
     @Override
     protected void beforeCreate(CreateMaterialRequest request) {
-
+        String materialName = request.getMaterialName().trim();
+        if (materialRepository.existsByMaterialName(materialName))
+            throw new InvalidDataException("Tên chất liệu đã tồn tại.");
+        request.setMaterialName(materialName);
     }
 
     @Override

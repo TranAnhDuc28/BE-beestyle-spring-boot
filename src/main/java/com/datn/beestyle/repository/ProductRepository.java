@@ -2,6 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import java.util.Optional;
 public interface ProductRepository extends IGenericRepository<Product, Long> {
 
     @Query(value = """
-            select p.id, p.productName, pi.imageUrl, p.gender, p.brand.id, p.brand.brandName,
+            select p.id, p.productCode, p.productName, pi.imageUrl, p.gender, p.brand.id, p.brand.brandName,
                 p.material.id, p.material.materialName, p.description
             from Product p
                 left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
@@ -28,7 +29,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
 
     @Query(value = """
             select new com.datn.beestyle.dto.product.ProductResponse(
-                p.id, p.productName, pi.imageUrl, p.gender, b.id, b.brandName, m.id, 
+                p.id, p.productCode, p.productName, pi.imageUrl, p.gender, b.id, b.brandName, m.id, 
                 m.materialName, p.description, c.id, c.categoryName, p.status, p.createdAt,
                 p.updatedAt, p.createdBy, p.updatedBy)
             from Product p
@@ -37,7 +38,9 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
                 left join Material m on p.material.id = m.id 
                 left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
             where 
-                (:keyword is null or p.productName like concat('%', :keyword, '%')) and
+                (:keyword is null or 
+                    p.productName like concat('%', :keyword, '%') or
+                    p.productCode like concat('%', :keyword, '%')) and
                 (:categoryId is null or p.category.id = :categoryId) and
                 (:gender is null or p.gender = :gender) and
                 (:brandIds is null or p.brand.id in (:brandIds)) and
@@ -52,6 +55,8 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
                                           @Param("status") Integer status);
 
     boolean existsByProductName(String name);
+    boolean existsByProductCode(String code);
 
-    Optional<Product> findByProductName(String name);
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
+
 }

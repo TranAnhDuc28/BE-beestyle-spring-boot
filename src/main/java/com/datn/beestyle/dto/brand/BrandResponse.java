@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.material;
+package com.datn.beestyle.dto.brand;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MaterialResponse{
+public class BrandResponse{
     Integer id;
-    String materialName;
+    String brandName;
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-    public MaterialResponse(Integer id, String materialName) {
+    public BrandResponse(Integer id, String brandName) {
         this.id = id;
-        this.materialName = materialName;
+        this.brandName = brandName;
     }
 }

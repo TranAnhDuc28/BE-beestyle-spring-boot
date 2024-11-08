@@ -4,15 +4,18 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
 import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
+import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.entity.product.ProductImage;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.product.attributes.Color;
+import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
@@ -25,6 +28,7 @@ import com.datn.beestyle.repository.SizeRepository;
 import com.datn.beestyle.service.category.ICategoryService;
 import com.datn.beestyle.service.brand.IBrandService;
 import com.datn.beestyle.service.material.IMaterialService;
+import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,11 +37,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -106,46 +108,19 @@ public class ProductService
             }
         }
 
-        Integer statusValue = null;
-        if (status != null) {
-            Status statusEnum = Status.fromString(status);
-            if (statusEnum != null) statusValue = statusEnum.getValue();
-        }
-
         Integer genderProductValue = null;
         if (genderProduct != null) {
             GenderProduct genderProductEnum = GenderProduct.fromString(genderProduct);
             if (genderProductEnum != null) genderProductValue = genderProductEnum.getValue();
         }
 
-        List<Integer> brandIdList = null;
-        String[] brandIdsStr = brandIds != null ? brandIds.split(",") : null;
-        if (brandIdsStr != null) {
-            brandIdList = new ArrayList<>();
-            for (String strId : brandIdsStr) {
-                int id;
-                try {
-                    id = Integer.parseInt(strId);
-                } catch (Exception e) {
-                    continue;
-                }
-                brandIdList.add(id);
-            }
-        }
+        List<Integer> brandIdList = AppUtils.handleStringIdsToIntegerIdList(brandIds);
+        List<Integer> materialIdList = AppUtils.handleStringIdsToIntegerIdList(materialIds);
 
-        List<Integer> materialIdList = null;
-        String[] materialIdsStr = materialIds != null ? materialIds.split(",") : null;
-        if (materialIdsStr != null) {
-            materialIdList = new ArrayList<>();
-            for (String strId : materialIdsStr) {
-                int id;
-                try {
-                    id = Integer.parseInt(strId);
-                } catch (Exception e) {
-                    continue;
-                }
-                materialIdList.add(id);
-            }
+        Integer statusValue = null;
+        if (status != null) {
+            Status statusEnum = Status.fromString(status);
+            if (statusEnum != null) statusValue = statusEnum.getValue();
         }
 
         Page<ProductResponse> productResponsePages = productRepository.findAllByFields(pageRequest, keyword, categoryId,
@@ -183,13 +158,25 @@ public class ProductService
     protected void beforeCreate(CreateProductRequest request) {
         String productName = request.getProductName().trim();
         if (productRepository.existsByProductName(productName))
-            throw new InvalidDataException("Product name already exists");
+            throw new InvalidDataException("Tên sản phẩm đã tồn tại.");
         request.setProductName(productName);
+
+        String productCode = request.getProductCode();
+        if (StringUtils.hasText(productCode)) {
+            productCode = productCode.trim();
+            if (productRepository.existsByProductCode(productCode))
+                throw new InvalidDataException("Mã sản phẩm đã tồn tại.");
+            request.setProductCode(productCode);
+        } else {
+            request.setProductCode(null);
+        }
+
+
     }
 
     @Override
     protected void beforeUpdate(Long id, UpdateProductRequest request) {
-
+        request.setProductName(request.getProductName().trim());
     }
 
     @Override
@@ -244,20 +231,19 @@ public class ProductService
     }
 
     @Override
-    protected void afterConvertUpdateRequest(UpdateProductRequest request, Product product) {
-        Optional<Product> productByName = productRepository.findByProductName(request.getProductName());
-        if (productByName.isPresent() && !productByName.get().getId().equals(product.getId())) {
-            throw new InvalidDataException("Product name already exists");
-        }
+    protected void afterConvertUpdateRequest(UpdateProductRequest request, Product productUpdate) {
+        Optional<Product> productByName =
+                productRepository.findByProductNameAndIdNot(request.getProductName(), productUpdate.getId());
+        if (productByName.isPresent()) throw new InvalidDataException("Tên sản phẩm đã tồn tại.");
 
         Integer brandId = request.getBrandId();
-        if (brandId != null) product.setBrand(brandService.getById(brandId));
+        if (brandId != null) productUpdate.setBrand(brandService.getById(brandId));
 
         Integer materialId = request.getMaterialId();
-        if (materialId != null) product.setMaterial(materialService.getById(materialId));
+        if (materialId != null) productUpdate.setMaterial(materialService.getById(materialId));
 
         Integer categoryId = request.getCategoryId();
-        if (categoryId != null) product.setCategory(categoryService.getById(categoryId));
+        if (categoryId != null) productUpdate.setCategory(categoryService.getById(categoryId));
     }
 
     @Override

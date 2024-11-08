@@ -55,7 +55,11 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "status")
     int status;
 
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
+=======
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
+>>>>>>> 8e2f3eea159ff29eef0d32d4745d07686f60b12e
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
 }

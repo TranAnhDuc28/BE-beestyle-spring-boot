@@ -1,4 +1,4 @@
-package com.datn.beestyle.dto.product.attributes.brand;
+package com.datn.beestyle.dto.brand;
 
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;

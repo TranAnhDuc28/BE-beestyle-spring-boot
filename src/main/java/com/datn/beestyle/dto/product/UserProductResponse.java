@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProductResponse {
     Long id;
+    String productCode;
     String productName;
     String imageUrl;
     String genderProduct;
@@ -21,9 +22,10 @@ public class UserProductResponse {
     String materialName;
     String description;
 
-    public UserProductResponse(Long id, String productName, String imageUrl, Integer genderProduct, Integer brandId,
+    public UserProductResponse(Long id, String productCode, String productName, String imageUrl, Integer genderProduct, Integer brandId,
                                String brandName, Integer materialId, String materialName, String description) {
         this.id = id;
+        this.productCode = productCode;
         this.productName = productName;
         this.imageUrl = imageUrl;
         this.genderProduct = GenderProduct.fromInteger(genderProduct);

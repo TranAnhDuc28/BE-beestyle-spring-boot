@@ -32,6 +32,11 @@ public class CategoryController {
 
     }
 
+    @GetMapping("/category-options")
+    public ApiResponse<?> getCategoryOptions() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Category options", categoryService.getCategoryOptions());
+    }
+
     @PostMapping("/create")
     public ApiResponse<?> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Category added successfully",
