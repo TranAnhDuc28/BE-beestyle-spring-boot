@@ -4,18 +4,14 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.material.UpdateMaterialRequest;
 import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
-import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
-import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.entity.product.ProductImage;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.product.attributes.Color;
-import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
@@ -23,7 +19,7 @@ import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.ProductMapper;
 import com.datn.beestyle.mapper.ProductVariantMapper;
 import com.datn.beestyle.repository.ColorRepository;
-import com.datn.beestyle.repository.ProductRepository;
+import com.datn.beestyle.repository.product.ProductRepository;
 import com.datn.beestyle.repository.SizeRepository;
 import com.datn.beestyle.service.category.ICategoryService;
 import com.datn.beestyle.service.brand.IBrandService;
@@ -39,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -74,26 +71,62 @@ public class ProductService
     }
 
     @Override
-    public PageResponse<List<UserProductResponse>> getAllByCategoryId(Pageable pageable, int categoryId) {
-        int page = 0;
+    public PageResponse<List<ProductResponse>> searchProductByStatusIsActive(Pageable pageable, String keyword) {
+        int page = 0, pageSize = 20;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        if (pageable.getPageSize() < 0) pageSize = pageable.getPageSize();
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
 
-        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
-        Page<Product> productPages = productRepository.findAllForUserByCategoryId(pageRequest, categoryId);
-        List<UserProductResponse> userProductResponses = productPages.get().map(productMapper::toUserProductResponse).toList();
-        return PageResponse.<List<UserProductResponse>>builder()
+        Page<ProductResponse> productResponsePages = productRepository.searchProduct(pageRequest, keyword, 1);
+
+        return PageResponse.<List<ProductResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
-                .pageSize(pageable.getPageSize())
-                .totalElements(productPages.getTotalElements())
-                .totalPages(productPages.getTotalPages())
-                .items(userProductResponses)
+                .pageSize(pageRequest.getPageSize())
+                .totalElements(productResponsePages.getTotalElements())
+                .totalPages(productResponsePages.getTotalPages())
+                .items(productResponsePages.getContent())
                 .build();
     }
 
     @Override
-    public PageResponse<List<ProductResponse>> getProductsByFields(Pageable pageable, String keyword,
-                                                                   String category, String genderProduct, String brandIds,
-                                                                   String materialIds, String status) {
+    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String category, String genderProduct,
+                                                                             String brandIds, String materialIds,
+                                                                             BigDecimal minPrice, BigDecimal maxPrice) {
+        Integer categoryId = null;
+        if (category != null) {
+            try {
+                categoryId = Integer.parseInt(category);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        Integer genderProductValue = null;
+        if (genderProduct != null) {
+            GenderProduct genderProductEnum = GenderProduct.fromString(genderProduct);
+            if (genderProductEnum != null) genderProductValue = genderProductEnum.getValue();
+        }
+
+        List<Integer> brandIdList = AppUtils.handleStringIdsToIntegerIdList(brandIds);
+        List<Integer> materialIdList = AppUtils.handleStringIdsToIntegerIdList(materialIds);
+
+        Page<ProductResponse> productResponsePages =
+                productRepository.filterProduct(pageable, categoryId, genderProductValue, brandIdList, materialIdList,
+                        minPrice,  maxPrice,  1);
+
+        return PageResponse.<List<ProductResponse>>builder()
+                .pageNo(productResponsePages.getNumber())
+                .pageSize(productResponsePages.getSize())
+                .totalElements(productResponsePages.getTotalElements())
+                .totalPages(productResponsePages.getTotalPages())
+                .items(productResponsePages.getContent())
+                .build();
+    }
+
+    @Override
+    public PageResponse<List<ProductResponse>> getProductsFilterByFields(Pageable pageable, String keyword,
+                                                                         String category, String genderProduct, String brandIds,
+                                                                         String materialIds, String status) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),

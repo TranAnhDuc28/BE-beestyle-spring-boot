@@ -4,7 +4,6 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.product.CreateProductRequest;
 import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.UpdateProductRequest;
-import com.datn.beestyle.dto.product.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
@@ -51,8 +50,6 @@ public interface ProductMapper extends IGenericMapper<Product, CreateProductRequ
     @Mapping(target = "updatedBy", ignore = true)
     @Override
     void toUpdateEntity(@MappingTarget Product entity, UpdateProductRequest request);
-
-    UserProductResponse toUserProductResponse(Product product);
 
     @Named("statusId")
     default int statusId(UpdateProductRequest request) {

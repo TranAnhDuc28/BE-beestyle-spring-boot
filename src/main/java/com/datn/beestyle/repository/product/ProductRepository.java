@@ -1,36 +1,42 @@
-package com.datn.beestyle.repository;
+package com.datn.beestyle.repository.product;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
-import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
-import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends IGenericRepository<Product, Long> {
+public interface ProductRepository extends IGenericRepository<Product, Long>, ProductRepositoryCustom{
 
     @Query(value = """
-            select p.id, p.productCode, p.productName, pi.imageUrl, p.gender, p.brand.id, p.brand.brandName,
-                p.material.id, p.material.materialName, p.description
+            select new com.datn.beestyle.dto.product.ProductResponse(
+                p.id, p.productCode, p.productName, pi.imageUrl, min(pv.salePrice), sum(pv.quantityInStock))
             from Product p
                 left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
-            where p.status in (1, 2) and p.category.id = :categoryId
+                left join ProductVariant pv on p.id = pv.product.id
+            where 
+                (:keyword is null or 
+                    p.productName like concat('%', :keyword, '%') or
+                    p.productCode like concat('%', :keyword, '%')) and
+                (:status is null or p.status = :status)
+            group by p.id, p.productCode, p.productName, pi.imageUrl
             """)
-    Page<Product> findAllForUserByCategoryId(Pageable pageable, @Param("categoryId") int categoryId);
+    Page<ProductResponse> searchProduct(Pageable pageable,
+                                        @Param("keyword") String keyword,
+                                        @Param("status") Integer status);
 
     @Query(value = """
             select new com.datn.beestyle.dto.product.ProductResponse(
                 p.id, p.productCode, p.productName, pi.imageUrl, p.gender, b.id, b.brandName, m.id, 
-                m.materialName, p.description, c.id, c.categoryName, p.status, p.createdAt,
+                m.materialName, c.id, c.categoryName,p.description, p.status, p.createdAt,
                 p.updatedAt, p.createdBy, p.updatedBy)
             from Product p
                 left join Category c on p.category.id = c.id
@@ -54,9 +60,10 @@ public interface ProductRepository extends IGenericRepository<Product, Long> {
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
+
+
     boolean existsByProductName(String name);
     boolean existsByProductCode(String code);
-
     Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 
 }
