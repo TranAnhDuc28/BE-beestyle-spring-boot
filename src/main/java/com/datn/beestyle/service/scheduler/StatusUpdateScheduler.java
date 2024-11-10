@@ -53,7 +53,7 @@ public class StatusUpdateScheduler {
         }
         voucherRepository.saveAll(vouchers);
     }
-    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void checkAndExpirePromotions() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
