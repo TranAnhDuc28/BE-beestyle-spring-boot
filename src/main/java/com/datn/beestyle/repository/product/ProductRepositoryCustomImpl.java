@@ -22,9 +22,10 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     public Page<ProductResponse> filterProduct(Pageable pageable, Integer categoryId, Integer genderProduct,
                                                List<Integer> brandIds, List<Integer> materialIds,
                                                BigDecimal minPrice, BigDecimal maxPrice, Integer status) {
-        int page = 0;
+        int page = 0, pageSize = 20;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
-        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize());
+        if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
 
         StringBuilder sqlQuery = new StringBuilder("""
                     WITH MinPriceOfProduct AS (

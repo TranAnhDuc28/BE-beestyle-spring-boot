@@ -74,7 +74,7 @@ public class ProductService
     public PageResponse<List<ProductResponse>> searchProductByStatusIsActive(Pageable pageable, String keyword) {
         int page = 0, pageSize = 20;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
-        if (pageable.getPageSize() < 0) pageSize = pageable.getPageSize();
+        if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
         PageRequest pageRequest = PageRequest.of(page, pageSize);
 
         Page<ProductResponse> productResponsePages = productRepository.searchProduct(pageRequest, keyword, 1);
@@ -91,7 +91,8 @@ public class ProductService
     @Override
     public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String category, String genderProduct,
                                                                              String brandIds, String materialIds,
-                                                                             BigDecimal minPrice, BigDecimal maxPrice) {
+                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
+
         Integer categoryId = null;
         if (category != null) {
             try {
@@ -115,7 +116,7 @@ public class ProductService
                         minPrice,  maxPrice,  1);
 
         return PageResponse.<List<ProductResponse>>builder()
-                .pageNo(productResponsePages.getNumber())
+                .pageNo(productResponsePages.getNumber() + 1)
                 .pageSize(productResponsePages.getSize())
                 .totalElements(productResponsePages.getTotalElements())
                 .totalPages(productResponsePages.getTotalPages())
