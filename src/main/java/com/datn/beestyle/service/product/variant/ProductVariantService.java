@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,9 +41,9 @@ public class ProductVariantService
     }
 
     @Override
-    public PageResponse<List<ProductVariantResponse>> getProductsByFieldsByProductId(Pageable pageable, String productIdStr,
-                                                                                     String keyword, String colorIds,
-                                                                                     String sizeIds, String status) {
+    public PageResponse<List<ProductVariantResponse>> getProductVariantsByFieldsByProductId(Pageable pageable, String productIdStr,
+                                                                                            String keyword, String colorIds,
+                                                                                            String sizeIds, String status) {
         Integer productId = null;
         if (productIdStr != null) {
             try {
@@ -67,10 +68,46 @@ public class ProductVariantService
         }
 
         Page<ProductVariantResponse> productVariantResponsePages =
-                productVariantRepository.findAllByFieldsByProductId(pageRequest, productId, keyword, colorIdList, sizeIdList, statusValue);
+                productVariantRepository.findAllByFieldsByProductId(pageRequest, productId, keyword, colorIdList,
+                        sizeIdList, statusValue);
+
         return PageResponse.<List<ProductVariantResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
+                .totalElements(productVariantResponsePages.getTotalElements())
+                .totalPages(productVariantResponsePages.getTotalPages())
+                .items(productVariantResponsePages.getContent())
+                .build();
+    }
+
+    @Override
+    public PageResponse<List<ProductVariantResponse>> filterProductVariantsByStatusIsActive(Pageable pageable, String productIdStr,
+                                                                                            String colorIds, String sizeIds,
+                                                                                            BigDecimal minPrice, BigDecimal maxPrice) {
+        Integer productId = null;
+        if (productIdStr != null) {
+            try {
+                productId = Integer.parseInt(productIdStr);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("ID sản phẩm phải là số.");
+            }
+        }
+
+        int page = 0, pageSize = 10;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+
+        List<Integer> colorIdList = AppUtils.handleStringIdsToIntegerIdList(colorIds);
+        List<Integer> sizeIdList = AppUtils.handleStringIdsToIntegerIdList(sizeIds);
+
+        Page<ProductVariantResponse> productVariantResponsePages =
+                productVariantRepository.filterProductVariantByProductId(pageRequest, productId, colorIdList, sizeIdList,
+                        minPrice, maxPrice, 1);
+
+        return PageResponse.<List<ProductVariantResponse>>builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageRequest.getPageSize())
                 .totalElements(productVariantResponsePages.getTotalElements())
                 .totalPages(productVariantResponsePages.getTotalPages())
                 .items(productVariantResponsePages.getContent())
