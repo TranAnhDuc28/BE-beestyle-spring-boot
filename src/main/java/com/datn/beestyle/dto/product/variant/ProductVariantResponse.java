@@ -24,16 +24,16 @@ public class ProductVariantResponse extends UserProductVariantResponse {
     Long createdBy;
     Long updatedBy;
 
-    public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
-                                  String colorName, Integer sizeId, String sizeName, BigDecimal salePrice,
-                                  Integer quantityInStock, BigDecimal originalPrice, Integer status,
-                                  LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
-        super(id, sku, productId, productName, colorId, colorName, sizeId, sizeName, salePrice, quantityInStock);
-        this.originalPrice = originalPrice;
-        this.status = Status.fromInteger(status);
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-    }
+        public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
+                                      String colorName, Integer sizeId, String sizeName, BigDecimal salePrice,
+                                      Integer quantityInStock, BigDecimal originalPrice, Integer status,
+                                      LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
+            super(id, sku, productId, productName, colorId, colorName, sizeId, sizeName, salePrice, quantityInStock);
+            this.originalPrice = originalPrice;
+            this.status = Status.fromInteger(status);
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.createdBy = createdBy;
+            this.updatedBy = updatedBy;
+        }
 }
