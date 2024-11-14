@@ -28,4 +28,5 @@ public interface IProductVariantService
     void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
 
     void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
+
 }

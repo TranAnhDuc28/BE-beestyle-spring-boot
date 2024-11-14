@@ -74,18 +74,29 @@ public class ProductVariantController {
         productVariantService.updateProductVariantCreate(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
     }
-    @PutMapping("/productVariant/updatess")
-    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
-        System.out.println(request);
-        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
-    }
+//    @PutMapping("/productVariant/updatess")
+//    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
+//        System.out.println(request);
+//        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
+//        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
+//    }
     @GetMapping("/products/{promotionId}")
     public ResponseEntity<Map<String, List<Long>>> getProductsByPromotionId(@PathVariable Long promotionId) {
         Map<String, List<Long>> productAndDetailIds = productVariantService.getProductAndDetailIdsByPromotionId(promotionId);
         return ResponseEntity.ok(productAndDetailIds);
     }
+    @PutMapping("/{promotionId}/delete")
+    public ResponseEntity<Void> removePromotionFromNonSelectedVariants(
+            @PathVariable Integer promotionId,
+            @RequestBody Integer ids) {
 
+        try {
+            productVariantService.removePromotionFromNonSelectedVariants(promotionId, ids);
+            return ResponseEntity.ok().build(); // Trả về 200 OK nếu thành công
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Trả về 500 nếu có lỗi
+        }
+    }
 }
 
 
