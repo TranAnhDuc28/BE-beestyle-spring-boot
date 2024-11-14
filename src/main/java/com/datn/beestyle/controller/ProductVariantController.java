@@ -2,7 +2,6 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
-import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,10 +33,21 @@ public class ProductVariantController {
                                                         @RequestParam(required = false) String keyword,
                                                         @RequestParam(required = false) String color,
                                                         @RequestParam(required = false) String size,
-                                                        @RequestParam(name = "status",required = false) String status
+                                                        @RequestParam(required = false) String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants",
-                productVariantService.getProductsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+                productVariantService.getProductVariantsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+    }
+    @GetMapping("/product/{productId}/filter/variant")
+    public ApiResponse<?> getProductVariantsByProductId(Pageable pageable,
+                                                        @PathVariable("productId") String productId,
+                                                        @RequestParam(required = false) String color,
+                                                        @RequestParam(required = false) String size,
+                                                        @RequestParam(required = false) BigDecimal minPrice,
+                                                        @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Product variants filter",
+                productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, color, size, minPrice, maxPrice));
     }
   
     @GetMapping("/productVariant")
