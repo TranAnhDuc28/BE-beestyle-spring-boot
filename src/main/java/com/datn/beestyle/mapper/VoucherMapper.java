@@ -1,10 +1,12 @@
 package com.datn.beestyle.mapper;
 
 import com.datn.beestyle.common.IGenericMapper;
+import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
@@ -12,6 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+import java.sql.Timestamp;
 import java.util.List;
 @Mapper(componentModel = "spring")
 public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse> {
@@ -21,7 +24,7 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     @Override
     VoucherResponse toEntityDto(Voucher entity);
 
-    @Mapping(target = "status", constant = "1")
+    @Mapping(target = "status", source = "request", qualifiedByName = "determineStatusForCreate")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -29,7 +32,7 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
     @Override
     Voucher toCreateEntity(CreateVoucherRequest request);
 
-    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
+    @Mapping(target = "status", source = "request", qualifiedByName = "determineStatusForUpdate")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -42,12 +45,12 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
 
     @Named("statusId")
     default int statusId(UpdateVoucherRequest request) {
-        return Status.valueOf(request.getStatus()).getValue();
+        return DiscountStatus.valueOf(request.getStatus()).getValue();
     }
 
     @Named("statusName")
     default String statusName(Voucher voucher) {
-        Status status = Status.resolve(voucher.getStatus());
+        DiscountStatus status = DiscountStatus.resolve(voucher.getStatus());
         return status != null ? status.name() : null;
     }
 
@@ -62,4 +65,28 @@ public interface VoucherMapper extends IGenericMapper<Voucher, CreateVoucherRequ
         DiscountType type = DiscountType.fromString(discountType);
         return type != null ? type.getValue() : null;
     }
+    @Named("determineStatusForCreate")
+    default int determineStatusForCreate(CreateVoucherRequest request) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (now.before(request.getStartDate())) {
+            return 0;
+        } else if (!now.after(request.getEndDate())) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    @Named("determineStatusForUpdate")
+    default int determineStatusForUpdate(UpdateVoucherRequest request) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (now.before(request.getStartDate())) {
+            return 0;
+        } else if (!now.after(request.getEndDate())) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
 }

@@ -19,10 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -106,8 +106,41 @@ public class ProductVariantService
     }
     @Override
     @Transactional
-    public void updateProductVariant(Integer promotionId, List<Integer> ids) {
+    public void updateProductVariantCreate(Integer promotionId, List<Integer> ids) {
         productVariantRepository.updatePromotionForVariants(promotionId, ids);
+    }
+
+//    @Override
+//    @Transactional
+//    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
+//        productVariantRepository.updatePromotionToNullForNonSelectedIds(promotionId, ids);
+//
+//        try {
+//            Thread.sleep(100);  // Dừng 100ms trước khi cập nhật
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//
+//        productVariantRepository.updatePromotionForVariants(promotionId, ids);
+//    }
+
+    public Map<String, List<Long>> getProductAndDetailIdsByPromotionId(Long promotionId) {
+        List<Object[]> results = productVariantRepository.findProductAndDetailIdsByPromotionId(promotionId);
+
+        List<Long> productIds = results.stream()
+                .map(result -> (Long) result[0]) // `productId` là phần tử đầu trong `Object[]`
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<Long> productDetailIds = results.stream()
+                .map(result -> (Long) result[1]) // `productDetailId` là phần tử thứ hai trong `Object[]`
+                .collect(Collectors.toList());
+
+        Map<String, List<Long>> response = new HashMap<>();
+        response.put("productIds", productIds);
+        response.put("productDetailIds", productDetailIds);
+
+        return response;
     }
     @Override
     protected void beforeCreate(CreateProductVariantRequest request) {
@@ -136,6 +169,27 @@ public class ProductVariantService
     @Override
     public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
         return productVariantRepository.findAllProductsWithDetails(productIds);
+    }
+    @Override
+    @Transactional
+    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
+        // Xóa promotionId khỏi các bản ghi không còn được chọn
+        removePromotionFromNonSelectedVariants(promotionId, ids);
+
+        // Cập nhật promotionId cho các bản ghi mới được chọn
+        applyPromotionToSelectedVariants(promotionId, ids);
+    }
+
+    // Phương thức xóa liên kết promotion với các bản ghi không được chọn
+    @Transactional
+    public void removePromotionFromNonSelectedVariants(Integer promotionId, List<Integer> ids) {
+        productVariantRepository.updatePromotionToNullForNonSelectedIds(promotionId, ids);
+    }
+
+    // Phương thức cập nhật promotion cho các bản ghi được chọn
+    @Transactional
+    public void applyPromotionToSelectedVariants(Integer promotionId, List<Integer> ids) {
+        productVariantRepository.updatePromotionForVariants(promotionId, ids);
     }
 
 }
