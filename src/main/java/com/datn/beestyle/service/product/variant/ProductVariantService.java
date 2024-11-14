@@ -170,19 +170,11 @@ public class ProductVariantService
     public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
         return productVariantRepository.findAllProductsWithDetails(productIds);
     }
-    @Override
-    @Transactional
-    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
-        // Xóa promotionId khỏi các bản ghi không còn được chọn
-        removePromotionFromNonSelectedVariants(promotionId, ids);
 
-        // Cập nhật promotionId cho các bản ghi mới được chọn
-        applyPromotionToSelectedVariants(promotionId, ids);
-    }
 
     // Phương thức xóa liên kết promotion với các bản ghi không được chọn
     @Transactional
-    public void removePromotionFromNonSelectedVariants(Integer promotionId, List<Integer> ids) {
+    public void removePromotionFromNonSelectedVariants(Integer promotionId, Integer ids) {
         productVariantRepository.updatePromotionToNullForNonSelectedIds(promotionId, ids);
     }
 
