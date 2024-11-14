@@ -19,13 +19,13 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateCustomerRequest {
 
-    @NotBlank(message = "Khong de trong")
+
     String fullName;
 
-    @NotNull(message = "Khong duoc de trong")
+
     LocalDate dateOfBirth;
 
-    @NotNull(message = "Khong duoc de trong")
+
     String gender;
 
     @NotBlank(message = "Khong duoc de trong")

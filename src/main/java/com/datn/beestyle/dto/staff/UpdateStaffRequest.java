@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class UpdateStaffRequest {
 
     @NotBlank(message = "Khong duoc de trong")
-    @NotBlank(message = "Khong duoc de trong")
+//    @NotBlank(message = "Khong duoc de trong")
     String username;
 
     @NotBlank(message = "Khong duoc de trong")
@@ -27,7 +27,7 @@ public class UpdateStaffRequest {
 
     LocalDate dateOfBirth;
 
-    @NotNull(message = "Khong duoc de trong")
+//    @NotNull(message = "Khong duoc de trong")
     String gender;
 
     @NotBlank(message = "Khong duoc de trong")

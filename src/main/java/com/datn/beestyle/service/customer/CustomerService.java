@@ -55,7 +55,7 @@ public class CustomerService
 
     @Override
     protected void beforeUpdate(Integer id, UpdateCustomerRequest request) {
-
+        request.setPassword("");
     }
 
     @Override
