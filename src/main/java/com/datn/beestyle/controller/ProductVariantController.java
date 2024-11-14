@@ -2,7 +2,6 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
-import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -14,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,10 +33,21 @@ public class ProductVariantController {
                                                         @RequestParam(required = false) String keyword,
                                                         @RequestParam(required = false) String color,
                                                         @RequestParam(required = false) String size,
-                                                        @RequestParam(name = "status",required = false) String status
+                                                        @RequestParam(required = false) String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants",
-                productVariantService.getProductsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+                productVariantService.getProductVariantsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+    }
+    @GetMapping("/product/{productId}/filter/variant")
+    public ApiResponse<?> getProductVariantsByProductId(Pageable pageable,
+                                                        @PathVariable("productId") String productId,
+                                                        @RequestParam(required = false) String color,
+                                                        @RequestParam(required = false) String size,
+                                                        @RequestParam(required = false) BigDecimal minPrice,
+                                                        @RequestParam(required = false) BigDecimal maxPrice
+    ) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Product variants filter",
+                productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, color, size, minPrice, maxPrice));
     }
   
     @GetMapping("/productVariant")
@@ -63,18 +74,29 @@ public class ProductVariantController {
         productVariantService.updateProductVariantCreate(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
     }
-    @PutMapping("/productVariant/updatess")
-    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
-        System.out.println(request);
-        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
-        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
-    }
+//    @PutMapping("/productVariant/updatess")
+//    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
+//        System.out.println(request);
+//        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
+//        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
+//    }
     @GetMapping("/products/{promotionId}")
     public ResponseEntity<Map<String, List<Long>>> getProductsByPromotionId(@PathVariable Long promotionId) {
         Map<String, List<Long>> productAndDetailIds = productVariantService.getProductAndDetailIdsByPromotionId(promotionId);
         return ResponseEntity.ok(productAndDetailIds);
     }
+    @PutMapping("/{promotionId}/delete")
+    public ResponseEntity<Void> removePromotionFromNonSelectedVariants(
+            @PathVariable Integer promotionId,
+            @RequestBody Integer ids) {
 
+        try {
+            productVariantService.removePromotionFromNonSelectedVariants(promotionId, ids);
+            return ResponseEntity.ok().build(); // Trả về 200 OK nếu thành công
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Trả về 500 nếu có lỗi
+        }
+    }
 }
 
 

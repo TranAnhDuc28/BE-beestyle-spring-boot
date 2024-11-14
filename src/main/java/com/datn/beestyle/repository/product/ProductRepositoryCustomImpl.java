@@ -42,7 +42,6 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 """);
 
         handleStringConditionQuery(sqlQuery, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
-        log.info("SQL: {}", sqlQuery);
         Query query = entityManager.createNativeQuery(String.valueOf(sqlQuery), "ProductResponseMapping");
         handleParamConditionQuery(query, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
 
