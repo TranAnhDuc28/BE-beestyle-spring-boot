@@ -4,15 +4,11 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.CreateOrderItemRequest;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
 import com.datn.beestyle.dto.order.item.UpdateOrderItemRequest;
-import com.datn.beestyle.dto.product.UserProductResponse;
-import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.entity.product.Product;
-import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.OrderItemMapper;
 import com.datn.beestyle.mapper.ProductMapper;
 import com.datn.beestyle.repository.OrderItemRepository;
@@ -26,8 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -68,18 +62,18 @@ public class OrderItemService extends GenericServiceAbstract<OrderItem, Long, Cr
                 orderItemResponse.setProductVariant(null);
             }
 
-            if (item.getProductVariant().getProduct() != null) {
-                Long ids = item.getProductVariant().getProduct().getId();
-                List<Product> products = this.orderItemRepository.findProductById(ids);
-                UserProductResponse productResponse = new UserProductResponse();
-                for (Product product : products) {
-                    productResponse =
-                            this.productMapper.toEntityDto(product);
-                }
-                orderItemResponse.setProductResponse(productResponse);
-            } else {
-                orderItemResponse.setProductResponse(null);
-            }
+//            if (item.getProductVariant().getProduct() != null) {
+//                Long ids = item.getProductVariant().getProduct().getId();
+//                List<Product> products = this.orderItemRepository.findProductById(ids);
+//                UserProductResponse productResponse = new UserProductResponse();
+//                for (Product product : products) {
+//                    productResponse =
+//                            this.productMapper.toEntityDto(product);
+//                }
+//                orderItemResponse.setProductResponse(productResponse);
+//            } else {
+//                orderItemResponse.setProductResponse(null);
+//            }
             return orderItemResponse;
         }).toList();
 
