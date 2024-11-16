@@ -5,7 +5,6 @@ import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.entity.product.attributes.Size;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -55,11 +54,7 @@ public class ProductVariant extends Auditable<Long> {
     @Column(name = "status")
     int status;
 
-<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.EAGER, cascade = {PERSIST, MERGE})
-=======
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {PERSIST, MERGE})
->>>>>>> 8e2f3eea159ff29eef0d32d4745d07686f60b12e
     @JoinColumn(name = "promotion_id", referencedColumnName = "id")
     Promotion promotion;
 }
