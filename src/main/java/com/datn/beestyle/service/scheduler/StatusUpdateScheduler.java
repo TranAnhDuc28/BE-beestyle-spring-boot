@@ -2,7 +2,8 @@ package com.datn.beestyle.service.scheduler;
 
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
-import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.enums.DiscountStatus;
+import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.repository.PromotionRepository;
 import com.datn.beestyle.repository.VoucherRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,24 +16,26 @@ import java.util.List;
 public class StatusUpdateScheduler {
     private final PromotionRepository promotionRepository;
     private final VoucherRepository voucherRepository;
+    private final ProductVariantRepository productVariantRepository;
 
-    public StatusUpdateScheduler(PromotionRepository promotionRepository, VoucherRepository voucherRepository) {
+    public StatusUpdateScheduler(PromotionRepository promotionRepository, VoucherRepository voucherRepository, ProductVariantRepository productVariantRepository) {
         this.promotionRepository = promotionRepository;
         this.voucherRepository = voucherRepository;
+        this.productVariantRepository = productVariantRepository;
     }
 
 //    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
-
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-
 
         List<Promotion> promotions = promotionRepository.findAll();
         for (Promotion promotion : promotions) {
-            if (currentTimestamp.after(promotion.getEndDate()) || currentTimestamp.before(promotion.getStartDate())) {
-                promotion.setStatus(Status.INACTIVE.getValue());
+            if (currentTimestamp.before(promotion.getStartDate())) {
+                promotion.setStatus(DiscountStatus.UPCOMING.getValue());
+            } else if (currentTimestamp.after(promotion.getEndDate())) {
+                promotion.setStatus(DiscountStatus.ENDED.getValue());
             } else {
-                promotion.setStatus(Status.ACTIVE.getValue());
+                promotion.setStatus(DiscountStatus.ONGOING.getValue());
             }
         }
         promotionRepository.saveAll(promotions);
@@ -40,12 +43,25 @@ public class StatusUpdateScheduler {
 
         List<Voucher> vouchers = voucherRepository.findAll();
         for (Voucher voucher : vouchers) {
-            if (currentTimestamp.after(voucher.getEndDate()) || currentTimestamp.before(voucher.getStartDate())) {
-                voucher.setStatus(Status.INACTIVE.getValue());
+            if (currentTimestamp.before(voucher.getStartDate())) {
+                voucher.setStatus(DiscountStatus.UPCOMING.getValue());
+            } else if (currentTimestamp.after(voucher.getEndDate())) {
+                voucher.setStatus(DiscountStatus.ENDED.getValue());
             } else {
-                voucher.setStatus(Status.ACTIVE.getValue());
+                voucher.setStatus(DiscountStatus.ONGOING.getValue());
             }
         }
         voucherRepository.saveAll(vouchers);
+    }
+//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+    public void checkAndExpirePromotions() {
+
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        List<Promotion> endedPromotions = promotionRepository.findEndedPromotions(currentTimestamp);
+
+        for (Promotion promotion : endedPromotions) {
+
+            productVariantRepository.updateProductVariantToNullByPromotionId(promotion.getId());
+        }
     }
 }

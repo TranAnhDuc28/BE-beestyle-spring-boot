@@ -19,10 +19,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,9 +41,9 @@ public class ProductVariantService
     }
 
     @Override
-    public PageResponse<List<ProductVariantResponse>> getProductsByFieldsByProductId(Pageable pageable, String productIdStr,
-                                                                                     String keyword, String colorIds,
-                                                                                     String sizeIds, String status) {
+    public PageResponse<List<ProductVariantResponse>> getProductVariantsByFieldsByProductId(Pageable pageable, String productIdStr,
+                                                                                            String keyword, String colorIds,
+                                                                                            String sizeIds, String status) {
         Integer productId = null;
         if (productIdStr != null) {
             try {
@@ -67,10 +68,46 @@ public class ProductVariantService
         }
 
         Page<ProductVariantResponse> productVariantResponsePages =
-                productVariantRepository.findAllByFieldsByProductId(pageRequest, productId, keyword, colorIdList, sizeIdList, statusValue);
+                productVariantRepository.findAllByFieldsByProductId(pageRequest, productId, keyword, colorIdList,
+                        sizeIdList, statusValue);
+
         return PageResponse.<List<ProductVariantResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
+                .totalElements(productVariantResponsePages.getTotalElements())
+                .totalPages(productVariantResponsePages.getTotalPages())
+                .items(productVariantResponsePages.getContent())
+                .build();
+    }
+
+    @Override
+    public PageResponse<List<ProductVariantResponse>> filterProductVariantsByStatusIsActive(Pageable pageable, String productIdStr,
+                                                                                            String colorIds, String sizeIds,
+                                                                                            BigDecimal minPrice, BigDecimal maxPrice) {
+        Integer productId = null;
+        if (productIdStr != null) {
+            try {
+                productId = Integer.parseInt(productIdStr);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("ID sản phẩm phải là số.");
+            }
+        }
+
+        int page = 0, pageSize = 10;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+
+        List<Integer> colorIdList = AppUtils.handleStringIdsToIntegerIdList(colorIds);
+        List<Integer> sizeIdList = AppUtils.handleStringIdsToIntegerIdList(sizeIds);
+
+        Page<ProductVariantResponse> productVariantResponsePages =
+                productVariantRepository.filterProductVariantByProductId(pageRequest, productId, colorIdList, sizeIdList,
+                        minPrice, maxPrice, 1);
+
+        return PageResponse.<List<ProductVariantResponse>>builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageRequest.getPageSize())
                 .totalElements(productVariantResponsePages.getTotalElements())
                 .totalPages(productVariantResponsePages.getTotalPages())
                 .items(productVariantResponsePages.getContent())
@@ -106,8 +143,41 @@ public class ProductVariantService
     }
     @Override
     @Transactional
-    public void updateProductVariant(Integer promotionId, List<Integer> ids) {
+    public void updateProductVariantCreate(Integer promotionId, List<Integer> ids) {
         productVariantRepository.updatePromotionForVariants(promotionId, ids);
+    }
+
+//    @Override
+//    @Transactional
+//    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
+//        productVariantRepository.updatePromotionToNullForNonSelectedIds(promotionId, ids);
+//
+//        try {
+//            Thread.sleep(100);  // Dừng 100ms trước khi cập nhật
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        }
+//
+//        productVariantRepository.updatePromotionForVariants(promotionId, ids);
+//    }
+
+    public Map<String, List<Long>> getProductAndDetailIdsByPromotionId(Long promotionId) {
+        List<Object[]> results = productVariantRepository.findProductAndDetailIdsByPromotionId(promotionId);
+
+        List<Long> productIds = results.stream()
+                .map(result -> (Long) result[0]) // `productId` là phần tử đầu trong `Object[]`
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<Long> productDetailIds = results.stream()
+                .map(result -> (Long) result[1]) // `productDetailId` là phần tử thứ hai trong `Object[]`
+                .collect(Collectors.toList());
+
+        Map<String, List<Long>> response = new HashMap<>();
+        response.put("productIds", productIds);
+        response.put("productDetailIds", productDetailIds);
+
+        return response;
     }
     @Override
     protected void beforeCreate(CreateProductVariantRequest request) {
@@ -136,6 +206,19 @@ public class ProductVariantService
     @Override
     public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
         return productVariantRepository.findAllProductsWithDetails(productIds);
+    }
+
+
+    // Phương thức xóa liên kết promotion với các bản ghi không được chọn
+    @Transactional
+    public void removePromotionFromNonSelectedVariants(Integer promotionId, Integer ids) {
+        productVariantRepository.updatePromotionToNullForNonSelectedIds(promotionId, ids);
+    }
+
+    // Phương thức cập nhật promotion cho các bản ghi được chọn
+    @Transactional
+    public void applyPromotionToSelectedVariants(Integer promotionId, List<Integer> ids) {
+        productVariantRepository.updatePromotionForVariants(promotionId, ids);
     }
 
 }

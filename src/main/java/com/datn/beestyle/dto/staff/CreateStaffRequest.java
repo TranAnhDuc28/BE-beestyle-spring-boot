@@ -23,7 +23,7 @@ public class CreateStaffRequest {
 
     LocalDate dateOfBirth;
 
-    @NotNull(message = "Khong duoc de trong")
+//    @NotNull(message = "Khong duoc de trong")
     String gender;
 
     @NotBlank(message = "Khong duoc de trong")

@@ -14,8 +14,10 @@ public interface IAddressService extends
         IGenericService<Address,Long, CreateAddressRequest, UpdateAddressRequest, AddressResponse> {
 
 
+
+
     @Transactional
-    void beforeUpdateIsDefault(Long id, UpdateAddressRequest request);
+    AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request);
 
 
     PageResponse<?> getAllByCustomerId(Pageable pageable, Long customerId);

@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 public interface PromotionRepository extends IGenericRepository<Promotion, Integer> {
     //    @Query("""
 //            select p from Promotion p
@@ -33,5 +36,18 @@ public interface PromotionRepository extends IGenericRepository<Promotion, Integ
                                                 @Param("name") String name,
                                                 @Param("status") Integer status,
                                                 @Param("discountType") Integer discountType);
+
+
+    @Query(""" 
+    SELECT p FROM Promotion p
+    WHERE (:startDate IS NULL OR p.startDate >= :startDate)
+    AND (:endDate IS NULL OR p.endDate <= :endDate)
+    """)
+    Page<Promotion> findByDateRange(@Param("startDate") Timestamp startDate,
+                                  @Param("endDate") Timestamp endDate,
+                                  Pageable pageable);
+
+    @Query("SELECT p FROM Promotion p WHERE p.endDate < :currentDate")
+    List<Promotion> findEndedPromotions(@Param("currentDate") Timestamp currentDate);
 
 }

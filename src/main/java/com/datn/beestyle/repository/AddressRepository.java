@@ -18,9 +18,6 @@ public interface AddressRepository extends IGenericRepository<Address,Long> {
             """)
     Page<Address> findByCustomerId(Pageable pageable,@Param("customerId") Long customerId);
 
-//    Kiểm tra sự tồn tại của isDefault = true
-    boolean existsByIsDefaultTrue();
-
     boolean existsByCustomerIdAndIsDefaultTrue(Long customerId);
 
 

@@ -8,15 +8,25 @@ import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public interface IProductVariantService
         extends IGenericService<ProductVariant, Long, CreateProductVariantRequest, UpdateProductVariantRequest, ProductVariantResponse> {
 
-    PageResponse<List<ProductVariantResponse>> getProductsByFieldsByProductId(Pageable pageable, String productIdStr,
-                                                                              String keyword, String colorIds,
-                                                                              String sizeIds, String status);
+    PageResponse<List<ProductVariantResponse>> getProductVariantsByFieldsByProductId(Pageable pageable, String productIdStr,
+                                                                                     String keyword, String colorIds,
+                                                                                     String sizeIds, String status);
+
+    PageResponse<List<ProductVariantResponse>> filterProductVariantsByStatusIsActive(Pageable pageable, String productId,
+                                                                                     String colorIds, String sizeIds,
+                                                                                     BigDecimal minPrice, BigDecimal maxPrice);
+
     Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
-    void updateProductVariant(Integer promotionId, List<Integer> ids);
+
+    void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
+
+    void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
+
 }

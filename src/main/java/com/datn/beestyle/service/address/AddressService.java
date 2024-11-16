@@ -60,31 +60,40 @@ implements IAddressService{
     }
 
 
-    @Override
-    public void beforeUpdateIsDefault(Long id, UpdateAddressRequest request) {
-        // Lấy địa chỉ hiện tại từ database
-        Address currentAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
 
-        // Cập nhật các trường khác từ request
-        currentAddress.setAddressName(request.getAddressName());
-        currentAddress.setCity(request.getCity());
-        currentAddress.setDistrict(request.getDistrict());
-        currentAddress.setCommune(request.getCommune());
-
-        // Kiểm tra nếu yêu cầu là để đặt địa chỉ này thành mặc định
+    public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
+        // Kiểm tra nếu yêu cầu đặt địa chỉ này làm mặc định
         if (request.isDefault()) {
-            // Nếu địa chỉ hiện tại không phải là mặc định, cập nhật các địa chỉ khác thành false
+            Address currentAddress = addressRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
+
+            // Nếu địa chỉ hiện tại chưa được đặt là mặc định, tiến hành cập nhật
             if (!currentAddress.isDefault()) {
+                // Đặt các địa chỉ khác của khách hàng này thành không mặc định
                 addressRepository.updateIsDefaultFalseForOtherAddresses(currentAddress.getCustomer().getId(), id);
+
+                // Đặt địa chỉ hiện tại thành mặc định
+                currentAddress.setDefault(true);
+                return mapper.toEntityDto(addressRepository.save(currentAddress));  // Lưu và trả về AddressResponse
             }
-            // Đặt địa chỉ hiện tại thành mặc định
-            currentAddress.setDefault(true);
         } else {
-            // Nếu không đánh dấu là mặc định, đảm bảo rằng trường isDefault được thiết lập đúng
-            currentAddress.setDefault(false);
+            // Nếu không cần mặc định, chỉ cập nhật `isDefault` thành false
+            Address addressToUpdate = addressRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
+
+            addressToUpdate.setDefault(false); // Đảm bảo địa chỉ này không là mặc định
+
+            // Thực hiện cập nhật khác từ request (nếu cần thiết)
+            // addressToUpdate.setAddressName(request.getAddressName());
+
+            return mapper.toEntityDto(addressRepository.save(addressToUpdate));
         }
+
+        // Nếu không cần cập nhật gì, trả về địa chỉ hiện tại đã ở trạng thái mặc định
+        return mapper.toEntityDto(addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id)));
     }
+
 
 
 
@@ -112,8 +121,8 @@ implements IAddressService{
 
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "isDefault")
-                        .and(Sort.by(Sort.Direction.DESC, "createdAt", "id")));
+                Sort.by(Sort.Direction.DESC, "id"));
+
 
         Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest,customerId);
         List<AddressResponse> addressResponseList = mapper.toEntityDtoList(addressPage.getContent());

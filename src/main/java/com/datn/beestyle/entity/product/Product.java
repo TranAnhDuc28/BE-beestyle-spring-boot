@@ -1,5 +1,6 @@
 package com.datn.beestyle.entity.product;
 
+import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Category;
 import com.datn.beestyle.entity.product.attributes.Brand;
@@ -10,10 +11,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.CascadeType.*;
+import static jakarta.persistence.CascadeType.ALL;
 
 
 @Table(name = "product")
@@ -23,6 +25,20 @@ import static jakarta.persistence.CascadeType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SqlResultSetMapping(
+        name = "ProductResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = ProductResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "product_code", type = String.class),
+                        @ColumnResult(name = "product_name", type = String.class),
+                        @ColumnResult(name = "image_url", type = String.class),
+                        @ColumnResult(name = "min_sale_price", type = BigDecimal.class),
+                        @ColumnResult(name = "total_product_in_stock", type = Long.class)
+                }
+        )
+)
 public class Product extends Auditable<Long> {
 
     @Column(name = "product_code")

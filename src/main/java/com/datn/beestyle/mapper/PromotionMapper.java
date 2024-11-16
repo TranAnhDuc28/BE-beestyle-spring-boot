@@ -4,14 +4,19 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
+import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
+import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
+
+import java.sql.Timestamp;
 
 @Mapper(componentModel = "spring")
 public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
@@ -21,7 +26,7 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Override
     PromotionResponse toEntityDto(Promotion entity);
 
-    @Mapping(target = "status", constant = "1")
+    @Mapping(target = "status", source = "request", qualifiedByName = "determineStatusForCreate")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -29,7 +34,7 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Override
     Promotion toCreateEntity(CreatePromotionRequest request);
 
-    @Mapping(target = "status", source = ".", qualifiedByName = "statusId")
+    @Mapping(target = "status", source = "request", qualifiedByName = "determineStatusForUpdate")
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
@@ -37,14 +42,9 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     @Override
     void toUpdateEntity(@MappingTarget Promotion entity, UpdatePromotionRequest request);
 
-    @Named("statusId")
-    default int statusId(UpdatePromotionRequest request) {
-        return Status.valueOf(request.getStatus()).getValue();
-    }
-
     @Named("statusName")
     default String statusName(Promotion promotion) {
-        Status status = Status.resolve(promotion.getStatus());
+        DiscountStatus status = DiscountStatus.resolve(promotion.getStatus());
         return status != null ? status.name() : null;
     }
 
@@ -57,5 +57,28 @@ public interface PromotionMapper extends IGenericMapper<Promotion, CreatePromoti
     default Integer discountTypeId(String discountType) {
         DiscountType type = DiscountType.fromString(discountType);
         return type != null ? type.getValue() : null;
+    }
+    @Named("determineStatusForCreate")
+    default int determineStatusForCreate(CreatePromotionRequest request) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (now.before(request.getStartDate())) {
+            return 0;
+        } else if (!now.after(request.getEndDate())) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    @Named("determineStatusForUpdate")
+    default int determineStatusForUpdate(UpdatePromotionRequest request) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (now.before(request.getStartDate())) {
+            return 0;
+        } else if (!now.after(request.getEndDate())) {
+            return 1;
+        } else {
+            return 2;
+        }
     }
 }
