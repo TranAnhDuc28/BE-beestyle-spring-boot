@@ -4,12 +4,11 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.category.CategoryResponse;
-import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
+import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.OrderRepository;
@@ -21,8 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,77 +31,49 @@ public class OrderService
 
     private final OrderRepository orderRepository;
 
-    private final OrderMapper orderMapper;
-
     public OrderService(IGenericRepository<Order, Long> entityRepository,
-                        IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest,
-                                OrderResponse> mapper, EntityManager entityManager,
-                        OrderRepository orderRepository, OrderMapper orderMapper
-    ) {
+                        IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
+                        EntityManager entityManager, OrderRepository orderRepository) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
     }
 
-    public PageResponse<List<OrderResponse>> getOrdersDTO(
-            Pageable pageable, String search, String status
-//            String dateStart,
-//            String dateEnd
-    ) {
+    public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, String keyword, String orderChannel,
+                                                                       String orderStatus) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
+                Sort.by("createdAt", "id").descending());
 
-        Map<Long, String> customerNames;
-        List<OrderResponse> orderResponses;
-        int page = pageable.getPageNumber() > 0 ?
-                pageable.getPageNumber() - 1 : 0;
+        Integer orderChannelValue = null;
+        if (orderChannel != null) {
+            OrderChannel orderChannelEnum = OrderChannel.fromString(orderChannel.toUpperCase());
+            orderChannelValue = orderChannelEnum != null ? orderChannelEnum.getValue() : null;
+        }
+
         Integer statusValue = null;
-        if (status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+        if (orderStatus != null) {
+            Status statusEnum = Status.fromString(orderStatus.toUpperCase());
             statusValue = statusEnum != null ? statusEnum.getValue() : null;
         }
 
-        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
-                Sort.by("id").descending());
-
-        Page<Order> orderPages = this.orderRepository.findAllByKeywordAndStatus(search, status, pageRequest);
-
-//        LocalDate start = dateStart != null ? LocalDate.parse(dateStart) : null;
-//        LocalDate end = dateEnd != null ? LocalDate.parse(dateEnd) : null;
-
-        List<Long> ids = orderPages.get().map(order ->
-                order.getCustomer() != null ? order.getCustomer().getId() : null).distinct().toList();
-        System.out.println(ids);
-
-        if (ids.isEmpty()) {
-            customerNames = null;
-        } else {
-            customerNames = this.orderRepository.findCustomerNameById(ids).stream()
-                    .collect(Collectors.toMap(object -> (Long) object[0], object -> (String) object[1]));
-        }
-        System.out.println(customerNames);
-
-        if (customerNames != null) {
-            orderResponses = orderPages.get().map(order -> {
-                OrderResponse orderResponse = orderMapper.toEntityDto(order);
-
-                if (order.getCustomer().getFullName() != null) {
-                    orderResponse.setCustomerName(customerNames.get(order.getCustomer().getId()));
-                } else {
-                    orderResponse.setCustomerName(null);
-                }
-                return orderResponse;
-            }).toList();
-        } else {
-            orderResponses = orderPages.get().map(orderMapper::toEntityDto).toList();
-        }
+        Page<OrderResponse> orderResponsePages = orderRepository.findAllByFields(pageRequest, keyword, orderChannelValue,
+                statusValue);
 
         return PageResponse.<List<OrderResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
-                .totalElements(orderPages.getTotalElements())
-                .totalPages(orderPages.getTotalPages())
-                .items(orderResponses)
+                .totalElements(orderResponsePages.getTotalElements())
+                .totalPages(orderResponsePages.getTotalPages())
+                .items(orderResponsePages.getContent())
                 .build();
     }
+
+    @Override
+    public List<OrderResponse> getOrdersPending() {
+        return orderRepository.findOrdersByOrderChannelAndOrderStatus(0, 0);
+    }
+
 
     @Override
     protected List<CreateOrderRequest> beforeCreateEntities(List<CreateOrderRequest> requests) {

@@ -12,17 +12,19 @@ import org.mapstruct.MappingTarget;
 import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> {
+
     @Override
+    @Mapping(target = "shippingAddress", ignore = true)
     OrderResponse toEntityDto(Order entity);
 
-    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Override
     Order toCreateEntity(CreateOrderRequest orderRequest);
 
-    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     void toUpdateEntity(@MappingTarget Order entity, UpdateOrderRequest request);
 }

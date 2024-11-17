@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class AppUtils {
 
     private static final String PRODUCT_CODE_PREFIX = "SP";
+    private static final String ORDER_CODE_PREFIX = "HD";
     public static final int MAX_CATEGORY_LEVEL = 3;
     private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITE_SPACE = Pattern.compile("[\\s]");
