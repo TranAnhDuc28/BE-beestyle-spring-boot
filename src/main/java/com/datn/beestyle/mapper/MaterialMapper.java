@@ -4,6 +4,7 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.dto.material.CreateMaterialRequest;
 import com.datn.beestyle.dto.material.MaterialResponse;
 import com.datn.beestyle.dto.material.UpdateMaterialRequest;
+import com.datn.beestyle.entity.product.Product;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.Status;
 import org.mapstruct.Mapper;
@@ -44,6 +45,7 @@ public interface MaterialMapper extends IGenericMapper<Material, CreateMaterialR
 
     @Named("statusName")
     default String statusName(Material material) {
-        return Status.valueOf(material.getStatus()).name();
+        Status status = Status.resolve(material.getStatus());
+        return status != null ? status.name() : null;
     }
 }

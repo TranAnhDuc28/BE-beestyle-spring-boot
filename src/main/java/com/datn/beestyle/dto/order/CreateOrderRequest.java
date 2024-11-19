@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateOrderRequest {
-    Long id;
     String orderTrackingNumber;
-    Long customerId;
+    BigDecimal shippingFee;
+    BigDecimal totalAmount;
     String orderChannel;
     String orderStatus;
 }

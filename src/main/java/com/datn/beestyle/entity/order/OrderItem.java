@@ -36,7 +36,7 @@ public class OrderItem {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id")
     Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)

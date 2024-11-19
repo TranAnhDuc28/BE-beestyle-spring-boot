@@ -1,7 +1,9 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.service.order.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -36,8 +38,8 @@ public class OrderController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order detail");
     }
 
-    @GetMapping("/create")
-    public ApiResponse<?> createOrder() {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Orders");
+    @PostMapping("/create")
+    public ApiResponse<?> createOrder(@Valid  @RequestBody CreateOrderRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order added successfully", orderService.create(request));
     }
 }
