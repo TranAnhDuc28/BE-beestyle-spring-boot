@@ -45,4 +45,9 @@ public class UserProductController {
     public ApiResponse<?> offeringProducts() {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Offer", productService.getOfferProductUser());
     }
+
+    @GetMapping("/detail")
+    public ApiResponse<?> detailProducts() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Products Offer", productService.getOfferProductUser());
+    }
 }
