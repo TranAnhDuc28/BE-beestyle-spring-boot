@@ -31,23 +31,23 @@ public class ProductVariantController {
     public ApiResponse<?> getProductVariantsByProductId(Pageable pageable,
                                                         @PathVariable("productId") String productId,
                                                         @RequestParam(required = false) String keyword,
-                                                        @RequestParam(required = false) String color,
-                                                        @RequestParam(required = false) String size,
+                                                        @RequestParam(required = false) String colorIds,
+                                                        @RequestParam(required = false) String sizeIds,
                                                         @RequestParam(required = false) String status
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants",
-                productVariantService.getProductVariantsByFieldsByProductId(pageable, productId, keyword, color, size, status));
+                productVariantService.getProductVariantsByFieldsByProductId(pageable, productId, keyword, colorIds, sizeIds, status));
     }
     @GetMapping("/product/{productId}/filter/variant")
     public ApiResponse<?> getProductVariantsByProductId(Pageable pageable,
                                                         @PathVariable("productId") String productId,
-                                                        @RequestParam(required = false) String color,
-                                                        @RequestParam(required = false) String size,
+                                                        @RequestParam(required = false) String colorIds,
+                                                        @RequestParam(required = false) String sizeIds,
                                                         @RequestParam(required = false) BigDecimal minPrice,
                                                         @RequestParam(required = false) BigDecimal maxPrice
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants filter",
-                productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, color, size, minPrice, maxPrice));
+                productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, colorIds, sizeIds, minPrice, maxPrice));
     }
 
     @GetMapping("/productVariant")
