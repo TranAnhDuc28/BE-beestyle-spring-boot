@@ -6,7 +6,8 @@ import org.springframework.lang.Nullable;
 @Getter
 public enum PaymentMethod {
     CASH_ON_DELIVERY(0),
-    BANK_TRANSFER(1);
+    BANK_TRANSFER(1),
+    COD_AND_BANK_TRANSFER(2);
 
     private final int value;
 
@@ -30,6 +31,26 @@ public enum PaymentMethod {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static PaymentMethod fromString(String value) {
+        try {
+            return PaymentMethod.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static String fromInteger(Integer value) {
+        if (value == null) return null;
+        try {
+            PaymentMethod paymentMethod = PaymentMethod.resolve(value);
+            return paymentMethod != null ? paymentMethod.name() : null;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
     }
 
 }

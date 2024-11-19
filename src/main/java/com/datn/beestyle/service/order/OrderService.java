@@ -4,15 +4,18 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.category.CategoryResponse;
-import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
+<<<<<<< HEAD
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.*;
+=======
+import com.datn.beestyle.enums.OrderChannel;
+import com.datn.beestyle.enums.Status;
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.OrderRepository;
 import jakarta.persistence.EntityManager;
@@ -23,10 +26,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+=======
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,32 +44,39 @@ public class OrderService
 
     private final OrderRepository orderRepository;
 
-    private final OrderMapper orderMapper;
-
     public OrderService(IGenericRepository<Order, Long> entityRepository,
-                        IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest,
-                                OrderResponse> mapper, EntityManager entityManager,
-                        OrderRepository orderRepository, OrderMapper orderMapper
-    ) {
+                        IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
+                        EntityManager entityManager, OrderRepository orderRepository) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
-        this.orderMapper = orderMapper;
     }
 
+<<<<<<< HEAD
     public PageResponse<List<OrderResponse>> getOrdersDTO(
             Pageable pageable, String q, String status
     ) {
+=======
+    public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, String keyword, String orderChannel,
+                                                                       String orderStatus) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
+                Sort.by("createdAt", "id").descending());
 
-        Map<Long, String> customerNames;
-        List<OrderResponse> orderResponses;
-        int page = pageable.getPageNumber() > 0 ?
-                pageable.getPageNumber() - 1 : 0;
+        Integer orderChannelValue = null;
+        if (orderChannel != null) {
+            OrderChannel orderChannelEnum = OrderChannel.fromString(orderChannel.toUpperCase());
+            orderChannelValue = orderChannelEnum != null ? orderChannelEnum.getValue() : null;
+        }
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
+
         Integer statusValue = null;
-        if (status != null) {
-            Status statusEnum = Status.fromString(status.toUpperCase());
+        if (orderStatus != null) {
+            Status statusEnum = Status.fromString(orderStatus.toUpperCase());
             statusValue = statusEnum != null ? statusEnum.getValue() : null;
         }
 
+<<<<<<< HEAD
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by("id").descending());
 
@@ -93,13 +106,17 @@ public class OrderService
         } else {
             orderResponses = orderPages.get().map(orderMapper::toEntityDto).toList();
         }
+=======
+        Page<OrderResponse> orderResponsePages = orderRepository.findAllByFields(pageRequest, keyword, orderChannelValue,
+                statusValue);
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
 
         return PageResponse.<List<OrderResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
-                .totalElements(orderPages.getTotalElements())
-                .totalPages(orderPages.getTotalPages())
-                .items(orderResponses)
+                .totalElements(orderResponsePages.getTotalElements())
+                .totalPages(orderResponsePages.getTotalPages())
+                .items(orderResponsePages.getContent())
                 .build();
     }
 
@@ -143,6 +160,12 @@ public class OrderService
             o.setUpdatedAt(LocalDateTime.now());
         }
         this.orderRepository.save(o);
+    }
+
+
+    @Override
+    public List<OrderResponse> getOrdersPending() {
+        return orderRepository.findOrdersByOrderChannelAndOrderStatus(0, 0);
     }
 
 

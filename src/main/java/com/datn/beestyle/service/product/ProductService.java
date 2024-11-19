@@ -91,7 +91,7 @@ public class ProductService
     @Override
     public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String category, String genderProduct,
                                                                              String brandIds, String materialIds,
-                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
+                                                                             BigDecimal minPrice, BigDecimal maxPrice) {
 
         Integer categoryId = null;
         if (category != null) {
@@ -113,7 +113,7 @@ public class ProductService
 
         Page<ProductResponse> productResponsePages =
                 productRepository.filterProduct(pageable, categoryId, genderProductValue, brandIdList, materialIdList,
-                        minPrice,  maxPrice,  1);
+                        minPrice, maxPrice, 1);
 
         return PageResponse.<List<ProductResponse>>builder()
                 .pageNo(productResponsePages.getNumber() + 1)
@@ -131,7 +131,7 @@ public class ProductService
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt", "id"));
+                Sort.by("createdAt", "id").descending());
 
         Integer categoryId = null;
         if (category != null) {

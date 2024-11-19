@@ -17,9 +17,8 @@ public enum Gender {
 
     public static Gender valueOf(int value) {
         Gender gender = resolve(value);
-        if (gender == null) {
-            throw new IllegalArgumentException("No matching constant for [" + value + "]");
-        }
+        if (gender == null) return null;
+//            throw new IllegalArgumentException("No matching constant for [" + value + "]");
         return gender;
     }
 
@@ -33,7 +32,6 @@ public enum Gender {
         return null;
     }
 
-
     @Nullable
     public static Gender fromString(String gender) {
         try {
@@ -42,7 +40,6 @@ public enum Gender {
             return null;
         }
     }
-
 
     @Nullable
     public static String fromInteger(Integer value) {

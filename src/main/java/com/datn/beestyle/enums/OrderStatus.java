@@ -23,9 +23,8 @@ public enum OrderStatus {
 
     public static OrderStatus valueOf(int value) {
         OrderStatus orderStatus = resolve(value);
-        if (orderStatus == null) {
-            throw new IllegalArgumentException("No matching constant for [" + value + "]");
-        }
+        if (orderStatus == null) return null;
+//            throw new IllegalArgumentException("No matching constant for [" + value + "]");
         return orderStatus;
     }
 
@@ -37,5 +36,25 @@ public enum OrderStatus {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public static OrderStatus fromString(String orderStatus) {
+        try {
+            return OrderStatus.valueOf(orderStatus.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public static String fromInteger(Integer value) {
+        if (value == null) return null;
+        try {
+            OrderStatus orderStatus = OrderStatus.resolve(value);
+            return orderStatus != null ? orderStatus.name() : null;
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return null;
+        }
     }
 }

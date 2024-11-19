@@ -1,14 +1,18 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+<<<<<<< HEAD
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.service.order.OrderService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+=======
+import com.datn.beestyle.dto.order.CreateOrderRequest;
+import com.datn.beestyle.service.order.OrderService;
+import jakarta.validation.Valid;
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,16 +26,28 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<?> getOrders(
-            Pageable pageable,
-            @RequestParam(name = "q", required = false) String search,
-            @RequestParam(name = "status", required = false) String status
-//            @RequestParam(name = "dateS", defaultValue = "") String dateStart,
-//            @RequestParam(name = "dateE", defaultValue = "") String dateEnd
-    ) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order",
-                this.orderService.getOrdersDTO(pageable, search, status)
-        );
+    public ApiResponse<?> getOrders(Pageable pageable,
+                                    @RequestParam(required = false) String keyword,
+                                    @RequestParam(required = false) String orderChannel,
+                                    @RequestParam(required = false) String orderStatus) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Orders",
+                this.orderService.getOrdersFilterByFields(pageable, keyword, orderChannel, orderStatus));
+    }
+
+    @GetMapping("/sale/order-pending")
+    public ApiResponse<?> getOrdersPending() {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Orders Pending",
+                this.orderService.getOrdersPending());
+    }
+
+    @GetMapping("/{orderId}")
+    public ApiResponse<?> getOrderDetail(@PathVariable("orderId") Long orderId) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order detail");
+    }
+
+    @PostMapping("/create")
+    public ApiResponse<?> createOrder(@Valid  @RequestBody CreateOrderRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order added successfully", orderService.create(request));
     }
 
     @PostMapping("/add")

@@ -25,8 +25,8 @@ public class OrderItem {
     @Column(name = "quantity")
     int quantity;
 
-    @Column(name = "original_price")
-    BigDecimal originalPrice = BigDecimal.ZERO;
+    @Column(name = "sale_price")
+    BigDecimal salePrice = BigDecimal.ZERO;
 
     @Column(name = "discounted_price")
     BigDecimal discountedPrice = BigDecimal.ZERO;
@@ -35,8 +35,13 @@ public class OrderItem {
     String note;
 
     @JsonBackReference
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
+=======
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
     Order order;
 
     @ManyToOne(fetch = FetchType.EAGER)

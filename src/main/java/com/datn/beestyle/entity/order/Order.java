@@ -54,9 +54,14 @@ public class Order extends Auditable<Long> {
     @Enumerated(EnumType.ORDINAL)
     OrderChannel orderChannel;
 
+<<<<<<< HEAD
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     OrderStatus status;
+=======
+    @Column(name = "order_status")
+    int orderStatus;
+>>>>>>> ee23191801e6c6287e495bb989978a11a4ae2e84
 
     @Column(name = "note")
     String note;
