@@ -26,7 +26,4 @@ public interface IProductVariantService
     Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
 
     void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
-
-    void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
-
 }
