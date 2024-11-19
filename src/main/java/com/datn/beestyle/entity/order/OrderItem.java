@@ -25,8 +25,8 @@ public class OrderItem {
     @Column(name = "quantity")
     int quantity;
 
-    @Column(name = "original_price")
-    BigDecimal originalPrice = BigDecimal.ZERO;
+    @Column(name = "sale_price")
+    BigDecimal salePrice = BigDecimal.ZERO;
 
     @Column(name = "discounted_price")
     BigDecimal discountedPrice = BigDecimal.ZERO;
@@ -36,7 +36,7 @@ public class OrderItem {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id")
     Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
