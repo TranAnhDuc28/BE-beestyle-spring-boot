@@ -49,32 +49,32 @@ public class ProductVariantController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants filter",
                 productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, color, size, minPrice, maxPrice));
     }
-  
+
     @GetMapping("/productVariant")
     public Optional<Object[]> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
         return productVariantService.getAllProductsWithDetails(productIds);
     }
-  
+
     @PutMapping("/productVariant/update/{id}")
     public ApiResponse<?> updateProducrVariant(@Min(1) @PathVariable long id,
                                                @Valid @RequestBody UpdateProductVariantRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Sửa chi tiết sản phẩm thành công!",
                 productVariantService.update(id, request));
     }
-  
+
     //    @PatchMapping("/updates")
 //    public ApiResponse<?> updateProductVariant(@RequestBody List<@Valid UpdateProductVariantRequest> requestList) {
 //        iProductVariantService.updateEntities(requestList);
 //        return new ApiResponse<>(HttpStatus.CREATED.value(), "ProductVariant cập nhật thành công");
 //    }
-  
+
     @PutMapping("/productVariant/updates")
     public ResponseEntity<ApiResponse<String>> updateProductVariantCreate(@Valid @RequestBody UpdateProductVariantRequest request) {
         System.out.println(request);
         productVariantService.updateProductVariantCreate(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
     }
-//    @PutMapping("/productVariant/updatess")
+    //    @PutMapping("/productVariant/updatess")
 //    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
 //        System.out.println(request);
 //        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
@@ -98,5 +98,3 @@ public class ProductVariantController {
         }
     }
 }
-
-
