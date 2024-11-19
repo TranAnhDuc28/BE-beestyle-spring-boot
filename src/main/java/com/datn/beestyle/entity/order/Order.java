@@ -50,8 +50,8 @@ public class Order extends Auditable<Long> {
     @Column(name = "order_channel")
     int orderChannel;
 
-    @Column(name = "status")
-    int status;
+    @Column(name = "order_status")
+    int orderStatus;
 
     @Column(name = "note")
     String note;
