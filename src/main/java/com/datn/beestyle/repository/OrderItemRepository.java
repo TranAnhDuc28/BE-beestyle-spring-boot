@@ -3,9 +3,11 @@ package com.datn.beestyle.repository;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
 import com.datn.beestyle.entity.order.OrderItem;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -25,4 +27,10 @@ public interface OrderItemRepository extends IGenericRepository<OrderItem, Long>
         where oi.order.id = :orderId
     """)
     List<OrderItemResponse> findAllByOrderId(@Param("orderId") Long orderId);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update OrderItem oi set oi.quantity = :quantity where oi.id = :orderItemId")
+    int updateQuantityOrderItem(@Param("orderItemId") long orderItemId, @Param("quantity") int quantity);
 }

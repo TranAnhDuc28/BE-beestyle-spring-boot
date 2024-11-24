@@ -7,6 +7,7 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
+import com.datn.beestyle.util.AppUtils;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -71,4 +72,5 @@ public class Order extends Auditable<Long> {
     @JsonManagedReference
     @OneToMany(mappedBy = "order", cascade = ALL, fetch = FetchType.LAZY)
     List<OrderItem> orderItems = new ArrayList<>();
+
 }

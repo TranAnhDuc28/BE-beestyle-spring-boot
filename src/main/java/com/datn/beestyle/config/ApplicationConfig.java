@@ -23,7 +23,7 @@ public class ApplicationConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Allowed HTTP methods
+        config.setAllowedMethods(List.of("*")); // Allowed HTTP methods
         config.setAllowedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
 //        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
