@@ -119,9 +119,9 @@ public class ProductVariantService
     public int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action) {
         ProductVariant productVariant =  this.getById(request.getId());
 
-        if(action.equals("+")) { // hồi sản phẩm trong kho
+        if(action.equalsIgnoreCase("plus")) { // hồi sản phẩm trong kho
             request.setQuantity(productVariant.getQuantityInStock() + request.getQuantity());
-        } else if(action.equals("-")) { // trừ sản phẩm trong kho
+        } else if(action.equalsIgnoreCase("minus")) { // trừ sản phẩm trong kho
             request.setQuantity(productVariant.getQuantityInStock() - request.getQuantity());
         } else {
             throw new IllegalArgumentException("Hành động không hợp lệ ('+' hoặc '-').");

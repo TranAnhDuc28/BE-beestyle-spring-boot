@@ -5,7 +5,6 @@ import com.datn.beestyle.dto.order.item.CreateOrderItemRequest;
 import com.datn.beestyle.dto.order.item.PatchUpdateQuantityOrderItem;
 import com.datn.beestyle.dto.order.item.UpdateOrderItemRequest;
 import com.datn.beestyle.service.order.item.IOrderItemService;
-import com.datn.beestyle.service.order.item.OrderItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -47,6 +46,6 @@ public class OrderItemController {
     @DeleteMapping("/order-item/{orderItemId}/delete")
     public ApiResponse<?> deleteOrderItemByOrderId(@PathVariable("orderItemId") Long orderItemId) {
         orderItemService.delete(orderItemId);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Delete order item");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Deleted order item");
     }
 }

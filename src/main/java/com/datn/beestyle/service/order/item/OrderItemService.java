@@ -12,6 +12,7 @@ import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.OrderItemRepository;
+import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.service.order.OrderService;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import jakarta.persistence.EntityManager;
@@ -29,15 +30,17 @@ public class OrderItemService
     private final OrderItemRepository orderItemRepository;
     private final OrderService orderService;
     private final ProductVariantService productVariantService;
+    private final ProductVariantRepository productVariantRepository;
 
     public OrderItemService(IGenericRepository<OrderItem, Long> entityRepository,
                             IGenericMapper<OrderItem, CreateOrderItemRequest, UpdateOrderItemRequest, OrderItemResponse> mapper,
                             EntityManager entityManager, OrderItemRepository orderItemRepository, OrderService orderService,
-                            ProductVariantService productVariantService) {
+                            ProductVariantService productVariantService, ProductVariantRepository productVariantRepository) {
         super(entityRepository, mapper, entityManager);
         this.orderItemRepository = orderItemRepository;
         this.orderService = orderService;
         this.productVariantService = productVariantService;
+        this.productVariantRepository = productVariantRepository;
     }
 
     @Override
@@ -51,12 +54,23 @@ public class OrderItemService
         if (request.getId() == null) throw new InvalidDataException("Id hóa đơn chi tiết không hợp lệ.");
         this.getById(request.getId());
 
-
-        ProductVariant productVariant = productVariantService.getById(request.getProductVariantId());
-        int newQuantityProductVariant = productVariant.getQuantityInStock() - request.getQuantity();
-        productVariantService.updateQuantityProductVariant(, request.getProductVariantId(), , newQuantityProductVariant);
-
         return orderItemRepository.updateQuantityOrderItem(request.getId(), request.getQuantity());
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        if (id == null) throw new InvalidDataException("Id Hóa đơn chi tiết không tồn tại với ID: " + id);
+        OrderItem orderItem = this.getById(id);
+
+        Long productVariantId = orderItem.getProductVariant().getId();
+        ProductVariant productVariant = productVariantService.getById(productVariantId);
+
+        // tính và hồi lại số lượng sản phẩm vào kho
+        int quantity = orderItem.getQuantity() + productVariant.getQuantityInStock();
+        productVariantRepository.updateQuantityProductVariant(productVariantId, quantity);
+
+        super.delete(id);
     }
 
     @Override

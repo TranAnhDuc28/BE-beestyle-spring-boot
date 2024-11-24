@@ -52,10 +52,11 @@ public class ProductVariantController {
                 productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, colorIds, sizeIds, minPrice, maxPrice));
     }
 
-    @PatchMapping("/order-item/update-quantity")
+    @PatchMapping("/product-variant/update-quantity-in-stock")
     public ApiResponse<?> patchQuantityInStockProductVariant(@Valid @RequestBody PatchUpdateQuantityProductVariant request,
                                                              @RequestParam("action") String action) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Patch update quantity in stock product variant successfully.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Patch update quantity in stock product variant successfully.",
+                productVariantService.updateQuantityProductVariant(request, action));
     }
 
     @GetMapping("/productVariant")
