@@ -26,6 +26,7 @@ public interface OrderItemMapper extends IGenericMapper<OrderItem, CreateOrderIt
     OrderItemResponse toEntityDto(OrderItem entity);
 
     @Override
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "order", ignore = true)
     @Mapping(target = "productVariant", ignore = true)
     OrderItem toCreateEntity(CreateOrderItemRequest request);

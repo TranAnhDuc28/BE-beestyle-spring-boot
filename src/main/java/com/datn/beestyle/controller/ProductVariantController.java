@@ -1,6 +1,8 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.order.item.PatchUpdateQuantityOrderItem;
+import com.datn.beestyle.dto.product.variant.PatchUpdateQuantityProductVariant;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,6 +50,12 @@ public class ProductVariantController {
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Product variants filter",
                 productVariantService.filterProductVariantsByStatusIsActive(pageable, productId, colorIds, sizeIds, minPrice, maxPrice));
+    }
+
+    @PatchMapping("/order-item/update-quantity")
+    public ApiResponse<?> patchQuantityInStockProductVariant(@Valid @RequestBody PatchUpdateQuantityProductVariant request,
+                                                             @RequestParam("action") String action) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Patch update quantity in stock product variant successfully.");
     }
 
     @GetMapping("/productVariant")

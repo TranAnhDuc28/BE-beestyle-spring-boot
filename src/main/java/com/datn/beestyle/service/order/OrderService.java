@@ -9,9 +9,12 @@ import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.enums.OrderChannel;
+import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -74,7 +77,6 @@ public class OrderService
         return orderRepository.findOrdersByOrderChannelAndOrderStatus(0, 0);
     }
 
-
     @Override
     protected List<CreateOrderRequest> beforeCreateEntities(List<CreateOrderRequest> requests) {
         return null;
@@ -87,7 +89,8 @@ public class OrderService
 
     @Override
     protected void beforeCreate(CreateOrderRequest request) {
-
+        int countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(1L, OrderStatus.PENDING.getValue());
+        if (countOrderPending >= 20) throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
     }
 
     @Override
@@ -98,6 +101,9 @@ public class OrderService
     @Override
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
 
+        entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
+        entity.setCreatedBy(1L);
+        entity.setUpdatedBy(1L);
     }
 
     @Override

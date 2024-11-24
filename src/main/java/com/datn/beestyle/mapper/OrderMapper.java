@@ -24,10 +24,11 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "orderTrackingNumber", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "shippingFee", constant = "0")
     @Mapping(target = "totalAmount", constant = "0")
-    @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannel")
+    @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelId")
     @Mapping(target = "orderStatus", source = ".", qualifiedByName = "orderStatusId")
     @Override
     Order toCreateEntity(CreateOrderRequest orderRequest);
@@ -42,7 +43,7 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
         return OrderStatus.valueOf(request.getOrderStatus()).getValue();
     }
 
-    @Named("orderChannel")
+    @Named("orderChannelId")
     default int orderChannelId(CreateOrderRequest request) {
         return OrderChannel.valueOf(request.getOrderChannel()).getValue();
     }
