@@ -40,6 +40,6 @@ public class OrderController {
 
     @PostMapping("/create")
     public ApiResponse<?> createOrder(@Valid  @RequestBody CreateOrderRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order added successfully", orderService.create(request));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order pending added successfully.", orderService.create(request));
     }
 }

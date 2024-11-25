@@ -44,10 +44,11 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                 where
                     (:orderChannel is null or o.orderChannel = :orderChannel) and 
                     (:orderStatus is null or o.orderStatus = :orderStatus)
-                order by o.createdAt desc   
             """
     )
     List<OrderResponse> findOrdersByOrderChannelAndOrderStatus(@Param("orderChannel") Integer orderChannel,
                                              @Param("orderStatus") Integer orderStatus);
+
+    int countByCreatedByAndAndOrderStatus(Long staffId, Integer orderStatus);
 
 }
