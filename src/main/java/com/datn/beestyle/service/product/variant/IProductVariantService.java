@@ -3,6 +3,7 @@ package com.datn.beestyle.service.product.variant;
 import com.datn.beestyle.common.IGenericService;
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
+import com.datn.beestyle.dto.product.variant.PatchUpdateQuantityProductVariant;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.ProductVariant;
@@ -23,10 +24,12 @@ public interface IProductVariantService
                                                                                      String colorIds, String sizeIds,
                                                                                      BigDecimal minPrice, BigDecimal maxPrice);
 
+    int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action);
+
     Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
 
     void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
 
-    void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
+//    void updateProductVariantUpdate(Integer promotionId, List<Integer> ids);
 
 }

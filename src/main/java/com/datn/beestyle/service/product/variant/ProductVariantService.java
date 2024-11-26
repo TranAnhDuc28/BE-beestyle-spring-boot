@@ -5,10 +5,12 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.product.variant.CreateProductVariantRequest;
+import com.datn.beestyle.dto.product.variant.PatchUpdateQuantityProductVariant;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
@@ -19,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -112,6 +113,21 @@ public class ProductVariantService
                 .totalPages(productVariantResponsePages.getTotalPages())
                 .items(productVariantResponsePages.getContent())
                 .build();
+    }
+
+    @Override
+    public int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action) {
+        ProductVariant productVariant =  this.getById(request.getId());
+
+        if(action.equalsIgnoreCase("plus")) { // hồi sản phẩm trong kho
+            request.setQuantity(productVariant.getQuantityInStock() + request.getQuantity());
+        } else if(action.equalsIgnoreCase("minus")) { // trừ sản phẩm trong kho
+            request.setQuantity(productVariant.getQuantityInStock() - request.getQuantity());
+        } else {
+            throw new IllegalArgumentException("Hành động không hợp lệ ('+' hoặc '-').");
+        }
+
+        return productVariantRepository.updateQuantityProductVariant(request.getId(), request.getQuantity());
     }
 
     @Override

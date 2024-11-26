@@ -19,7 +19,11 @@ spring:
 
     url: jdbc:mysql://localhost:3306/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
+<<<<<<< HEAD
     password: 12345678
+=======
+    password: 123456
+>>>>>>> 02a2f0c4ebc68a37119d350637ca187655875f44
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -60,6 +64,11 @@ openapi:
     serverName: server dev
     api-docs: api-services
 
-
+# VNPay Configuration
+vnpay:
+  tmn_code: NB1VPMR9              # Mã Tài Khoản Merchant
+  hash_secret: U8T6SITAE5S2R4QVBTHX1FG98V5II02Z        # Chuỗi bí mật dùng để mã hóa
+  pay_url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  return_url: http://localhost:8080/api/v1/payment/return # URL trả kết quả sau khi thanh toán
 
 

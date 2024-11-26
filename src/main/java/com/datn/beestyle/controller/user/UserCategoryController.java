@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "User Category Controller")
 public class UserCategoryController {
-
     private final ICategoryService categoryService;
-
     @GetMapping
     public ApiResponse<?> getCategoriesForUser(Pageable pageable) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Categories", categoryService.getCategoryOptions());

@@ -1,18 +1,23 @@
 package com.datn.beestyle.util;
 
 import java.text.Normalizer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class AppUtils {
 
     private static final String PRODUCT_CODE_PREFIX = "SP";
+    private static final String ORDER_CODE_PREFIX = "HD";
     public static final int MAX_CATEGORY_LEVEL = 3;
     private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITE_SPACE = Pattern.compile("[\\s]");
     private static final Pattern EDGES_DASHES = Pattern.compile("(^-|-$)");
+    private static final DateTimeFormatter formatterDateOrderTrackingNumber = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
 
     public static String toSlug(String input) {
         // Thay thế khoảng trắng bằng dấu gạch ngang
@@ -55,8 +60,13 @@ public class AppUtils {
     public static String generateProductCode(Long id) {
         return String.format("%s%06d", PRODUCT_CODE_PREFIX, id);
     }
-
-    public static void main(String[] args) {
-        System.out.println(toSlug("Đây là một ví dụ về Slug!"));
+    public static String generateOrderTrackingNumber() {
+        LocalDateTime now = LocalDateTime.now();
+        String formattedOrderTrackingNumber = now.format(formatterDateOrderTrackingNumber);
+        return String.format("%s%s", ORDER_CODE_PREFIX, formattedOrderTrackingNumber);
     }
+
+//    public static void main(String[] args) {
+//        System.out.println(toSlug("Đây là một ví dụ về Slug!"));
+//    }
 }
