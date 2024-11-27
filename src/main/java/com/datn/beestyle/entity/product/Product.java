@@ -38,6 +38,7 @@ import static jakarta.persistence.CascadeType.ALL;
                 }
         )
 )
+
 public class Product extends Auditable<Long> {
 
     @Column(name = "product_code")
