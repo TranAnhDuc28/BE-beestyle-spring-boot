@@ -2,15 +2,14 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 
-import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.ProductVariant;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -64,6 +63,12 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
                                                             @Param("colorIds") List<Integer> colorIds,
                                                             @Param("sizeIds") List<Integer> sizeIds,
                                                             @Param("status") Integer status);
+
+
+    @Transactional
+    @Modifying
+    @Query(value = "update ProductVariant pv set pv.quantityInStock = :quantity where pv.id = :productVariantId")
+    int updateQuantityProductVariant(@Param("productVariantId") long productVariantId, @Param("quantity") int quantity);
 
     @Query(value = """
             SELECT 

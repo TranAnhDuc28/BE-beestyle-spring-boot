@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateOrderRequest {
-    String orderTrackingNumber;
     BigDecimal shippingFee;
     BigDecimal totalAmount;
     String orderChannel;

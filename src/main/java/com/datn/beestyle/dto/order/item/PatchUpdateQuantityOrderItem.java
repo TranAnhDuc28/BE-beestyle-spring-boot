@@ -7,26 +7,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateOrderItemRequest {
+public class PatchUpdateQuantityOrderItem {
+    @NotNull(message = "Id hóa đơn chi tiết không hợp lệ (null).")
+    Long id;
 
-    @NotNull(message = "Id hóa đơn không hợp lệ.")
-    Long orderId;
-
-    @NotNull(message = "Id biến thể sản phẩm không hợp lệ.")
+    @NotNull(message = "Id biến thể sản phẩm không hợp lệ (null).")
     Long productVariantId;
 
     @NotNull(message = "Số lượng không có giá trị.")
     @Min(value = 1, message = "Số lượng không được nhỏ hơn 1.")
     Integer quantity;
-
-    @NotNull(message = "Giá bán không có giá trị.")
-    @Min(value = 0, message = "Giá bán không được nhỏ hơn không.")
-    BigDecimal salePrice;
-
-    BigDecimal discountedPrice;
 }
