@@ -2,6 +2,7 @@ package com.datn.beestyle.repository.product;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
+import com.datn.beestyle.dto.product.user.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends IGenericRepository<Product, Long>, ProductRepositoryCustom{
+public interface ProductRepository extends IGenericRepository<Product, Long>, ProductRepositoryCustom {
 
     @Query(value = """
             select new com.datn.beestyle.dto.product.ProductResponse(
@@ -60,10 +61,76 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
+    @Query(
+            value = """
+                    select new com.datn.beestyle.dto.product.user.UserProductResponse(
+                        p.id,
+                        p.productName,
+                        pi.imageUrl,
+                        pv.salePrice,
+                        pv.originalPrice
+                    )
+                    from Product p
+                    left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
+                    left join ProductVariant pv on p.id = pv.product.id
+                    order by p.productName asc
+                    """
+    )
+    List<UserProductResponse> findAllProductUser();
 
+
+    @Query(value = """
+            select new com.datn.beestyle.dto.product.user.UserProductResponse(
+                p.id,\s
+                p.productName,\s
+                pi.imageUrl,\s
+                min(pv.salePrice),\s
+                max(pv.originalPrice))
+            from Product p
+                inner join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
+                inner join ProductVariant pv on p.id = pv.product.id
+            where (:q is null or p.gender = :q)
+            group by p.id, p.productName, pi.imageUrl\s
+            """)
+    Page<UserProductResponse> getProductForUser(Pageable pageable, @Param("q") Integer q);
+
+    @Query(value = """
+            select new com.datn.beestyle.dto.product.user.UserProductResponse(
+                    p.id,\s
+                    p.productName,\s
+                    max(pi2.imageUrl),
+                    max(pv.salePrice),
+                    max(pv.originalPrice)
+            )
+            from OrderItem oi
+                inner join ProductVariant pv on oi.productVariant.id = pv.id
+                inner join Product p on p.id = pv.product.id
+                inner join ProductImage pi2 on pi2.product.id = p.id
+            group by p.id, p.productName
+            order by count(p.id) desc
+            """)
+    Page<UserProductResponse> getSellingProducts(Pageable pageable);
+
+    @Query(value = """
+            select new com.datn.beestyle.dto.product.user.UserProductResponse(
+                    p.id,\s
+                    p.productName,\s
+                    min(pi2.imageUrl),
+                    min(pv.salePrice),
+                    min(pv.originalPrice)
+            )
+            from Product p
+                inner join ProductVariant pv on p.id = pv.product.id
+                inner join ProductImage pi2 on pi2.product.id = p.id
+            group by p.id, p.productName
+            order by min(pv.salePrice) asc
+            """)
+    Page<UserProductResponse> getOfferingProducts(Pageable pageable);
 
     boolean existsByProductName(String name);
+
     boolean existsByProductCode(String code);
+
     Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 
 }

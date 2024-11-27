@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 5050
   servlet:
       context-path: /api/v1
 
@@ -19,7 +19,15 @@ spring:
 
     url: jdbc:mysql://localhost:3306/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
+<<<<<<< HEAD
+<<<<<<< HEAD
+    password: 12345678
+=======
     password: 123456
+>>>>>>> 02a2f0c4ebc68a37119d350637ca187655875f44
+=======
+    password: 123456
+>>>>>>> 02a2f0c4ebc68a37119d350637ca187655875f44
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
