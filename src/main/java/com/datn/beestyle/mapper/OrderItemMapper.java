@@ -32,5 +32,7 @@ public interface OrderItemMapper extends IGenericMapper<OrderItem, CreateOrderIt
     OrderItem toCreateEntity(CreateOrderItemRequest request);
 
     @Override
+    @Mapping(target = "order", ignore = true)
+    @Mapping(target = "productVariant", ignore = true)
     void toUpdateEntity(@MappingTarget OrderItem entity, UpdateOrderItemRequest request);
 }
