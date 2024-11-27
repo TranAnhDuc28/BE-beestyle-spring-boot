@@ -1,8 +1,11 @@
 package com.datn.beestyle.repository.product;
 
 import com.datn.beestyle.dto.product.ProductResponse;
+import com.datn.beestyle.dto.product.user.UserProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 
 import java.math.BigDecimal;

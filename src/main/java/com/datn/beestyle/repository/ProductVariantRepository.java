@@ -2,7 +2,6 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 
-import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Page;
