@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateOrderItemRequest {
 
-    @NotNull(message = "Id hóa đơn không hợp lệ.")
+    @NotNull(message = "Id hóa đơn không hợp lệ (null).")
     Long orderId;
 
     @NotNull(message = "Id biến thể sản phẩm không hợp lệ.")

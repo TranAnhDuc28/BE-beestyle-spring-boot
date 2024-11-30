@@ -26,9 +26,15 @@ public class OrderItemController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order items", orderItemService.getAllByOrderId(orderId));
     }
 
+    @PostMapping("/order-item/create")
+    public ApiResponse<?> createOrderItemByOrderId(@RequestBody @Valid CreateOrderItemRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Create Order item", orderItemService.create(request));
+    }
+
     @PostMapping("/order-item/creates")
-    public ApiResponse<?> createsOrderItemByOrderId(@RequestBody List<@Valid CreateOrderItemRequest> request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Create Order item", orderItemService.createEntities(request));
+    public ApiResponse<?> createsOrderItemByOrderId(@RequestParam Long orderId,
+                                                    @RequestBody List<@Valid UpdateOrderItemRequest> request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Creates Order item", orderItemService.createOrUpdateOrderItems(orderId, request));
     }
 
     @PutMapping("/order-item/{orderItemId}/update")
