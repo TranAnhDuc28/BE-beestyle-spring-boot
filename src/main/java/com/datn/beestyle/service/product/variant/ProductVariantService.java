@@ -163,10 +163,10 @@ public class ProductVariantService
         productVariantRepository.updatePromotionForVariants(promotionId, ids);
     }
 
-    @Override
-    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
-
-    }
+//    @Override
+//    public void updateProductVariantUpdate(Integer promotionId, List<Integer> ids) {
+//
+//    }
 
 //    @Override
 //    @Transactional
