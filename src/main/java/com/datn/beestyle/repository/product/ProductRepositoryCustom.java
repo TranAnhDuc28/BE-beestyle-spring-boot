@@ -13,6 +13,6 @@ import java.util.List;
 
 public interface ProductRepositoryCustom {
 
-    Page<ProductResponse> filterProduct(Pageable pageable, Integer categoryId, Integer genderProduct, List<Integer> brandIds,
+    Page<ProductResponse> filterProduct(Pageable pageable, List<Integer> categoryIds, Integer genderProduct, List<Integer> brandIds,
                                         List<Integer> materialIds, BigDecimal minPrice, BigDecimal maxPrice, Integer status);
 }
