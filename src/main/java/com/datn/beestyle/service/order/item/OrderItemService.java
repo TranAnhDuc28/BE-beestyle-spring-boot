@@ -11,6 +11,7 @@ import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.exception.InvalidDataException;
+import com.datn.beestyle.mapper.OrderItemMapper;
 import com.datn.beestyle.repository.OrderItemRepository;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.service.order.OrderService;
@@ -20,7 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -31,21 +33,105 @@ public class OrderItemService
     private final OrderService orderService;
     private final ProductVariantService productVariantService;
     private final ProductVariantRepository productVariantRepository;
+    private final OrderItemMapper orderItemMapper;
 
     public OrderItemService(IGenericRepository<OrderItem, Long> entityRepository,
                             IGenericMapper<OrderItem, CreateOrderItemRequest, UpdateOrderItemRequest, OrderItemResponse> mapper,
                             EntityManager entityManager, OrderItemRepository orderItemRepository, OrderService orderService,
-                            ProductVariantService productVariantService, ProductVariantRepository productVariantRepository) {
+                            ProductVariantService productVariantService, ProductVariantRepository productVariantRepository, OrderItemMapper orderItemMapper) {
         super(entityRepository, mapper, entityManager);
         this.orderItemRepository = orderItemRepository;
         this.orderService = orderService;
         this.productVariantService = productVariantService;
         this.productVariantRepository = productVariantRepository;
+        this.orderItemMapper = orderItemMapper;
     }
 
     @Override
     public List<OrderItemResponse> getAllByOrderId(Long orderId) {
         return orderItemRepository.findAllByOrderId(orderId);
+    }
+
+    @Override
+    public Map<Long, Long> createOrUpdateOrderItems(Long orderId, List<UpdateOrderItemRequest> requests) {
+        Map<Long, Long> newOrderItemsMap = new HashMap<>();
+        List<Long> orderItemIds;
+        List<Long> productVariantIds;
+        List<OrderItem> orderItemsToSave = new ArrayList<>();
+
+        // kiểm hóa đơn có hợp lệ hay tồn tại không
+        if (orderId == null) throw new InvalidDataException("Id hóa đơn không hợp lệ (null).");
+        Order order = orderService.getById(orderId);
+
+        if (requests.isEmpty()) throw new InvalidDataException("Vui lòng chọn sản phẩm.");
+        // lấy ra orderItemIds và productVariantIds
+        orderItemIds = new ArrayList<>();
+        productVariantIds = new ArrayList<>();
+        for (UpdateOrderItemRequest request : requests) {
+            if (request.getId() != null) orderItemIds.add(request.getId());
+            if (request.getProductVariantId() != null) productVariantIds.add(request.getProductVariantId());
+        }
+
+        // validate tồn tại OrderItem
+        Map<Long, OrderItem> orderItemMap = Collections.emptyMap();
+        if (!orderItemIds.isEmpty()) {
+            List<OrderItem> orderItemList = orderItemRepository.findAllById(orderItemIds);
+
+            orderItemMap = orderItemList.stream().collect(Collectors.toMap(OrderItem::getId, orderItem -> orderItem));
+
+            this.validatePropOrderItems(orderId, orderItemIds, orderItemMap);
+        }
+
+        // validate tồn tại ProductVariant
+        Map<Long, ProductVariant> productVariantMap = Collections.emptyMap();
+        if (!productVariantIds.isEmpty()) {
+            List<ProductVariant> productVariantList = productVariantRepository.findAllById(productVariantIds);
+
+            productVariantMap = productVariantList.stream().collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
+
+            this.validatePropProductVariants(productVariantIds, productVariantMap);
+        }
+
+        for (UpdateOrderItemRequest request : requests) {
+            ProductVariant productVariant = productVariantMap.get(request.getProductVariantId());
+
+            OrderItem orderItem;
+            if (request.getId() != null) {
+                // Cập nhật OrderItem đã tồn tại
+                orderItem = orderItemMap.get(request.getId());
+                orderItem.setOrder(order);
+                orderItem.setSalePrice(productVariant.getSalePrice());
+
+                int newQuantity = orderItem.getQuantity() + request.getQuantity();
+                orderItem.setQuantity(newQuantity);
+            } else {
+                // Tạo mới OrderItem
+                orderItem = new OrderItem();
+                orderItem.setOrder(order);
+                orderItem.setProductVariant(productVariant);
+                orderItem.setQuantity(request.getQuantity());
+                orderItem.setSalePrice(productVariant.getSalePrice());
+            }
+
+            // Cập nhật số lượng tồn kho
+            int newStockQuantity = productVariant.getQuantityInStock() - request.getQuantity();
+            // Kiểm tra số lượng tồn kho có đủ hay không
+            if (newStockQuantity < 0) {
+                throw new InvalidDataException("Số lượng tồn kho không đủ cho sản phẩm: " + productVariant.getSku());
+            }
+            productVariant.setQuantityInStock(newStockQuantity);
+
+            // Thêm vào danh sách để lưu
+            orderItemsToSave.add(orderItem);
+        }
+        List<OrderItem> savedOrderItems = orderItemRepository.saveAll(orderItemsToSave);
+        productVariantRepository.saveAll(productVariantMap.values());
+
+        for (OrderItem newOrderItem : savedOrderItems) {
+            newOrderItemsMap.put(newOrderItem.getProductVariant().getId(), newOrderItem.getId());
+        }
+
+        return newOrderItemsMap;
     }
 
     @Transactional
@@ -89,8 +175,8 @@ public class OrderItemService
     }
 
     @Override
-    protected void beforeUpdate(Long aLong, UpdateOrderItemRequest request) {
-
+    protected void beforeUpdate(Long orderId, UpdateOrderItemRequest request) {
+        if (orderId == null) throw new InvalidDataException("Id hóa đơn không hợp lệ (null).");
     }
 
     @Override
@@ -106,11 +192,40 @@ public class OrderItemService
 
     @Override
     protected void afterConvertUpdateRequest(UpdateOrderItemRequest request, OrderItem entity) {
-
+        Long orderId = request.getOrderId();
+        Order order = orderService.getById(orderId);
+        entity.setOrder(order);
     }
 
     @Override
     protected String getEntityName() {
         return "Order Item";
+    }
+
+    private void validatePropProductVariants(List<Long> productVariantIds, Map<Long, ProductVariant> productVariantMap) {
+        List<Long> invalidProductVariantIds = productVariantIds.stream().filter(id -> productVariantMap.get(id) == null).toList();
+
+        if (!invalidProductVariantIds.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("ID biến thể sản phẩm không tồn tại: ");
+            for (Long invalidId : invalidProductVariantIds) {
+                errorMessage.append(invalidId).append(", ");
+            }
+            errorMessage.setLength(errorMessage.length() - 2);
+            throw new IllegalArgumentException(errorMessage.toString());
+        }
+    }
+
+    private void validatePropOrderItems(Long orderId, List<Long> orderItemIds, Map<Long, OrderItem> orderItemMap) {
+        List<Long> invalidOrderItemIds = orderItemIds.stream()
+                .filter(id -> orderItemMap.get(id) == null || !Objects.equals(orderItemMap.get(id).getOrder().getId(), orderId)).toList();
+
+        if (!invalidOrderItemIds.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("Hóa đơn chi tiết ID không tồn tại: ");
+            for (Long invalidId : invalidOrderItemIds) {
+                errorMessage.append(invalidId).append(", ");
+            }
+            errorMessage.setLength(errorMessage.length() - 2);
+            throw new IllegalArgumentException(errorMessage.toString());
+        }
     }
 }

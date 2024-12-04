@@ -248,7 +248,7 @@ public class ProductService
             Map<Integer, Color> colorMap = colors.stream().collect(Collectors.toMap(Color::getId, color -> color));
             Map<Integer, Size> sizeMap = sizes.stream().collect(Collectors.toMap(Size::getId, size -> size));
 
-            this.validateProductVariants(colorIds, sizeIds, colorMap, sizeMap);
+            this.validatePropsProductVariants(colorIds, sizeIds, colorMap, sizeMap);
 
             createProductVariantRequests.forEach(variantRequest -> {
                 Color color = colorMap.get(variantRequest.getColorId());
@@ -285,8 +285,8 @@ public class ProductService
         return "Product";
     }
 
-    private void validateProductVariants(List<Integer> colorIds, List<Integer> sizeIds,
-                                         Map<Integer, Color> colorMap, Map<Integer, Size> sizeMap) {
+    private void validatePropsProductVariants(List<Integer> colorIds, List<Integer> sizeIds,
+                                              Map<Integer, Color> colorMap, Map<Integer, Size> sizeMap) {
         List<Integer> invalidColorIds = colorIds.stream().filter(id -> colorMap.get(id) == null).toList();
         List<Integer> invalidSizeIds = sizeIds.stream().filter(id -> sizeMap.get(id) == null).toList();
 
