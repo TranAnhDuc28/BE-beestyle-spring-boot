@@ -89,18 +89,9 @@ public class ProductService
     }
 
     @Override
-    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String category, String genderProduct,
+    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String categoryIds, String genderProduct,
                                                                              String brandIds, String materialIds,
                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
-
-        Integer categoryId = null;
-        if (category != null) {
-            try {
-                categoryId = Integer.parseInt(category);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-        }
 
         Integer genderProductValue = null;
         if (genderProduct != null) {
@@ -110,9 +101,10 @@ public class ProductService
 
         List<Integer> brandIdList = AppUtils.handleStringIdsToIntegerIdList(brandIds);
         List<Integer> materialIdList = AppUtils.handleStringIdsToIntegerIdList(materialIds);
+        List<Integer> categoryIdList = AppUtils.handleStringIdsToIntegerIdList(categoryIds);
 
         Page<ProductResponse> productResponsePages =
-                productRepository.filterProduct(pageable, categoryId, genderProductValue, brandIdList, materialIdList,
+                productRepository.filterProduct(pageable, categoryIdList, genderProductValue, brandIdList, materialIdList,
                         minPrice, maxPrice, 1);
 
         return PageResponse.<List<ProductResponse>>builder()
