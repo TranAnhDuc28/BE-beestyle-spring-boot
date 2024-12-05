@@ -25,6 +25,18 @@ public class InvoiceController {
         this.invoicePDFExporter = new InvoicePDFExporter(); // Tạo đối tượng trực tiếp
     }
 
+    @PostMapping("/preview")
+    public ResponseEntity<byte[]> previewInvoice(@RequestBody InvoiceRequest request) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            invoicePDFExporter.exportInvoice(request, outputStream); // Xuất file PDF
+            byte[] pdfBytes = outputStream.toByteArray();
+            return ResponseEntity.ok().body(pdfBytes); // Trả về PDF dưới dạng byte[]
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
     @PostMapping("/generate")
     public ResponseEntity<byte[]> generateInvoice(@RequestBody InvoiceRequest request) {
         try {

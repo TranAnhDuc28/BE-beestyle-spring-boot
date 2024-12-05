@@ -12,6 +12,7 @@ public class InvoiceRequest {
     private String orderId;
     private String customerName;
     private String orderDate;
+    private String paymentMethod;
     private List<Product> products;
 
     @Getter
