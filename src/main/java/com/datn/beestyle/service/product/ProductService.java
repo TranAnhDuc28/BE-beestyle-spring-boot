@@ -89,18 +89,9 @@ public class ProductService
     }
 
     @Override
-    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String category, String genderProduct,
+    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String categoryIds, String genderProduct,
                                                                              String brandIds, String materialIds,
                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
-
-        Integer categoryId = null;
-        if (category != null) {
-            try {
-                categoryId = Integer.parseInt(category);
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-        }
 
         Integer genderProductValue = null;
         if (genderProduct != null) {
@@ -110,9 +101,10 @@ public class ProductService
 
         List<Integer> brandIdList = AppUtils.handleStringIdsToIntegerIdList(brandIds);
         List<Integer> materialIdList = AppUtils.handleStringIdsToIntegerIdList(materialIds);
+        List<Integer> categoryIdList = AppUtils.handleStringIdsToIntegerIdList(categoryIds);
 
         Page<ProductResponse> productResponsePages =
-                productRepository.filterProduct(pageable, categoryId, genderProductValue, brandIdList, materialIdList,
+                productRepository.filterProduct(pageable, categoryIdList, genderProductValue, brandIdList, materialIdList,
                         minPrice, maxPrice, 1);
 
         return PageResponse.<List<ProductResponse>>builder()
@@ -248,7 +240,7 @@ public class ProductService
             Map<Integer, Color> colorMap = colors.stream().collect(Collectors.toMap(Color::getId, color -> color));
             Map<Integer, Size> sizeMap = sizes.stream().collect(Collectors.toMap(Size::getId, size -> size));
 
-            this.validateProductVariants(colorIds, sizeIds, colorMap, sizeMap);
+            this.validatePropsProductVariants(colorIds, sizeIds, colorMap, sizeMap);
 
             createProductVariantRequests.forEach(variantRequest -> {
                 Color color = colorMap.get(variantRequest.getColorId());
@@ -285,8 +277,8 @@ public class ProductService
         return "Product";
     }
 
-    private void validateProductVariants(List<Integer> colorIds, List<Integer> sizeIds,
-                                         Map<Integer, Color> colorMap, Map<Integer, Size> sizeMap) {
+    private void validatePropsProductVariants(List<Integer> colorIds, List<Integer> sizeIds,
+                                              Map<Integer, Color> colorMap, Map<Integer, Size> sizeMap) {
         List<Integer> invalidColorIds = colorIds.stream().filter(id -> colorMap.get(id) == null).toList();
         List<Integer> invalidSizeIds = sizeIds.stream().filter(id -> sizeMap.get(id) == null).toList();
 

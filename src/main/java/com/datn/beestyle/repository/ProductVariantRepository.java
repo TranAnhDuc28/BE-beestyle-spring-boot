@@ -2,6 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 
+import com.datn.beestyle.dto.product.user.UserProductResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Page;
@@ -35,12 +36,12 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
                     (:status is null or pv.status = :status)    
             """)
     Page<ProductVariantResponse> filterProductVariantByProductId(Pageable pageable,
-                                                          @Param("productId") Integer productId,
-                                                          @Param("colorIds") List<Integer> colorIds,
-                                                          @Param("sizeIds") List<Integer> sizeIds,
-                                                          @Param("minPrice") BigDecimal minPrice,
-                                                          @Param("maxPrice") BigDecimal maxPrice,
-                                                          @Param("status") Integer status);
+                                                                 @Param("productId") Integer productId,
+                                                                 @Param("colorIds") List<Integer> colorIds,
+                                                                 @Param("sizeIds") List<Integer> sizeIds,
+                                                                 @Param("minPrice") BigDecimal minPrice,
+                                                                 @Param("maxPrice") BigDecimal maxPrice,
+                                                                 @Param("status") Integer status);
 
     @Query(value = """
             select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
@@ -67,7 +68,9 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 
     @Transactional
     @Modifying
-    @Query(value = "update ProductVariant pv set pv.quantityInStock = :quantity where pv.id = :productVariantId")
+    @Query(value = """
+            update ProductVariant pv set pv.quantityInStock = :quantity, pv.updatedAt = CURRENT_TIMESTAMP where pv.id = :productVariantId
+            """)
     int updateQuantityProductVariant(@Param("productVariantId") long productVariantId, @Param("quantity") int quantity);
 
     @Query(value = """
@@ -119,4 +122,33 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "WHERE p.id = :promotionId " +
             "AND pv.promotion.id = :promotionId")
     List<Object[]> findProductAndDetailIdsByPromotionId(Long promotionId);
+
+    @Query(
+            value = """
+                        select distinct
+                            pv.id as id, p.product_code as productCode,
+                        	p.product_name as productName, pv.original_price as originalPrice,
+                        	pv.sale_price as salePrice, pv.sku as sku,
+                        	c.category_name as categoryName, b.brand_name, 
+                        	pv.quantity_in_stock as quantityInStock,
+                        	cl.color_code as colorCode, cl.color_name as colorName,
+                        	s.size_name as sizeName, p.description as description
+                        from product_variant pv
+                        inner join product p on p.id = pv.product_id
+                        inner join category c on c.id = p.category_id
+                        inner join brand b on p.brand_id = b.id 
+                        inner join color cl on cl.id = pv.color_id 
+                        inner join size s on s.id = pv.size_id
+                        where pv.product_id = :productId
+                        	and (:colorCode is null or cl.color_code like :colorCode)
+                        	and (:sizeId is null or s.id = :sizeId)
+                        limit 1
+                    """,
+            nativeQuery = true
+    )
+    List<Object[]> getProductVariantData(
+            @Param("productId") Long productId,
+            @Param("colorCode") String colorCode,
+            @Param("sizeId") Long sizeId
+    );
 }

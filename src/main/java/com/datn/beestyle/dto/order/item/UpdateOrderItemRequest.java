@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 public class UpdateOrderItemRequest {
     Long id;
 
-    @NotNull(message = "Id hóa đơn không hợp lệ (null).")
     Long orderId;
 
     @NotNull(message = "Id biến thể sản phẩm không hợp lệ (null).")
