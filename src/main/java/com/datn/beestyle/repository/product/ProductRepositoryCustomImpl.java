@@ -52,7 +52,18 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         List<ProductResponse> productResponse = query.getResultList();
 
         // count users
-        StringBuilder sqlCountQuery = new StringBuilder("SELECT COUNT(*) FROM product p WHERE 1=1");
+        StringBuilder sqlCountQuery = new StringBuilder("""
+                WITH MinPriceOfProduct AS (
+                    SELECT p.id, MIN(pv.sale_price) AS min_sale_price, SUM(pv.quantity_in_stock) AS total_product_in_stock
+                    FROM product p
+                        JOIN product_variant pv ON p.id = pv.product_id
+                    GROUP BY p.id
+                )
+                SELECT COUNT(*)
+                FROM product p
+                LEFT JOIN MinPriceOfProduct mp ON p.id = mp.id
+                WHERE 1=1
+            """);
         handleStringConditionQuery(sqlCountQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
         Query countQuery = entityManager.createNativeQuery(String.valueOf(sqlCountQuery));
         handleParamConditionQuery(countQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
