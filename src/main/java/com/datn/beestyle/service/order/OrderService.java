@@ -94,13 +94,12 @@ public class OrderService
     }
 
     @Override
-    protected void beforeUpdate(Long aLong, UpdateOrderRequest request) {
+    protected void beforeUpdate(Long id, UpdateOrderRequest request) {
 
     }
 
     @Override
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
-
         entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
         entity.setCreatedBy(1L);
         entity.setUpdatedBy(1L);
