@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class InvoicePDFExporter {
 
@@ -31,7 +32,11 @@ public class InvoicePDFExporter {
             PdfDocument pdfDoc = new PdfDocument(writer);
             Document document = new Document(pdfDoc);
 
-            PdfFont font = PdfFontFactory.createFont(getClass().getResource("/NotoSans-Regular.ttf").toString(), PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+            PdfFont font = PdfFontFactory.createFont(
+                    Objects.requireNonNull(
+                            getClass().getResource("/NotoSans-Regular.ttf")).toString(),
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+            );
 
             // **1. Thêm tiêu đề "HÓA ĐƠN THANH TOÁN"**
 
@@ -55,27 +60,27 @@ public class InvoicePDFExporter {
                     .setBold();
             document.add(titleHeader);
 
-// Lấy chiều rộng của trang và trừ đi phần lề (nếu có)
+            // Lấy chiều rộng của trang và trừ đi phần lề (nếu có)
             float pageWidth = pdfDoc.getDefaultPageSize().getWidth();
             float marginRight = 60; // Ví dụ: lề phải 36
             float marginLeft = 36;  // Ví dụ: lề trái 36
 
-// Tính chiều rộng thực tế sử dụng được
+            // Tính chiều rộng thực tế sử dụng được
             float usableWidth = pageWidth - marginLeft - marginRight;
 
-// Tạo Paragraph
+            // Tạo Paragraph
             Paragraph paragraph = new Paragraph();
             paragraph.setFont(font).setFontSize(10);
 
-// Đặt TabStops
+            // Đặt TabStops
             paragraph.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
 
-// Thêm nội dung
+            // Thêm nội dung
             paragraph.add("Mã hóa đơn: " + request.getOrderId()); // Nội dung bên trái
             paragraph.add(new Tab()); // Tab để đẩy nội dung tiếp theo sang bên phải
             paragraph.add("Khách hàng: " + request.getCustomerName()); // Nội dung bên phải
 
-// Thêm Paragraph vào tài liệu
+            // Thêm Paragraph vào tài liệu
             document.add(paragraph);
 
             document.add(new Paragraph("Thu ngân: ")
@@ -98,15 +103,15 @@ public class InvoicePDFExporter {
             Paragraph dateTime = new Paragraph();
             dateTime.setFont(font).setFontSize(10);
 
-// Đặt TabStops
+            // Đặt TabStops
             dateTime.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
 
-// Thêm nội dung vào Paragraph
+            // Thêm nội dung vào Paragraph
             dateTime.add("Ngày: " + formattedDate); // Nội dung bên trái
             dateTime.add(new Tab()); // Đẩy nội dung tiếp theo sang bên phải
             dateTime.add("Giờ: " + formattedTime); // Nội dung bên phải
 
-// Thêm Paragraph vào tài liệu
+            // Thêm Paragraph vào tài liệu
             document.add(dateTime);
 
 

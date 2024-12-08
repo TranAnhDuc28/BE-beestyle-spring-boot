@@ -196,8 +196,6 @@ public class ProductService
         } else {
             request.setProductCode(null);
         }
-
-
     }
 
     @Override
