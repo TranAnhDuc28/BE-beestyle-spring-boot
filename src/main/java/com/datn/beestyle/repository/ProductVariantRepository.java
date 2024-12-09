@@ -126,7 +126,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            pv.id as id, p.product_code as productCode,
+                            p.id as id, p.product_code as productCode,
                         	p.product_name as productName, pv.original_price as originalPrice,
                         	pv.sale_price as salePrice, pv.sku as sku,
                         	c.category_name as categoryName, b.brand_name, 
