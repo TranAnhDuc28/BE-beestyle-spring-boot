@@ -92,7 +92,6 @@ public class ProductService
     public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String categoryIds, String genderProduct,
                                                                              String brandIds, String materialIds,
                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
-
         Integer genderProductValue = null;
         if (genderProduct != null) {
             GenderProduct genderProductEnum = GenderProduct.fromString(genderProduct);

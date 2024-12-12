@@ -25,7 +25,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         int page = 0, pageSize = 20;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
         if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by("createdAt", "id").descending());
 
         StringBuilder sqlQuery = new StringBuilder("""
                     WITH MinPriceOfProduct AS (
@@ -34,7 +34,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                             JOIN product_variant pv ON p.id = pv.product_id
                         GROUP BY p.id
                     )
-                    SELECT p.id, p.product_code, p.product_name, pi.image_url, mp.min_sale_price, mp.total_product_in_stock
+                    SELECT p.id, p.product_code, p.product_name, pi.image_url, mp.min_sale_price, mp.total_product_in_stock, p.created_at
                     FROM product p
                     LEFT JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = true
                     LEFT JOIN MinPriceOfProduct mp ON p.id = mp.id
@@ -42,6 +42,8 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 """);
 
         handleStringConditionQuery(sqlQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        sqlQuery.append(" ORDER BY p.created_at DESC, p.id DESC;");
+
         Query query = entityManager.createNativeQuery(String.valueOf(sqlQuery), "ProductResponseMapping");
         handleParamConditionQuery(query, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
 
