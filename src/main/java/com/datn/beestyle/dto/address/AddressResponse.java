@@ -17,13 +17,15 @@ public class AddressResponse {
     Long id;
     String addressName;
 
+    Integer cityCode;
     String city;
 
+    Integer districtCode;
     String district;
 
+    Integer communeCode;
     String commune;
 
-    boolean isDefault;
 
-    Customer customer;
+    Boolean isDefault;
 }
