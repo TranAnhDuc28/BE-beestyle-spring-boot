@@ -19,13 +19,13 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<ProductResponse> filterProduct(Pageable pageable, Integer categoryId, Integer genderProduct,
+    public Page<ProductResponse> filterProduct(Pageable pageable, List<Integer> categoryIds, Integer genderProduct,
                                                List<Integer> brandIds, List<Integer> materialIds,
                                                BigDecimal minPrice, BigDecimal maxPrice, Integer status) {
         int page = 0, pageSize = 20;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
         if (pageable.getPageSize() > 0) pageSize = pageable.getPageSize();
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by("createdAt", "id").descending());
 
         StringBuilder sqlQuery = new StringBuilder("""
                     WITH MinPriceOfProduct AS (
@@ -34,16 +34,18 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                             JOIN product_variant pv ON p.id = pv.product_id
                         GROUP BY p.id
                     )
-                    SELECT p.id, p.product_code, p.product_name, pi.image_url, mp.min_sale_price, mp.total_product_in_stock
+                    SELECT p.id, p.product_code, p.product_name, pi.image_url, mp.min_sale_price, mp.total_product_in_stock, p.created_at
                     FROM product p
                     LEFT JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = true
                     LEFT JOIN MinPriceOfProduct mp ON p.id = mp.id
                     WHERE 1=1                   
                 """);
 
-        handleStringConditionQuery(sqlQuery, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        handleStringConditionQuery(sqlQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        sqlQuery.append(" ORDER BY p.created_at DESC, p.id DESC;");
+
         Query query = entityManager.createNativeQuery(String.valueOf(sqlQuery), "ProductResponseMapping");
-        handleParamConditionQuery(query, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        handleParamConditionQuery(query, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
 
         int size = pageRequest.getPageSize();
         int offset = page * size;
@@ -52,20 +54,31 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         List<ProductResponse> productResponse = query.getResultList();
 
         // count users
-        StringBuilder sqlCountQuery = new StringBuilder("SELECT COUNT(*) FROM product p WHERE 1=1");
-        handleStringConditionQuery(sqlCountQuery, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        StringBuilder sqlCountQuery = new StringBuilder("""
+                WITH MinPriceOfProduct AS (
+                    SELECT p.id, MIN(pv.sale_price) AS min_sale_price, SUM(pv.quantity_in_stock) AS total_product_in_stock
+                    FROM product p
+                        JOIN product_variant pv ON p.id = pv.product_id
+                    GROUP BY p.id
+                )
+                SELECT COUNT(*)
+                FROM product p
+                LEFT JOIN MinPriceOfProduct mp ON p.id = mp.id
+                WHERE 1=1
+            """);
+        handleStringConditionQuery(sqlCountQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
         Query countQuery = entityManager.createNativeQuery(String.valueOf(sqlCountQuery));
-        handleParamConditionQuery(countQuery, categoryId, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
+        handleParamConditionQuery(countQuery, categoryIds, genderProduct, brandIds, materialIds, minPrice, maxPrice, status);
         Long totalElements = (Long) countQuery.getSingleResult();
 
         return new PageImpl<>(productResponse, pageRequest, totalElements);
     }
 
-    private void handleStringConditionQuery(StringBuilder query, Integer categoryId, Integer genderProduct,
+    private void handleStringConditionQuery(StringBuilder query, List<Integer> categoryIds, Integer genderProduct,
                                             List<Integer> brandIds, List<Integer> materialIds,
                                             BigDecimal minPrice, BigDecimal maxPrice, Integer status) {
-        if (categoryId != null) query.append(" AND p.category_id = :categoryId");
-        if (genderProduct != null) query.append(" AND p.gender = :gender");
+        if (categoryIds != null && !categoryIds.isEmpty()) query.append(" AND p.category_id IN :categoryIds");
+        if (genderProduct != null) query.append(" AND p.gender = :genderProduct");
         if (brandIds != null && !brandIds.isEmpty()) query.append(" AND p.brand_id IN (:brandIds)");
         if (materialIds != null && !materialIds.isEmpty()) query.append(" AND p.material_id IN (:materialIds)");
         if (minPrice != null) query.append(" AND mp.min_sale_price >= :minPrice");
@@ -73,10 +86,10 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
         if (status != null) query.append(" AND p.status = :status");
     }
 
-    private void handleParamConditionQuery(Query query, Integer categoryId, Integer genderProduct,
+    private void handleParamConditionQuery(Query query, List<Integer> categoryIds, Integer genderProduct,
                                             List<Integer> brandIds, List<Integer> materialIds,
                                             BigDecimal minPrice, BigDecimal maxPrice, Integer status) {
-        if (categoryId != null) query.setParameter("categoryId", categoryId);
+        if (categoryIds != null && !categoryIds.isEmpty()) query.setParameter("categoryIds", categoryIds);
         if (genderProduct != null) query.setParameter("genderProduct", genderProduct);
         if (brandIds != null && !brandIds.isEmpty()) query.setParameter("brandIds", brandIds);
         if (materialIds != null && !materialIds.isEmpty()) query.setParameter("materialIds", materialIds);

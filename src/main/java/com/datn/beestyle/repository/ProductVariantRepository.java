@@ -2,7 +2,6 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 
-import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Page;
@@ -68,7 +67,9 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 
     @Transactional
     @Modifying
-    @Query(value = "update ProductVariant pv set pv.quantityInStock = :quantity where pv.id = :productVariantId")
+    @Query(value = """
+            update ProductVariant pv set pv.quantityInStock = :quantity, pv.updatedAt = CURRENT_TIMESTAMP where pv.id = :productVariantId
+            """)
     int updateQuantityProductVariant(@Param("productVariantId") long productVariantId, @Param("quantity") int quantity);
 
     @Query(value = """

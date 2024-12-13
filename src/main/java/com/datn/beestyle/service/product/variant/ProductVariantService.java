@@ -10,6 +10,7 @@ import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.enums.StockAction;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.util.AppUtils;
@@ -119,12 +120,18 @@ public class ProductVariantService
     public int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action) {
         ProductVariant productVariant =  this.getById(request.getId());
 
-        if(action.equalsIgnoreCase("plus")) { // hồi sản phẩm trong kho
-            request.setQuantity(productVariant.getQuantityInStock() + request.getQuantity());
-        } else if(action.equalsIgnoreCase("minus")) { // trừ sản phẩm trong kho
-            request.setQuantity(productVariant.getQuantityInStock() - request.getQuantity());
+        int quantityInStock = productVariant.getQuantityInStock();
+
+        if(action.equalsIgnoreCase(StockAction.PLUS_STOCK.name())) { // hồi sản phẩm trong kho
+            request  .setQuantity(quantityInStock + request.getQuantity());
+        } else if(action.equalsIgnoreCase(StockAction.MINUS_STOCK.name())) { // trừ sản phẩm trong kho
+            if (quantityInStock == 0) throw new RuntimeException("Sản phẩm đã hết hàng");
+            if (request.getQuantity() > quantityInStock) {
+                throw new RuntimeException("Số lượng mua vượt quá số lượng tồn kho. Vui lòng giảm số lượng hoặc chọn sản phẩm khác.");
+            }
+            request.setQuantity(quantityInStock - request.getQuantity());
         } else {
-            throw new IllegalArgumentException("Hành động không hợp lệ ('+' hoặc '-').");
+            throw new IllegalArgumentException("Hành động không hợp lệ ('plus' hoặc 'minus').");
         }
 
         return productVariantRepository.updateQuantityProductVariant(request.getId(), request.getQuantity());
@@ -154,7 +161,7 @@ public class ProductVariantService
         if (existingIds.isEmpty()) return Collections.emptyList();
 
         return validRequests.stream()
-                .filter(dto -> existingIds.contains(dto.getId()))
+                .filter(dto -> existingIds.contains(Long.valueOf(dto.getId())))
                 .toList();
     }
     @Override
@@ -162,6 +169,7 @@ public class ProductVariantService
     public void updateProductVariantCreate(Integer promotionId, List<Integer> ids) {
         productVariantRepository.updatePromotionForVariants(promotionId, ids);
     }
+
 
 //    @Override
 //    @Transactional
