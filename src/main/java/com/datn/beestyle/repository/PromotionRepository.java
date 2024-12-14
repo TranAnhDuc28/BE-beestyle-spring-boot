@@ -38,16 +38,16 @@ public interface PromotionRepository extends IGenericRepository<Promotion, Integ
                                                 @Param("discountType") Integer discountType);
 
 
+    @Query("SELECT p FROM Promotion p WHERE p.endDate < :currentDate")
+    List<Promotion> findEndedPromotions(@Param("currentDate") Timestamp currentDate);
     @Query(""" 
     SELECT p FROM Promotion p
     WHERE (:startDate IS NULL OR p.startDate >= :startDate)
     AND (:endDate IS NULL OR p.endDate <= :endDate)
     """)
-    Page<Promotion> findByDateRange(@Param("startDate") Timestamp startDate,
+    Page<Voucher> findByDateRange(@Param("startDate") Timestamp startDate,
                                   @Param("endDate") Timestamp endDate,
                                   Pageable pageable);
 
-    @Query("SELECT p FROM Promotion p WHERE p.endDate < :currentDate")
-    List<Promotion> findEndedPromotions(@Param("currentDate") Timestamp currentDate);
 
 }

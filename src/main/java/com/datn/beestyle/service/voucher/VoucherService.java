@@ -84,14 +84,6 @@ public class VoucherService
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
-//    public Page<VoucherResponse> getVoucherByNameOrCode(String searchTerm, Pageable pageable) {
-//
-////        if (searchTerm == null || searchTerm.isEmpty()) {
-////            return voucherRepository.get(pageable);
-////        }
-//
-//        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
-//    }
 
     public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate,Pageable pageable) {
         return voucherRepository.findByDateRange(startDate,endDate,pageable);

@@ -10,10 +10,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Validated
@@ -70,5 +73,14 @@ public class PromotionController {
     @GetMapping("/{id}")
     public ApiResponse<?> getPromotion(@Min(1) @PathVariable int id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Promotion", promotionService.getDtoById(id));
+    }
+    @GetMapping("/findbydate")
+    public ApiResponse<?> findByDateRange(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,Pageable pageable) {
+        Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", promotionService.getPromotionByDateRange(startTimestamp, endTimestamp,pageable));
     }
 }

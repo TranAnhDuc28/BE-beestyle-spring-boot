@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.promotion.CreatePromotionRequest;
 import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.dto.promotion.UpdatePromotionRequest;
 import com.datn.beestyle.entity.Promotion;
+import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.repository.ProductVariantRepository;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class PromotionService
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
         Integer statusValue = null;
-        if(status != null) {
+        if (status != null) {
             DiscountStatus statusEnum = DiscountStatus.fromString(status.toUpperCase());
             if (statusEnum != null) statusValue = statusEnum.getValue();
         }
@@ -54,7 +56,7 @@ public class PromotionService
             DiscountType discountTypeEnum = DiscountType.fromString(discountType.toUpperCase());
             if (discountTypeEnum != null) discountTypeValue = discountTypeEnum.getValue();
         }
-        PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
@@ -125,6 +127,7 @@ public class PromotionService
     protected String getEntityName() {
         return "Promotion";
     }
+
     @Transactional
     public void deletePromotion(Integer id) {
         // Cập nhật các bản ghi trong product_variant trước khi xóa promotion
@@ -133,5 +136,9 @@ public class PromotionService
         promotionRepository.deleteById(id);
     }
 
+    @Override
+    public Page<Voucher> getPromotionByDateRange(Timestamp startDate, Timestamp endDate, Pageable pageable) {
+        return promotionRepository.findByDateRange(startDate, endDate, pageable);
+    }
 
 }
