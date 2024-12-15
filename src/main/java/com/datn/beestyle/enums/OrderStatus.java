@@ -9,12 +9,14 @@ public enum OrderStatus {
     PAID(1), // đã thanh toán
     AWAITING_CONFIRMATION(2), // chờ xác nhận
     CONFIRMED(3), // đã xác nhận
-    OUT_FOR_DELIVERY(4), // đang giao hàng
-    DELIVERED(5), // đã giao hàng
-    CANCELLED(6), // đã hủy
-    RETURN_REQUESTED(7), // yêu cầu trả hàng
-    RETURNED(8), // đã trả hàng
-    REFUNDED(9); // đã hoàn tiền
+    AWAITING_SHIPMENT(4), // chờ giao hàng
+    OUT_FOR_DELIVERY(5), // đang giao hàng
+    DELIVERED(6), // đã giao hàng
+    CANCELLED(7) // đã hủy
+//    RETURN_REQUESTED(7), // yêu cầu trả hàng
+//    RETURNED(8), // đã trả hàng
+//    REFUNDED(9) // đã hoàn tiền
+    ;
 
     private final int value;
     OrderStatus(int value) {

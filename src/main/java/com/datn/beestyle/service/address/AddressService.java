@@ -51,7 +51,7 @@ implements IAddressService{
         boolean existsDefaultAddress = addressRepository.existsByCustomerIdAndIsDefaultTrue(request.getCustomer().getId());
 
         // Nếu chưa có bản ghi nào có isDefault = true, đặt isDefault của bản ghi mới là true
-        request.setDefault(!existsDefaultAddress);
+        request.setIsDefault(!existsDefaultAddress);
     }
 
     @Override
@@ -63,17 +63,17 @@ implements IAddressService{
 
     public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
         // Kiểm tra nếu yêu cầu đặt địa chỉ này làm mặc định
-        if (request.isDefault()) {
+        if (request.getIsDefault()) {
             Address currentAddress = addressRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
 
             // Nếu địa chỉ hiện tại chưa được đặt là mặc định, tiến hành cập nhật
-            if (!currentAddress.isDefault()) {
+            if (!currentAddress.getIsDefault()) {
                 // Đặt các địa chỉ khác của khách hàng này thành không mặc định
                 addressRepository.updateIsDefaultFalseForOtherAddresses(currentAddress.getCustomer().getId(), id);
 
                 // Đặt địa chỉ hiện tại thành mặc định
-                currentAddress.setDefault(true);
+                currentAddress.setIsDefault(true);
                 return mapper.toEntityDto(addressRepository.save(currentAddress));  // Lưu và trả về AddressResponse
             }
         } else {
@@ -81,7 +81,8 @@ implements IAddressService{
             Address addressToUpdate = addressRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
 
-            addressToUpdate.setDefault(false); // Đảm bảo địa chỉ này không là mặc định
+            addressToUpdate.setIsDefault(
+                    false); // Đảm bảo địa chỉ này không là mặc định
 
             // Thực hiện cập nhật khác từ request (nếu cần thiết)
             // addressToUpdate.setAddressName(request.getAddressName());
@@ -121,7 +122,7 @@ implements IAddressService{
 
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "id"));
+                Sort.by(Sort.Direction.DESC, "isDefault"));
 
 
         Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest,customerId);

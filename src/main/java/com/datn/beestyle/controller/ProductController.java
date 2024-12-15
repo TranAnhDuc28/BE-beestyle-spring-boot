@@ -69,5 +69,4 @@ public class ProductController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật sản phẩm thành công.",
                 productService.update(id, request));
     }
-
 }

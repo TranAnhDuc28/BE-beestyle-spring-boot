@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Validated
 @RestController
 @RequestMapping(path = "/admin/order")
@@ -19,15 +21,12 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping
-    public ApiResponse<?> getOrders(Pageable pageable,
-                                    @RequestParam(required = false) String keyword,
-                                    @RequestParam(required = false) String orderChannel,
-                                    @RequestParam(required = false) String orderStatus) {
+    public ApiResponse<?> getOrders(Pageable pageable, @RequestParam(required = false) Map<String, String> filters) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Orders",
-                this.orderService.getOrdersFilterByFields(pageable, keyword, orderChannel, orderStatus));
+                this.orderService.getOrdersFilterByFields(pageable, filters));
     }
 
-    @GetMapping("/sale/order-pending")
+    @GetMapping("/order-pending")
     public ApiResponse<?> getOrdersPending() {
         return new ApiResponse<>(HttpStatus.OK.value(), "Orders Pending",
                 this.orderService.getOrdersPending());

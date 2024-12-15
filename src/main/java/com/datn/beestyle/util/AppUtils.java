@@ -1,12 +1,14 @@
 package com.datn.beestyle.util;
 
+import com.datn.beestyle.enums.OrderStatus;
+import com.datn.beestyle.enums.Status;
+
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class AppUtils {
@@ -41,10 +43,10 @@ public class AppUtils {
 
     public static List<Integer> handleStringIdsToIntegerIdList(String StringIds) {
         List<Integer> integerIdList = null;
-        String[] colorIdsStr = StringIds != null ? StringIds.split(",") : null;
-        if (colorIdsStr != null) {
+        String[] idsStr = StringIds != null ? StringIds.split(",") : null;
+        if (idsStr != null) {
             integerIdList = new ArrayList<>();
-            for (String strId : colorIdsStr) {
+            for (String strId : idsStr) {
                 int id;
                 try {
                     id = Integer.parseInt(strId);
