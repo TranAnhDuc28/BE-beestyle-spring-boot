@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.voucher.CreateVoucherRequest;
 import com.datn.beestyle.dto.voucher.UpdateVoucherRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
+import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.service.voucher.VoucherService;
 import jakarta.validation.Valid;
@@ -12,8 +13,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
@@ -99,6 +102,10 @@ public class VoucherController {
 
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp,pageable));
     }
-
+    @GetMapping("/findByTotalAmount")
+    public ResponseEntity<List<Voucher>> getValidVouchers(@RequestParam BigDecimal totalAmount) {
+        List<Voucher> vouchers = voucherService.getValidVouchers(totalAmount);
+        return ResponseEntity.ok(vouchers);
+    }
 
 }

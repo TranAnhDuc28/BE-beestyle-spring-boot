@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +45,7 @@ public class VoucherService
         this.voucherRepository = voucherRepository;
         this.voucherMapper = voucherMapper;
     }
+
     @Override
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
         int page = 0;
@@ -85,10 +87,11 @@ public class VoucherService
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
 
-    public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate,Pageable pageable) {
-        return voucherRepository.findByDateRange(startDate,endDate,pageable);
+    public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp endDate, Pageable pageable) {
+        return voucherRepository.findByDateRange(startDate, endDate, pageable);
 
     }
+
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
@@ -107,7 +110,8 @@ public class VoucherService
                 .items(voucherResponseList)
                 .build();
     }
-//    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
+
+    //    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
 //        if (discountType != null) {
 //            if (discountType.equals("PERCENTAGE")) {
 //                return voucherRepository.findVouchersByDiscountType(DiscountType.PERCENTAGE, pageable);
@@ -118,7 +122,9 @@ public class VoucherService
 //        // Nếu không có discountType, trả về tất cả
 //        return voucherRepository.findAll(pageable);
 //    }
-
+    public List<Voucher> getValidVouchers(BigDecimal totalAmount) {
+        return voucherRepository.findValidVouchers(1, totalAmount);
+    }
 
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
