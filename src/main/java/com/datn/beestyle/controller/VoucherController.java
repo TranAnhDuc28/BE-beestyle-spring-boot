@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -27,14 +28,26 @@ import java.util.List;
 @CrossOrigin("*")
 public class VoucherController {
     private final VoucherService voucherService;
-
     @GetMapping
     public ApiResponse<?> getVouchers(Pageable pageable,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) String status,
-                                      @RequestParam(required = false) String discountType) {
+                                      @RequestParam(required = false) String discountType,
+                                      @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                      @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        Timestamp startTimestamp = null;
+        Timestamp endTimestamp = null;
+
+        if (startDate != null) {
+            startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+        }
+
+        if (endDate != null) {
+            endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+        }
+
         return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers",
-                voucherService.getAllByNameAndStatus(pageable, name, status, discountType));
+                voucherService.getAllByNameAndStatus(pageable, name, status, discountType, startTimestamp, endTimestamp));
     }
 
 
@@ -96,12 +109,13 @@ public class VoucherController {
     @GetMapping("/findbydate")
     public ApiResponse<?> findByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,Pageable pageable) {
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, Pageable pageable) {
         Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
         Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
 
-        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp,pageable));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp, pageable));
     }
+
     @GetMapping("/findByTotalAmount")
     public ResponseEntity<List<Voucher>> getValidVouchers(@RequestParam BigDecimal totalAmount) {
         List<Voucher> vouchers = voucherService.getValidVouchers(totalAmount);

@@ -34,9 +34,21 @@ public class PromotionController {
     public ApiResponse<?> getPromotions(Pageable pageable,
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) String status,
-                                        @RequestParam(required = false) String discountType) {
+                                        @RequestParam(required = false) String discountType,
+                                        @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                        @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        Timestamp startTimestamp = null;
+        Timestamp endTimestamp = null;
+
+        if (startDate != null) {
+            startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
+        }
+
+        if (endDate != null) {
+            endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
+        }
         return new ApiResponse<>(HttpStatus.OK.value(), "Promotions",
-                promotionService.getAllByNameAndStatus(pageable, name, status,discountType));
+                promotionService.getAllByNameAndStatus(pageable, name, status,discountType, startTimestamp, endTimestamp));
     }
 
     @PostMapping("/create")

@@ -42,7 +42,7 @@ public class PromotionService
     }
 
     @Override
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType, Timestamp startDate, Timestamp endDate) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -59,7 +59,7 @@ public class PromotionService
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
+        Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue, startDate, endDate);
         List<PromotionResponse> promotionResponseList = mapper.toEntityDtoList(promotionPage.getContent());
 
         return PageResponse.builder()

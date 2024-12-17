@@ -26,6 +26,8 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ public class VoucherService
     }
 
     @Override
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType, Timestamp startDate,Timestamp endDate) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -62,13 +64,18 @@ public class VoucherService
             DiscountType discountTypeEnum = DiscountType.fromString(discountType.toUpperCase());
             if (discountTypeEnum != null) discountTypeValue = discountTypeEnum.getValue();
         }
-        System.out.println("Discount Type Value: " + discountTypeValue);
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
-
+        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(
+                pageRequest,
+                name,
+                statusValue,
+                discountTypeValue,
+                startDate,
+                endDate
+        );
         List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
 
         return PageResponse.builder()

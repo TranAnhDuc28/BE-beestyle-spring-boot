@@ -30,21 +30,26 @@ public interface PromotionRepository extends IGenericRepository<Promotion, Integ
                 where 
                     (:name is null or p.promotionName like concat('%', :name, '%')) and
                     (:status is null or p.status = :status) and
-                    (:discountType is null or p.discountType = :discountType)
+                    (:discountType is null or p.discountType = :discountType)and
+                    (:startDate IS NULL OR p.startDate >= :startDate) AND 
+                    (:endDate IS NULL OR p.endDate <= :endDate)
             """)
     Page<Promotion> findByNameContainingAndStatus(Pageable pageable,
-                                                @Param("name") String name,
-                                                @Param("status") Integer status,
-                                                @Param("discountType") Integer discountType);
+                                                  @Param("name") String name,
+                                                  @Param("status") Integer status,
+                                                  @Param("discountType") Integer discountType,
+                                                  @Param("startDate") Timestamp startDate,
+                                                  @Param("endDate") Timestamp endDate);
 
 
     @Query("SELECT p FROM Promotion p WHERE p.endDate < :currentDate")
     List<Promotion> findEndedPromotions(@Param("currentDate") Timestamp currentDate);
+
     @Query(""" 
-    SELECT p FROM Promotion p
-    WHERE (:startDate IS NULL OR p.startDate >= :startDate)
-    AND (:endDate IS NULL OR p.endDate <= :endDate)
-    """)
+            SELECT p FROM Promotion p
+            WHERE (:startDate IS NULL OR p.startDate >= :startDate)
+            AND (:endDate IS NULL OR p.endDate <= :endDate)
+            """)
     Page<Voucher> findByDateRange(@Param("startDate") Timestamp startDate,
                                   @Param("endDate") Timestamp endDate,
                                   Pageable pageable);
