@@ -29,18 +29,18 @@ public class AddressController {
     @PostMapping("/create")
     public ApiResponse<?> createAddress(@RequestBody CreateAddressRequest request) {
 
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Address add successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm địa chỉ thành công",
                 addressService.create(request));
     }
     @PutMapping("/{id}")
     public ApiResponse<?> setIsDefault(@PathVariable("id") Long id, @RequestBody UpdateAddressRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Address updated to isDefault successfully",
+        return new ApiResponse<>(HttpStatus.OK.value(), "Đặt địa chỉ mặc định thành công",
                 addressService.setUpdateIsDefault(id,request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateAddress(@Min(1) @PathVariable Long id,
                                       @Valid @RequestBody UpdateAddressRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Address updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật địa chỉ thành công",
                 addressService.update(id, request));
     }
 

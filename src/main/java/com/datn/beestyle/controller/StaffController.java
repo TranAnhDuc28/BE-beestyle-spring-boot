@@ -29,18 +29,18 @@ public class StaffController {
 
     @PostMapping("/create")
     public ApiResponse<?> createStaff(@Valid @RequestBody CreateStaffRequest request){
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff add successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm nhân viên thành công",
                 staffService.create(request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateStaff(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateStaffRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật nhân viên thành công",
                 staffService.update(id, request));
     }
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deleteStaff(@Min(1) @PathVariable int id) {
         staffService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Staff deleted successfully.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Xóa nhân viên thành công");
     }
 
     @GetMapping("/{id}")
