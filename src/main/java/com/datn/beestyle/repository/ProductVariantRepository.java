@@ -2,7 +2,6 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 
-import com.datn.beestyle.dto.product.user.UserProductResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.product.ProductVariant;
 import org.springframework.data.domain.Page;
@@ -74,7 +73,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     int updateQuantityProductVariant(@Param("productVariantId") long productVariantId, @Param("quantity") int quantity);
 
     @Query(value = """
-            SELECT 
+            SELECT  
                 p.id AS productId, 
                 p.productName AS productName, 
                 b.brandName AS brandName, 

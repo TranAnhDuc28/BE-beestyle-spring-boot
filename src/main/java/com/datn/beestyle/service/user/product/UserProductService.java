@@ -1,9 +1,10 @@
 package com.datn.beestyle.service.user.product;
 
+import com.datn.beestyle.dto.product.ProductResponse;
 import com.datn.beestyle.dto.product.attributes.color.ColorResponse;
 import com.datn.beestyle.dto.product.attributes.image.ImageReponse;
 import com.datn.beestyle.dto.product.attributes.size.SizeResponse;
-import com.datn.beestyle.dto.product.user.UserProductResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.repository.ColorRepository;
 import com.datn.beestyle.repository.ImageRepository;
 import com.datn.beestyle.repository.ProductVariantRepository;
@@ -35,20 +36,16 @@ public class UserProductService {
         this.sizeRepository = sizeRepository;
     }
 
-    public Page<UserProductResponse> getFeaturedProducts(Integer q) {
-        return this.productRepository.getProductForUser(PageRequest.of(0, 8), q);
+    public Page<ProductResponse> getFeaturedProductService(Integer q) {
+        return this.productRepository.getFeaturedProducts(PageRequest.of(0, 8), q);
     }
 
-    public Page<UserProductResponse> getSellerProducts() {
+    public Page<ProductResponse> getSellerProductService() {
         return this.productRepository.getSellingProducts(PageRequest.of(0, 10));
     }
 
-    public Page<UserProductResponse> getOfferProductUser() {
+    public Page<ProductResponse> getOfferProductService() {
         return this.productRepository.getOfferingProducts(PageRequest.of(0, 9));
-    }
-
-    public List<UserProductResponse> findProductUser() {
-        return this.productRepository.findAllProductUser();
     }
 
     public List<ImageReponse> getImageProducVariant(Long productId) {
@@ -63,7 +60,7 @@ public class UserProductService {
         return this.sizeRepository.findAllByProductVariant(productId, colorCode);
     }
 
-    public UserProductResponse getProductVariantUser(Long productId, String colorCode, Long sizeId) {
+    public ProductVariantResponse getProductVariantUser(Long productId, String colorCode, Long sizeId) {
         List<Object[]> results = productVariantRepository.getProductVariantData(productId, colorCode, sizeId);
 
         if (results == null || results.isEmpty()) {
@@ -86,7 +83,7 @@ public class UserProductService {
         String sizeName = (String) result[11];
         String description = (String) result[12];
 
-        return new UserProductResponse(
+        return new ProductVariantResponse(
                 id, productCode, productName, originalPrice, salePrice,
                 sku, categoryName, brandName, quantity, colorCodeResult,
                 colorName, sizeName, description

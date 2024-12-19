@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductResponse{
+public class ProductResponse {
     Long id;
     String productCode;
     String productName;
@@ -35,6 +35,13 @@ public class ProductResponse{
     LocalDateTime updatedAt;
     Long createdBy;
     Long updatedBy;
+
+    public ProductResponse(Long id, String productName, String imageUrl, BigDecimal minSalePrice) {
+        this.id = id;
+        this.productName = productName;
+        this.imageUrl = imageUrl;
+        this.minSalePrice = minSalePrice;
+    }
 
     public ProductResponse(Long id, String productCode, String productName, String imageUrl, BigDecimal salePrice,
                            Long totalProductInStock) {

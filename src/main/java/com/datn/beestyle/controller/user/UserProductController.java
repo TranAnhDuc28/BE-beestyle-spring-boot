@@ -21,31 +21,23 @@ public class UserProductController {
     private final UserProductService productService;
 
     @GetMapping
-    public ApiResponse<?> getProductsForUser(
+    public ApiResponse<?> featuredProducts(
             @RequestParam(name = "q", required = false) Integer q
     ) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Products Area", productService.getFeaturedProducts(q));
-    }
-
-    @GetMapping("/search")
-    public ApiResponse<?> searchProductsUser(
-    ) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Products Search",
-                productService.findProductUser()
-        );
+        return new ApiResponse<>(HttpStatus.OK.value(), "Products Area", productService.getFeaturedProductService(q));
     }
 
     @GetMapping("/seller")
     public ApiResponse<?> sellingProducts() {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Seller",
-                productService.getSellerProducts()
+                productService.getSellerProductService()
         );
     }
 
     @GetMapping("/offer")
     public ApiResponse<?> offeringProducts() {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Offer",
-                productService.getOfferProductUser()
+                productService.getOfferProductService()
         );
     }
 

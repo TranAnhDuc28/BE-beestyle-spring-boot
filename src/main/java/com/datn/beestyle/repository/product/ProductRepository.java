@@ -2,7 +2,6 @@ package com.datn.beestyle.repository.product;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
-import com.datn.beestyle.dto.product.user.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -61,46 +60,26 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
-    @Query(
-            value = """
-                    select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                        p.id,
-                        p.productName,
-                        pi.imageUrl,
-                        pv.salePrice,
-                        pv.originalPrice
-                    )
-                    from Product p
-                    left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
-                    left join ProductVariant pv on p.id = pv.product.id
-                    order by p.productName asc
-                    """
-    )
-    List<UserProductResponse> findAllProductUser();
-
-
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                p.id,\s
-                p.productName,\s
-                pi.imageUrl,\s
-                min(pv.salePrice),\s
-                max(pv.originalPrice))
-            from Product p
+            select new com.datn.beestyle.dto.product.ProductResponse(
+                p.id,
+                p.productName,
+                pi.imageUrl,
+                max(pv.salePrice)
+                ) from Product p
                 inner join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
                 inner join ProductVariant pv on p.id = pv.product.id
             where (:q is null or p.gender = :q)
-            group by p.id, p.productName, pi.imageUrl\s
+            group by p.id, p.productName, pi.imageUrl
             """)
-    Page<UserProductResponse> getProductForUser(Pageable pageable, @Param("q") Integer q);
+    Page<ProductResponse> getFeaturedProducts(Pageable pageable, @Param("q") Integer q);
 
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                    p.id,\s
-                    p.productName,\s
+            select new com.datn.beestyle.dto.product.ProductResponse(
+                    p.id,
+                    p.productName,
                     max(pi2.imageUrl),
-                    max(pv.salePrice),
-                    max(pv.originalPrice)
+                    max(pv.salePrice)
             )
             from OrderItem oi
                 inner join ProductVariant pv on oi.productVariant.id = pv.id
@@ -109,15 +88,14 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             group by p.id, p.productName
             order by count(p.id) desc
             """)
-    Page<UserProductResponse> getSellingProducts(Pageable pageable);
+    Page<ProductResponse> getSellingProducts(Pageable pageable);
 
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                    p.id,\s
-                    p.productName,\s
+            select new com.datn.beestyle.dto.product.ProductResponse(
+                    p.id,
+                    p.productName,
                     min(pi2.imageUrl),
-                    min(pv.salePrice),
-                    min(pv.originalPrice)
+                    min(pv.salePrice)
             )
             from Product p
                 inner join ProductVariant pv on p.id = pv.product.id
@@ -125,7 +103,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             group by p.id, p.productName
             order by min(pv.salePrice) asc
             """)
-    Page<UserProductResponse> getOfferingProducts(Pageable pageable);
+    Page<ProductResponse> getOfferingProducts(Pageable pageable);
 
     boolean existsByProductName(String name);
 

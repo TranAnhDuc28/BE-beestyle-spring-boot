@@ -4,7 +4,6 @@ import com.datn.beestyle.enums.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,11 +14,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductVariantResponse{
+public class ProductVariantResponse {
     Long id;
     String sku;
     Long productId;
+    String productCode;
     String productName;
+    String categoryName;
+    String brandName;
     Integer colorId;
     String colorCode;
     String colorName;
@@ -28,6 +30,7 @@ public class ProductVariantResponse{
     BigDecimal salePrice;
     Integer quantityInStock;
     BigDecimal originalPrice;
+    String description;
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
@@ -71,5 +74,25 @@ public class ProductVariantResponse{
         this.sizeName = sizeName;
         this.salePrice = salePrice;
         this.quantityInStock = quantityInStock;
+    }
+
+    public ProductVariantResponse(
+            Long id, String productCode, String productName, BigDecimal originalPrice,
+            BigDecimal salePrice, String sku, String categoryName, String brandName, Integer quantity,
+            String colorCode, String colorName, String sizeName, String description
+    ) {
+        this.id = id;
+        this.productCode = productCode;
+        this.productName = productName;
+        this.originalPrice = originalPrice;
+        this.salePrice = salePrice;
+        this.sku = sku;
+        this.categoryName = categoryName;
+        this.brandName = brandName;
+        this.quantityInStock = quantity;
+        this.colorCode = colorCode;
+        this.colorName = colorName;
+        this.sizeName = sizeName;
+        this.description = description;
     }
 }
