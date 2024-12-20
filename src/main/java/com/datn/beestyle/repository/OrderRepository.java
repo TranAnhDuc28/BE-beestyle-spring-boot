@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -25,15 +27,23 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                     (:keyword is null or 
                         o.orderTrackingNumber like concat('%', :keyword, '%') or
                         c.fullName like concat('%', :keyword, '%') or
-                        o.phoneNumber like concat('%', :keyword, '%')) and 
+                        o.phoneNumber like concat('%', :keyword, '%')) and
+                    (:startDate is null or o.createdAt >= :startDate) and
+                    (:endDate is null or o.createdAt <= :endDate) and
+                    (:month is null or function('MONTH', o.createdAt) = :month) and
+                    (:year is null or function('YEAR', o.createdAt) = :year) and     
                     (:orderChannel is null or o.orderChannel = :orderChannel) and 
-                    (:orderStatus is null or o.orderStatus = :orderStatus)    
+                    (:orderStatus is null or o.orderStatus in (:orderStatus))    
             """
     )
     Page<OrderResponse> findAllByFields(Pageable pageable,
                                         @Param("keyword") String keyword,
+                                        @Param("startDate") LocalDateTime startDate,
+                                        @Param("endDate") LocalDateTime endDate,
+                                        @Param("month") Integer month,
+                                        @Param("year") Integer year,
                                         @Param("orderChannel") Integer orderChannel,
-                                        @Param("orderStatus") Integer orderStatus);
+                                        @Param("orderStatus") List<Integer> orderStatus);
 
     @Query(value = """
                 select new com.datn.beestyle.dto.order.OrderResponse(

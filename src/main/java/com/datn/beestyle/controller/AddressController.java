@@ -43,5 +43,9 @@ public class AddressController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Address updated successfully",
                 addressService.update(id, request));
     }
+    @GetMapping("/{id}")
+    public ApiResponse<?> getAddress (@Min(1) @PathVariable Long id) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Address", addressService.getDtoById(id));
+    }
 
 }

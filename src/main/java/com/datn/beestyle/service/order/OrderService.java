@@ -22,7 +22,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,27 +45,52 @@ public class OrderService
         this.orderRepository = orderRepository;
     }
 
-    public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, String keyword, String orderChannel,
-                                                                       String orderStatus) {
+    public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by("createdAt", "id").descending());
 
+        String keyword = filters.getOrDefault("keyword", null);
+
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
+        // Xử lý startDate
+        try {
+            if (filters.get("startDate") != null) {
+                startDate = LocalDate.parse(filters.get("startDate")).atStartOfDay();
+            }
+        } catch (Exception e) {
+            log.error("Định dạng ngày không hợp lệ cho startDate: " + filters.get("startDate"));
+        }
+
+        // Xử lý endDate
+        try {
+            if (filters.get("endDate") != null) {
+                endDate = LocalDate.parse(filters.get("endDate")).atTime(LocalTime.MAX);
+            }
+        } catch (Exception e) {
+            log.error("Định dạng ngày không hợp lệ cho endDate: " + filters.get("endDate"));
+        }
+
+        Integer month = filters.get("month") != null ? Integer.parseInt(filters.get("month")) : null;
+        Integer year = filters.get("year") != null ? Integer.parseInt(filters.get("year")) : null;
+
         Integer orderChannelValue = null;
+        String orderChannel = filters.getOrDefault("orderChannel", null);
         if (orderChannel != null) {
             OrderChannel orderChannelEnum = OrderChannel.fromString(orderChannel.toUpperCase());
             orderChannelValue = orderChannelEnum != null ? orderChannelEnum.getValue() : null;
         }
 
-        Integer statusValue = null;
-        if (orderStatus != null) {
-            Status statusEnum = Status.fromString(orderStatus.toUpperCase());
-            statusValue = statusEnum != null ? statusEnum.getValue() : null;
+        List<Integer> orderStatusIdList = null;
+        String orderStatusValues = filters.getOrDefault("orderStatus", null);
+        if (orderStatusValues != null) {
+            orderStatusIdList = AppUtils.handleStringIdsToIntegerIdList(orderStatusValues);
         }
 
-        Page<OrderResponse> orderResponsePages = orderRepository.findAllByFields(pageRequest, keyword, orderChannelValue,
-                statusValue);
+        Page<OrderResponse> orderResponsePages = orderRepository.findAllByFields(pageRequest, keyword, startDate, endDate,
+                month, year, orderChannelValue, orderStatusIdList);
 
         return PageResponse.<List<OrderResponse>>builder()
                 .pageNo(pageRequest.getPageNumber() + 1)

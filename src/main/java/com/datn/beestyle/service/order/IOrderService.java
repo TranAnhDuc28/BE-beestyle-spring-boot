@@ -7,14 +7,15 @@ import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IOrderService
         extends IGenericService<Order, Long, CreateOrderRequest, UpdateOrderRequest, OrderResponse> {
 
-    PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, String keyword, String orderChannel,
-                                                                String orderStatus);
+    PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters);
 
     List<OrderResponse> getOrdersPending();
 }
