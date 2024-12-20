@@ -129,11 +129,11 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query("UPDATE ProductVariant pv SET pv.promotion.id = null WHERE pv.promotion.id = :promotionId AND pv.id IN :ids")
     void updatePromotionToNullForNonSelectedIds(@Param("promotionId") Integer promotionId, @Param("ids") Integer ids);
 
-
     @Query("SELECT pv.product.id AS productId, pv.id AS productDetailId " +
             "FROM ProductVariant pv " +
             "JOIN pv.promotion p " +
             "WHERE p.id = :promotionId " +
             "AND pv.promotion.id = :promotionId")
     List<Object[]> findProductAndDetailIdsByPromotionId(Long promotionId);
+
 }
