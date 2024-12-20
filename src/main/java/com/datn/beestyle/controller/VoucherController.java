@@ -106,19 +106,10 @@ public class VoucherController {
 //        return new ApiResponse<>(HttpStatus.OK.value(), "Voucher", vouchers);
 //    }
 
-    @GetMapping("/findbydate")
-    public ApiResponse<?> findByDateRange(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate, Pageable pageable) {
-        Timestamp startTimestamp = Timestamp.valueOf(startDate.atStartOfDay());
-        Timestamp endTimestamp = Timestamp.valueOf(endDate.atTime(23, 59, 59));
-
-        return new ApiResponse<>(HttpStatus.OK.value(), "Vouchers found", voucherService.getVoucherByDateRange(startTimestamp, endTimestamp, pageable));
-    }
 
     @GetMapping("/findByTotalAmount")
-    public ResponseEntity<List<Voucher>> getValidVouchers(@RequestParam BigDecimal totalAmount) {
-        List<Voucher> vouchers = voucherService.getValidVouchers(totalAmount);
+    public ResponseEntity<List<VoucherResponse>> getValidVouchers(@RequestParam BigDecimal totalAmount) {
+        List<VoucherResponse> vouchers = voucherService.getValidVouchers(totalAmount);
         return ResponseEntity.ok(vouchers);
     }
 

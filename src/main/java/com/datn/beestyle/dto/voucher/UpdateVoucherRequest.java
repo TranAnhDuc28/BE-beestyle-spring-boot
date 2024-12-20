@@ -35,7 +35,7 @@ public class UpdateVoucherRequest {
     private Integer maxDiscount;
 
     @NotNull(message = "Giá trị đơn hàng tối thiểu không được để trống")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Giá trị đơn hàng tối thiểu phải lớn hơn 0")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Giá trị đơn hàng tối thiểu phải lớn hơn hoặc 0")
     private BigDecimal minOrderValue;
 
     @NotNull(message = "Thời gian bắt đầu không được để trống")
@@ -49,6 +49,9 @@ public class UpdateVoucherRequest {
 
     @Min(value = 0, message = "Giới hạn sử dụng cho mỗi người dùng phải lớn hơn hoặc bằng 0")
     private Integer usagePerUser;
+
+    @NotNull(message = "Mô tả không được để trống")
+    private String note;
 
     @EnumValue(name = "Status", enumClass = DiscountStatus.class)
     String status;

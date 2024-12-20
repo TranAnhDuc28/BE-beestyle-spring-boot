@@ -19,8 +19,29 @@ import java.util.List;
 
 public interface VoucherRepository extends IGenericRepository<Voucher, Integer> {
 
+    //    @Query("""
+//                select v from Voucher v
+//                where
+//                    (:name is null or v.voucherName like concat('%', :name, '%')) and
+//                    (:status is null or v.status = :status) and
+//                    (:discountType is null or v.discountType = :discountType) and
+//                    (:startDate IS NULL OR v.startDate >= :startDate) AND
+//                    (:endDate IS NULL OR v.endDate <= :endDate)
+//            """)
+//    Page<Voucher> findByNameContainingAndStatus(Pageable pageable,
+//                                                @Param("name") String name,
+//                                                @Param("status") Integer status,
+//                                                @Param("discountType") Integer discountType,
+//                                                @Param("startDate") Timestamp startDate,
+//                                                @Param("endDate") Timestamp endDate);
     @Query("""
-                select v from Voucher v 
+                select new com.datn.beestyle.dto.voucher.VoucherResponse(
+                    v.id, v.voucherName, v.voucherCode, 
+                    v.discountType, v.discountValue, v.maxDiscount, 
+                    v.minOrderValue, v.startDate, v.endDate, 
+                    v.usageLimit, v.usagePerUser, v.note,
+                    v.status, v.createdAt, v.updatedAt) 
+                from Voucher v 
                 where 
                     (:name is null or v.voucherName like concat('%', :name, '%')) and
                     (:status is null or v.status = :status) and
@@ -28,30 +49,28 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
                     (:startDate IS NULL OR v.startDate >= :startDate) AND 
                     (:endDate IS NULL OR v.endDate <= :endDate)
             """)
-    Page<Voucher> findByNameContainingAndStatus(Pageable pageable,
-                                                @Param("name") String name,
-                                                @Param("status") Integer status,
-                                                @Param("discountType") Integer discountType,
-                                                @Param("startDate") Timestamp startDate,
-                                                @Param("endDate") Timestamp endDate);
+    Page<VoucherResponse> findByNameContainingAndStatus(
+            Pageable pageable,
+            @Param("name") String name,
+            @Param("status") Integer status,
+            @Param("discountType") Integer discountType,
+            @Param("startDate") Timestamp startDate,
+            @Param("endDate") Timestamp endDate
+    );
 
-
+//    @Query("SELECT v FROM Voucher v WHERE v.status = :status AND v.minOrderValue <= :totalAmount")
+//    List<Voucher> findValidVouchers(@Param("status") int status, @Param("totalAmount") BigDecimal totalAmount);
     @Query("""
-            select v from Voucher v 
+                select new com.datn.beestyle.dto.voucher.VoucherResponse(
+                        v.id, v.voucherName, v.voucherCode, 
+                        v.discountType, v.discountValue, v.maxDiscount, 
+                        v.minOrderValue, v.startDate, v.endDate, 
+                        v.usageLimit, v.usagePerUser, v.note,
+                        v.status, v.createdAt, v.updatedAt) 
+                from Voucher v 
+            WHERE v.status = :status AND v.minOrderValue <= :totalAmount
             """)
-    Page<Voucher> findAll(Pageable pageable);
+    List<VoucherResponse> findValidVouchers(@Param("status") int status, @Param("totalAmount") BigDecimal totalAmount);
 
-    @Query(""" 
-            SELECT v FROM Voucher v
-            WHERE (:startDate IS NULL OR v.startDate >= :startDate)
-            AND (:endDate IS NULL OR v.endDate <= :endDate)
-            """)
-    Page<Voucher> findByDateRange(@Param("startDate") Timestamp startDate,
-                                  @Param("endDate") Timestamp endDate,
-                                  Pageable pageable);
-
-
-    @Query("SELECT v FROM Voucher v WHERE v.status = :status AND v.minOrderValue <= :totalAmount")
-    List<Voucher> findValidVouchers(@Param("status") int status, @Param("totalAmount") BigDecimal totalAmount);
 
 }

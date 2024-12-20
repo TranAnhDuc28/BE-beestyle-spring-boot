@@ -16,5 +16,4 @@ public interface IPromotionService
         extends IGenericService<Promotion, Integer, CreatePromotionRequest, UpdatePromotionRequest, PromotionResponse> {
     PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType, Timestamp startDate, Timestamp endDate);
     void deletePromotion(Integer id);
-    Page<Voucher> getPromotionByDateRange(Timestamp startDate, Timestamp  endDate, Pageable pageable);
 }

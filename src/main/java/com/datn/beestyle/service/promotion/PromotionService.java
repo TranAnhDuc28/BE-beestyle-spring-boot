@@ -59,15 +59,15 @@ public class PromotionService
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Promotion> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue, startDate, endDate);
-        List<PromotionResponse> promotionResponseList = mapper.toEntityDtoList(promotionPage.getContent());
+        Page<PromotionResponse> promotionPage = promotionRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue, startDate, endDate);
+//        List<PromotionResponse> promotionResponseList = mapper.toEntityDtoList(promotionPage.getContent());
 
         return PageResponse.builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(promotionPage.getTotalElements())
                 .totalPages(promotionPage.getTotalPages())
-                .items(promotionResponseList)
+                .items(promotionPage.getContent())
                 .build();
     }
 //    @Override
@@ -136,9 +136,5 @@ public class PromotionService
         promotionRepository.deleteById(id);
     }
 
-    @Override
-    public Page<Voucher> getPromotionByDateRange(Timestamp startDate, Timestamp endDate, Pageable pageable) {
-        return promotionRepository.findByDateRange(startDate, endDate, pageable);
-    }
 
 }

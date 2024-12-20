@@ -1,5 +1,6 @@
 package com.datn.beestyle.service.scheduler;
 
+import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.DiscountStatus;
@@ -57,11 +58,10 @@ public class StatusUpdateScheduler {
     public void checkAndExpirePromotions() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        List<Promotion> endedPromotions = promotionRepository.findEndedPromotions(currentTimestamp);
+        List<PromotionResponse> endedPromotions = promotionRepository.findEndedPromotions(currentTimestamp);
 
-        for (Promotion promotion : endedPromotions) {
-
-            productVariantRepository.updateProductVariantToNullByPromotionId(promotion.getId());
+        for (PromotionResponse promotionResponse : endedPromotions) {
+            productVariantRepository.updateProductVariantToNullByPromotionId(promotionResponse.getId());
         }
     }
 }

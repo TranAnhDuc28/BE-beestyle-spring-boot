@@ -68,7 +68,7 @@ public class VoucherService
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(
+        Page<VoucherResponse> voucherPage = voucherRepository.findByNameContainingAndStatus(
                 pageRequest,
                 name,
                 statusValue,
@@ -76,14 +76,14 @@ public class VoucherService
                 startDate,
                 endDate
         );
-        List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
+//        List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
 
         return PageResponse.builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(voucherPage.getTotalElements())
                 .totalPages(voucherPage.getTotalPages())
-                .items(voucherResponseList)
+                .items(voucherPage.getContent())
                 .build();
     }
 
@@ -94,10 +94,6 @@ public class VoucherService
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
 
-    public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp endDate, Pageable pageable) {
-        return voucherRepository.findByDateRange(startDate, endDate, pageable);
-
-    }
 
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;
@@ -129,7 +125,7 @@ public class VoucherService
 //        // Nếu không có discountType, trả về tất cả
 //        return voucherRepository.findAll(pageable);
 //    }
-    public List<Voucher> getValidVouchers(BigDecimal totalAmount) {
+    public List<VoucherResponse> getValidVouchers(BigDecimal totalAmount) {
         return voucherRepository.findValidVouchers(1, totalAmount);
     }
 
