@@ -1,8 +1,6 @@
 package com.datn.beestyle.service.authentication.jwt;
 
-import com.datn.beestyle.service.authentication.jwt.JwtService;
-import com.demo.enums.TokenType;
-import com.demo.service.JwtService;
+import com.datn.beestyle.enums.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.demo.enums.TokenType.*;
+import static com.datn.beestyle.enums.TokenType.*;
 
 @Service
 public class JwtServiceImpl implements JwtService {

@@ -1,6 +1,6 @@
 package com.datn.beestyle.service.authentication.jwt;
 
-import com.demo.enums.TokenType;
+import com.datn.beestyle.enums.TokenType;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
