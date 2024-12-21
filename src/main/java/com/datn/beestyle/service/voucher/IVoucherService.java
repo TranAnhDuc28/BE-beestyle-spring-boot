@@ -7,9 +7,11 @@ import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.enums.DiscountType;
 import org.springframework.data.domain.Pageable;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IVoucherService {
-    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType);
+    PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType, Timestamp startDate, Timestamp endDate);
     List<VoucherResponse> createVoucher(List<CreateVoucherRequest> requestList);
 }

@@ -118,13 +118,13 @@ public class ProductVariantService
 
     @Override
     public int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action) {
-        ProductVariant productVariant =  this.getById(request.getId());
+        ProductVariant productVariant = this.getById(request.getId());
 
         int quantityInStock = productVariant.getQuantityInStock();
 
-        if(action.equalsIgnoreCase(StockAction.PLUS_STOCK.name())) { // hồi sản phẩm trong kho
-            request  .setQuantity(quantityInStock + request.getQuantity());
-        } else if(action.equalsIgnoreCase(StockAction.MINUS_STOCK.name())) { // trừ sản phẩm trong kho
+        if (action.equalsIgnoreCase(StockAction.PLUS_STOCK.name())) { // hồi sản phẩm trong kho
+            request.setQuantity(quantityInStock + request.getQuantity());
+        } else if (action.equalsIgnoreCase(StockAction.MINUS_STOCK.name())) { // trừ sản phẩm trong kho
             if (quantityInStock == 0) throw new RuntimeException("Sản phẩm đã hết hàng");
             if (request.getQuantity() > quantityInStock) {
                 throw new RuntimeException("Số lượng mua vượt quá số lượng tồn kho. Vui lòng giảm số lượng hoặc chọn sản phẩm khác.");
@@ -164,6 +164,7 @@ public class ProductVariantService
                 .filter(dto -> existingIds.contains(Long.valueOf(dto.getId())))
                 .toList();
     }
+
     @Override
     @Transactional
     public void updateProductVariantCreate(Integer promotionId, List<Integer> ids) {
@@ -203,6 +204,7 @@ public class ProductVariantService
 
         return response;
     }
+
     @Override
     protected void beforeCreate(CreateProductVariantRequest request) {
 
@@ -227,9 +229,38 @@ public class ProductVariantService
     protected String getEntityName() {
         return "Product variant";
     }
+
+    //    @Override
+//    public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
+//        return productVariantRepository.findAllProductsWithDetails(productIds);
+//    }
+//    @Override
+//    public Optional<List<ProductVariantResponse>> getAllProductsWithDetails(List<Long> productIds) {
+//        return productVariantRepository.findAllProductsWithDetails(productIds);
+//    }
     @Override
     public Optional<Object[]> getAllProductsWithDetails(List<Long> productIds) {
-        return productVariantRepository.findAllProductsWithDetails(productIds);
+
+        List<ProductVariantResponse> productVariantResponses = productVariantRepository.findAllProductsWithDetails(productIds);
+
+        List<Object[]> result = productVariantResponses.stream()
+                .map(response -> new Object[]{
+                        response.getProductId(),
+                        response.getProductName(),
+                        response.getBrandName(),
+                        response.getMaterialName(),
+                        response.getId(),
+                        response.getSku(),
+                        response.getColorName(),
+                        response.getSizeName(),
+                        response.getOriginalPrice(),
+                        response.getQuantityInStock(),
+                        response.getImageUrl(),
+                        response.getPromotionName()
+                })
+                .collect(Collectors.toList());
+
+        return Optional.ofNullable(result.toArray(new Object[0]));
     }
 
 

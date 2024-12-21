@@ -23,8 +23,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -44,8 +47,9 @@ public class VoucherService
         this.voucherRepository = voucherRepository;
         this.voucherMapper = voucherMapper;
     }
+
     @Override
-    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
+    public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType, Timestamp startDate,Timestamp endDate) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -60,21 +64,26 @@ public class VoucherService
             DiscountType discountTypeEnum = DiscountType.fromString(discountType.toUpperCase());
             if (discountTypeEnum != null) discountTypeValue = discountTypeEnum.getValue();
         }
-        System.out.println("Discount Type Value: " + discountTypeValue);
 
         PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
-        Page<Voucher> voucherPage = voucherRepository.findByNameContainingAndStatus(pageRequest, name, statusValue, discountTypeValue);
-
-        List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
+        Page<VoucherResponse> voucherPage = voucherRepository.findByNameContainingAndStatus(
+                pageRequest,
+                name,
+                statusValue,
+                discountTypeValue,
+                startDate,
+                endDate
+        );
+//        List<VoucherResponse> voucherResponseList = mapper.toEntityDtoList(voucherPage.getContent());
 
         return PageResponse.builder()
                 .pageNo(pageRequest.getPageNumber() + 1)
                 .pageSize(pageable.getPageSize())
                 .totalElements(voucherPage.getTotalElements())
                 .totalPages(voucherPage.getTotalPages())
-                .items(voucherResponseList)
+                .items(voucherPage.getContent())
                 .build();
     }
 
@@ -84,19 +93,8 @@ public class VoucherService
         List<Voucher> voucherList = mapper.toCreateEntityList(requestList);
         return mapper.toEntityDtoList(voucherRepository.saveAll(voucherList));
     }
-//    public Page<VoucherResponse> getVoucherByNameOrCode(String searchTerm, Pageable pageable) {
-//
-////        if (searchTerm == null || searchTerm.isEmpty()) {
-////            return voucherRepository.get(pageable);
-////        }
-//
-//        return voucherRepository.findByVoucherNameOrCode(searchTerm, pageable);
-//    }
 
-    public Page<Voucher> getVoucherByDateRange(Timestamp startDate, Timestamp  endDate,Pageable pageable) {
-        return voucherRepository.findByDateRange(startDate,endDate,pageable);
 
-    }
     public PageResponse<?> getAll(Pageable pageable) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
@@ -115,7 +113,8 @@ public class VoucherService
                 .items(voucherResponseList)
                 .build();
     }
-//    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
+
+    //    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
 //        if (discountType != null) {
 //            if (discountType.equals("PERCENTAGE")) {
 //                return voucherRepository.findVouchersByDiscountType(DiscountType.PERCENTAGE, pageable);
@@ -126,7 +125,9 @@ public class VoucherService
 //        // Nếu không có discountType, trả về tất cả
 //        return voucherRepository.findAll(pageable);
 //    }
-
+    public List<VoucherResponse> getValidVouchers(BigDecimal totalAmount) {
+        return voucherRepository.findValidVouchers(1, totalAmount);
+    }
 
     @Override
     protected List<CreateVoucherRequest> beforeCreateEntities(List<CreateVoucherRequest> requests) {
