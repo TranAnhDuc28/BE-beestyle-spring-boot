@@ -1,6 +1,5 @@
 package com.datn.beestyle.dto.voucher;
 
-import com.datn.beestyle.enums.DiscountType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +16,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class UserVoucherResponse {
     Long id;
-    String voucherName;
     String voucherCode;
+    String voucherName;
     String discountType;
     Integer discountValue;
     Integer maxDiscount;
@@ -27,5 +26,6 @@ public class UserVoucherResponse {
     Timestamp endDate;
     Integer usageLimit;
     Integer usagePerUser;
+
 
 }

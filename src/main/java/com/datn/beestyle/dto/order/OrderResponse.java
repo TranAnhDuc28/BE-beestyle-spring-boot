@@ -24,7 +24,7 @@ public class OrderResponse {
     String customerName;
     Integer voucherId;
     String voucherName;
-    String addressId;
+    Long addressId;
     String shippingAddress;
     String phoneNumber;
     BigDecimal shippingFee;
@@ -38,6 +38,32 @@ public class OrderResponse {
     LocalDateTime updatedAt;
     Long createdBy;
     Long updatedBy;
+
+    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, Integer voucherId,
+                         String voucherName, Long addressId, String shippingAddress, String phoneNumber,
+                         BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
+                         Integer orderStatus, String note, LocalDateTime createdAt, LocalDateTime updatedAt,
+                         Long createdBy, Long updatedBy) {
+        this.id = id;
+        this.orderTrackingNumber = orderTrackingNumber;
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.voucherId = voucherId;
+        this.voucherName = voucherName;
+        this.addressId = addressId;
+        this.shippingAddress = shippingAddress;
+        this.phoneNumber = phoneNumber;
+        this.totalAmount = totalAmount;
+        this.paymentDate = paymentDate;
+        this.paymentMethod = PaymentMethod.fromInteger(paymentMethod);
+        this.orderChannel = OrderChannel.fromInteger(orderChannel);
+        this.orderStatus = OrderStatus.fromInteger(orderStatus);
+        this.note = note;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+    }
 
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
                          BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,

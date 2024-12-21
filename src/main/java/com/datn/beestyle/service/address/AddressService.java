@@ -24,8 +24,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class AddressService
-extends GenericServiceAbstract<Address,Long, CreateAddressRequest, UpdateAddressRequest, AddressResponse>
-implements IAddressService{
+        extends GenericServiceAbstract<Address, Long, CreateAddressRequest, UpdateAddressRequest, AddressResponse>
+        implements IAddressService {
 
     private final AddressRepository addressRepository;
 
@@ -58,7 +58,6 @@ implements IAddressService{
     protected void beforeUpdate(Long aLong, UpdateAddressRequest request) {
 
     }
-
 
 
     public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
@@ -95,10 +94,6 @@ implements IAddressService{
     }
 
 
-
-
-
-
     @Override
     protected void afterConvertCreateRequest(CreateAddressRequest request, Address entity) {
 
@@ -124,7 +119,7 @@ implements IAddressService{
                 Sort.by(Sort.Direction.DESC, "id"));
 
 
-        Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest,customerId);
+        Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest, customerId);
         List<AddressResponse> addressResponseList = mapper.toEntityDtoList(addressPage.getContent());
 
         return PageResponse.builder()

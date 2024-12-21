@@ -15,6 +15,7 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AddressResponse {
     Long id;
+
     String addressName;
 
     String city;
@@ -23,7 +24,7 @@ public class AddressResponse {
 
     String commune;
 
-    boolean isDefault;
+    Boolean isDefault;
 
     Customer customer;
 }

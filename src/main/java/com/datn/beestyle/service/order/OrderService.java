@@ -4,16 +4,19 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.InvalidDataException;
-import com.datn.beestyle.mapper.OrderMapper;
+import com.datn.beestyle.exception.ResourceNotFoundException;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.service.address.AddressService;
+import com.datn.beestyle.service.voucher.VoucherService;
 import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +25,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,12 +38,16 @@ public class OrderService
         implements IOrderService {
 
     private final OrderRepository orderRepository;
+    private final AddressService addressService;
+    private final VoucherService voucherService;
 
     public OrderService(IGenericRepository<Order, Long> entityRepository,
                         IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
-                        EntityManager entityManager, OrderRepository orderRepository) {
+                        EntityManager entityManager, OrderRepository orderRepository, AddressService addressService, VoucherService voucherService) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
+        this.addressService = addressService;
+        this.voucherService = voucherService;
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -103,7 +108,45 @@ public class OrderService
 
     @Override
     public List<OrderResponse> getOrdersPending() {
-        return orderRepository.findOrdersByOrderChannelAndOrderStatus(0, 0);
+        return orderRepository.findOrdersByOrderChannelAndOrderStatus(OrderChannel.OFFLINE.getValue(), OrderStatus.PENDING.getValue());
+    }
+
+    /**
+     * Lấy thông tin chi tiết đầy đủ nhất của hóa đơn
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderResponse getOrderByOrderId(Long orderId) {
+        // lấy thông tin hóa đơn
+        Optional<OrderResponse> order = orderRepository.findOrderById(orderId);
+        if (order.isEmpty()) throw new ResourceNotFoundException(this.getEntityName() + " not found.");
+
+        // lấy thông tin địa chỉ giao hàng
+        Long addressId = order.get().getAddressId();
+        if (addressId != null) {
+            AddressResponse address = addressService.getDtoById(addressId);
+            StringJoiner stringJoiner = new StringJoiner(", ");
+
+            if (address.getAddressName() != null && !address.getAddressName().isEmpty()) {
+                stringJoiner.add(address.getAddressName());
+            }
+            stringJoiner.add(address.getCommune());
+            stringJoiner.add(address.getDistrict());
+            stringJoiner.add(address.getCity());
+
+            order.get().setShippingAddress(stringJoiner.toString());
+        }
+
+        // lấy thông tin voucher áp dụng
+        Integer voucherId = order.get().getVoucherId();
+        if (voucherId != null) {
+            Voucher voucher = voucherService.getById(voucherId);
+            order.get().setVoucherName(voucher.getVoucherName());
+        }
+
+        return order.get();
     }
 
     @Override
@@ -119,7 +162,8 @@ public class OrderService
     @Override
     protected void beforeCreate(CreateOrderRequest request) {
         int countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(1L, OrderStatus.PENDING.getValue());
-        if (countOrderPending >= 20) throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
+        if (countOrderPending >= 20)
+            throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
     }
 
     @Override

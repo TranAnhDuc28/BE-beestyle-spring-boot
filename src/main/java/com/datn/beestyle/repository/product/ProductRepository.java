@@ -61,6 +61,12 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
+    boolean existsByProductName(String name);
+
+    boolean existsByProductCode(String code);
+
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
+
     @Query(
             value = """
                     select new com.datn.beestyle.dto.product.user.UserProductResponse(
@@ -126,11 +132,5 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             order by min(pv.salePrice) asc
             """)
     Page<UserProductResponse> getOfferingProducts(Pageable pageable);
-
-    boolean existsByProductName(String name);
-
-    boolean existsByProductCode(String code);
-
-    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 
 }

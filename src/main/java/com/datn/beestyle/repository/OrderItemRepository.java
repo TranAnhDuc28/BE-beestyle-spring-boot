@@ -16,7 +16,7 @@ public interface OrderItemRepository extends IGenericRepository<OrderItem, Long>
 
     @Query("""
         select new com.datn.beestyle.dto.order.item.OrderItemResponse(
-            oi.id, oi.order.id, pv.id, pv.sku, p.id, p.productName, c.id, c.colorCode, c.colorName, s.id, s.sizeName,
+            oi.id, oi.order.id, pv.id, pv.sku, p.id, p.productName,c.id, c.colorCode, c.colorName, s.id, s.sizeName,
             oi.quantity, oi.salePrice, oi.discountedPrice, oi.note
         )
         from OrderItem oi

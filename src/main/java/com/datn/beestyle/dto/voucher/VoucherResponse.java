@@ -19,5 +19,4 @@ public class VoucherResponse extends UserVoucherResponse{
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-
 }

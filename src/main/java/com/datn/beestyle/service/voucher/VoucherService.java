@@ -35,14 +35,12 @@ public class VoucherService
         implements IVoucherService {
 
     private final VoucherRepository voucherRepository;
-    private final VoucherMapper voucherMapper;
 
     protected VoucherService(IGenericRepository<Voucher, Integer> entityRepository,
                              IGenericMapper<Voucher, CreateVoucherRequest, UpdateVoucherRequest, VoucherResponse> mapper,
                              VoucherRepository voucherRepository, VoucherMapper voucherMapper, EntityManager entityManager) {
         super(entityRepository, mapper, entityManager);
         this.voucherRepository = voucherRepository;
-        this.voucherMapper = voucherMapper;
     }
     @Override
     public PageResponse<?> getAllByNameAndStatus(Pageable pageable, String name, String status, String discountType) {
