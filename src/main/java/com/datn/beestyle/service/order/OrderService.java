@@ -107,6 +107,11 @@ public class OrderService
     }
 
     @Override
+    public OrderResponse getOrderDetailById(Long id) {
+        return null;
+    }
+
+    @Override
     protected List<CreateOrderRequest> beforeCreateEntities(List<CreateOrderRequest> requests) {
         return null;
     }
