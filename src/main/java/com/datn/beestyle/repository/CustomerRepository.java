@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CustomerRepository extends IGenericRepository<Customer,Integer> {
+public interface CustomerRepository extends IGenericRepository<Customer, Long> {
     @Query("""
             select c from Customer c 
             where 
@@ -20,8 +20,10 @@ public interface CustomerRepository extends IGenericRepository<Customer,Integer>
                 (:status is null or c.status = :status) and
                  (:gender is null or c.gender = :gender)
             """)
-    Page<Customer> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status, @Param("gender") Integer gender
-            , @Param("keyword") String keyword);
+    Page<Customer> findByKeywordContainingAndStatusAndGender(Pageable pageable,
+                                                             @Param("status") Integer status,
+                                                             @Param("gender") Integer gender,
+                                                             @Param("keyword") String keyword);
 
 }
 

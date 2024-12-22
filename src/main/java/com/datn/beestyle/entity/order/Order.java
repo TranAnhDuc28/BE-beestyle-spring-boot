@@ -2,12 +2,8 @@ package com.datn.beestyle.entity.order;
 
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
-import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.Voucher;
-import com.datn.beestyle.enums.OrderChannel;
-import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.enums.PaymentMethod;
-import com.datn.beestyle.util.AppUtils;
+import com.datn.beestyle.entity.user.Customer;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;

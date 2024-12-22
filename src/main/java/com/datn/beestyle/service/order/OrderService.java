@@ -130,7 +130,8 @@ public class OrderService
     @Override
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
         entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
-
+        entity.setCreatedBy(1L);
+        entity.setUpdatedBy(1L);
     }
 
     @Override
