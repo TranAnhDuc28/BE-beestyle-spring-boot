@@ -28,6 +28,8 @@ public class ProductVariantResponse {
     Integer sizeId;
     String sizeName;
     BigDecimal salePrice;
+    BigDecimal discountPrice;
+    Integer discountValue;
     Integer quantityInStock;
     BigDecimal originalPrice;
     String description;
@@ -77,14 +79,16 @@ public class ProductVariantResponse {
     }
 
     public ProductVariantResponse(
-            Long id, String productCode, String productName, BigDecimal salePrice,
-            String sku, String categoryName, String brandName, Integer quantity,
+            Long id, String productCode, String productName, BigDecimal salePrice, BigDecimal discountPrice,
+            Integer discountValue, String sku, String categoryName, String brandName, Integer quantity,
             String colorCode, String colorName, String sizeName, String description
     ) {
         this.id = id;
         this.productCode = productCode;
         this.productName = productName;
         this.salePrice = salePrice;
+        this.discountPrice = discountPrice;
+        this.discountValue = discountValue;
         this.sku = sku;
         this.categoryName = categoryName;
         this.brandName = brandName;

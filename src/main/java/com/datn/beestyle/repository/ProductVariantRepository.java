@@ -126,10 +126,11 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             value = """
                         select distinct
                             p.id as id, p.product_code as productCode,
-                        	p.product_name as productName, 
-                        	pv.sale_price as salePrice, pv.sku as sku,
-                        	c.category_name as categoryName, b.brand_name, 
-                        	pv.quantity_in_stock as quantityInStock,
+                        	p.product_name as productName, pv.sale_price as salePrice, 
+                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
+                        	pm.discount_value as discountValue, 
+                        	pv.sku as sku, c.category_name as categoryName, 
+                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
                         	cl.color_code as colorCode, cl.color_name as colorName,
                         	s.size_name as sizeName, p.description as description
                         from product_variant pv
@@ -138,6 +139,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
                         inner join brand b on p.brand_id = b.id 
                         inner join color cl on cl.id = pv.color_id 
                         inner join size s on s.id = pv.size_id
+                        left join promotion pm on pv.promotion_id = pm.id
                         where pv.product_id = :productId
                         	and (:colorCode is null or cl.color_code like :colorCode)
                         	and (:sizeId is null or s.id = :sizeId)

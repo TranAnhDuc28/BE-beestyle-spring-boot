@@ -96,19 +96,21 @@ public class UserProductService {
         String productCode = (String) result[1];
         String productName = (String) result[2];
         BigDecimal salePrice = (BigDecimal) result[3];
-        String sku = (String) result[4];
-        String categoryName = (String) result[5];
-        String brandName = (String) result[6];
-        Integer quantity = (Integer) result[7];
-        String colorCodeResult = (String) result[8];
-        String colorName = (String) result[9];
-        String sizeName = (String) result[10];
-        String description = (String) result[11];
+        BigDecimal discountPrice = (BigDecimal) result[4];
+        Integer discountValue = (Integer) result[5];
+        String sku = (String) result[6];
+        String categoryName = (String) result[7];
+        String brandName = (String) result[8];
+        Integer quantity = (Integer) result[9];
+        String colorCodeResult = (String) result[10];
+        String colorName = (String) result[11];
+        String sizeName = (String) result[12];
+        String description = (String) result[13];
 
         return new ProductVariantResponse(
-                id, productCode, productName, salePrice,
-                sku, categoryName, brandName, quantity, colorCodeResult,
-                colorName, sizeName, description
+                id, productCode, productName, salePrice, discountPrice,
+                discountValue, sku, categoryName, brandName, quantity,
+                colorCodeResult, colorName, sizeName, description
         );
     }
 
