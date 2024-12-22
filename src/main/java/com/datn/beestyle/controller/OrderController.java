@@ -34,7 +34,7 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ApiResponse<?> getOrderDetail(@PathVariable("orderId") Long orderId) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order detail");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order detail", orderService.getOrderDetailById(orderId));
     }
 
     @PostMapping("/create")

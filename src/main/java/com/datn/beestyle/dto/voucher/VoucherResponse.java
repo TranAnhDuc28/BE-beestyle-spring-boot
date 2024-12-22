@@ -42,7 +42,7 @@ public class VoucherResponse {
         this.id = id;
         this.voucherName = voucherName;
         this.voucherCode = voucherCode;
-        this.discountType = DiscountType.fromInteger(discountType);;
+        this.discountType = DiscountType.fromInteger(discountType);
         this.discountValue = discountValue;
         this.maxDiscount = maxDiscount;
         this.minOrderValue = minOrderValue;
@@ -55,5 +55,4 @@ public class VoucherResponse {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-
 }
