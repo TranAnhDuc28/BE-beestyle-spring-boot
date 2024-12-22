@@ -32,5 +32,17 @@ public interface ColorRepository extends IGenericRepository<Color, Integer> {
             """)
     List<ColorResponse> findAllByStatusIsActive();
 
+    @Query("""
+            select distinct 
+            new com.datn.beestyle.dto.product.attributes.color.ColorResponse(
+                c.id, c.colorCode, c.colorName
+            ) 
+            from Color c 
+            inner join ProductVariant pv on pv.color.id = c.id 
+            where pv.product.id = :productId and c.status = 1
+            order by c.id 
+            """)
+    List<ColorResponse> findAllByProductVariant(@Param("productId") Long productId);
+
     boolean existsByColorName(String name);
 }
