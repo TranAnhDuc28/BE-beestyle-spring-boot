@@ -1,5 +1,8 @@
 package com.datn.beestyle.dto.order;
 
+import com.datn.beestyle.dto.address.AddressResponse;
+import com.datn.beestyle.dto.customer.CustomerResponse;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.PaymentMethod;
@@ -22,10 +25,11 @@ public class OrderResponse {
     String orderTrackingNumber;
     Long customerId;
     String customerName;
+    CustomerResponse customerInfo;
     Integer voucherId;
-    String voucherName;
-    String addressId;
-    String shippingAddress;
+    VoucherResponse voucherInfo;
+    Long addressId;
+    AddressResponse shippingAddress;
     String phoneNumber;
     BigDecimal shippingFee;
     BigDecimal totalAmount;

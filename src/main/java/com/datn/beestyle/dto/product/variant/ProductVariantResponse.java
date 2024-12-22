@@ -2,6 +2,7 @@ package com.datn.beestyle.dto.product.variant;
 
 import com.datn.beestyle.enums.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -38,6 +39,11 @@ public class ProductVariantResponse {
     LocalDateTime updatedAt;
     Long createdBy;
     Long updatedBy;
+
+    String brandName;
+    String materialName;
+    String imageUrl;
+    String promotionName;
 
     public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
                                   String colorCode, String colorName, Integer sizeId, String sizeName, BigDecimal salePrice,
@@ -78,11 +84,11 @@ public class ProductVariantResponse {
         this.quantityInStock = quantityInStock;
     }
 
+
     public ProductVariantResponse(
             Long id, String productCode, String productName, BigDecimal salePrice, BigDecimal discountPrice,
             Integer discountValue, String sku, String categoryName, String brandName, Integer quantity,
-            String colorCode, String colorName, String sizeName, String description
-    ) {
+            String colorCode, String colorName, String sizeName, String description) {
         this.id = id;
         this.productCode = productCode;
         this.productName = productName;
@@ -98,4 +104,5 @@ public class ProductVariantResponse {
         this.sizeName = sizeName;
         this.description = description;
     }
+
 }

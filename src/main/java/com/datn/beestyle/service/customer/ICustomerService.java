@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
 import com.datn.beestyle.entity.user.Customer;
 import org.springframework.data.domain.Pageable;
 
-public interface ICustomerService extends IGenericService<Customer,Integer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
-    PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable,String status,String gender,String keyword);
+public interface ICustomerService
+        extends IGenericService<Customer, Long, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
+    PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable, String status, String gender, String keyword);
 }

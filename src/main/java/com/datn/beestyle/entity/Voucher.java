@@ -52,6 +52,9 @@ public class Voucher extends Auditable<Long> {
     @Column(name = "usage_per_user")
     int usagePerUser;
 
+    @Column(name = "note")
+    String note;
+
     @Column(name = "status")
     int status;
 

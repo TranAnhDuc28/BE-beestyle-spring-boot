@@ -26,6 +26,7 @@ public interface IProductVariantService
 
     int updateQuantityProductVariant(PatchUpdateQuantityProductVariant request, String action);
 
+    //    Optional<List<ProductVariantResponse>> getAllProductsWithDetails(List<Long> productIds);
     Optional<Object[]> getAllProductsWithDetails(List<Long> productIds);
 
     void updateProductVariantCreate(Integer promotionId, List<Integer> ids);
