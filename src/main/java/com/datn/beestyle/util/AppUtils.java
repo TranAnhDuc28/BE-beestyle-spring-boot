@@ -1,8 +1,5 @@
 package com.datn.beestyle.util;
 
-import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.enums.Status;
-
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +10,7 @@ import java.util.regex.Pattern;
 
 public class AppUtils {
 
+    private static final int FREE_SHIPPING_THRESHOLD = 500000;
     private static final String PRODUCT_CODE_PREFIX = "SP";
     private static final String ORDER_CODE_PREFIX = "HD";
     public static final int MAX_CATEGORY_LEVEL = 3;

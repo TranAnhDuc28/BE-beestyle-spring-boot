@@ -18,4 +18,6 @@ public interface IOrderService
     PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters);
 
     List<OrderResponse> getOrdersPending();
+
+    OrderResponse getOrderDetailById(Long id);
 }

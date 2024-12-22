@@ -72,31 +72,19 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             """)
     int updateQuantityProductVariant(@Param("productVariantId") long productVariantId, @Param("quantity") int quantity);
 
-    @Query(value = """
-            SELECT  
-                p.id AS productId, 
-                p.productName AS productName, 
-                b.brandName AS brandName, 
-                m.materialName AS materialName, 
-                pv.id AS productVariantId, 
-                pv.sku AS sku, 
-                c.colorName AS colorName, 
-                s.sizeName AS sizeName, 
-                pv.originalPrice AS originalPrice, 
-                pv.quantityInStock AS quantityInStock,
-                pi.imageUrl AS imageUrl,
-                promo.promotionName AS promotionName
-            FROM Product p
-            LEFT JOIN p.brand b
-            LEFT JOIN p.material m
-            LEFT JOIN p.productVariants pv
-            LEFT JOIN pv.color c
-            LEFT JOIN pv.size s
-            LEFT JOIN p.productImages pi
-            LEFT JOIN pv.promotion promo
-            WHERE p.id IN :productIds
-            """)
-    Optional<Object[]> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
+    @Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
+            "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
+            "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
+            "FROM ProductVariant pv " +
+            "JOIN pv.product p " +
+            "LEFT JOIN p.brand b " +
+            "LEFT JOIN p.material m " +
+            "LEFT JOIN pv.color c " +
+            "LEFT JOIN pv.size s " +
+            "LEFT JOIN p.productImages pi " +
+            "LEFT JOIN pv.promotion promo " +
+            "WHERE pv.product.id in :productIds")
+    List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
 
 
     @Modifying
@@ -113,7 +101,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Transactional
     @Query("UPDATE ProductVariant pv SET pv.promotion.id = null WHERE pv.promotion.id = :promotionId AND pv.id IN :ids")
     void updatePromotionToNullForNonSelectedIds(@Param("promotionId") Integer promotionId, @Param("ids") Integer ids);
-
 
     @Query("SELECT pv.product.id AS productId, pv.id AS productDetailId " +
             "FROM ProductVariant pv " +

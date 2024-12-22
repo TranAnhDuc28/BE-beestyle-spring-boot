@@ -47,5 +47,8 @@ public class CreateVoucherRequest {
     @Min(value = 0, message = "Giới hạn sử dụng cho mỗi người dùng phải lớn hơn hoặc bằng 0")
     private Integer usagePerUser;
 
+    @NotNull(message = "Mô tả không được để trống")
+    private String note;
+
     private Integer status;
 }

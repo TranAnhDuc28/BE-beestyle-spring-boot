@@ -25,12 +25,12 @@ import java.util.List;
 @Slf4j
 @Service
 public class CustomerService
-    extends GenericServiceAbstract<Customer,Integer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse>
-    implements ICustomerService{
+        extends GenericServiceAbstract<Customer, Long, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse>
+        implements ICustomerService {
 
     private final CustomerRepository customerRepository;
 
-    public CustomerService(IGenericRepository<Customer, Integer> entityRepository,
+    public CustomerService(IGenericRepository<Customer, Long> entityRepository,
                            IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> mapper,
                            EntityManager entityManager, CustomerRepository customerRepository) {
         super(entityRepository, mapper, entityManager);
@@ -54,7 +54,7 @@ public class CustomerService
     }
 
     @Override
-    protected void beforeUpdate(Integer id, UpdateCustomerRequest request) {
+    protected void beforeUpdate(Long id, UpdateCustomerRequest request) {
         request.setPassword("");
     }
 
@@ -75,7 +75,7 @@ public class CustomerService
 
 
     @Override
-    public PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable,String status,String gender,String keyword) {
+    public PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable, String status, String gender, String keyword) {
         int page = 0;
         if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
 
@@ -87,12 +87,12 @@ public class CustomerService
         Integer genderValue = null;
         if (gender != null) {
             Gender genderEnum = Gender.fromString(gender);
-            if(genderEnum!=null) genderValue = genderEnum.getValue();
+            if (genderEnum != null) genderValue = genderEnum.getValue();
         }
-        PageRequest pageRequest = PageRequest.of(page , pageable.getPageSize(),
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt", "id"));
         Page<Customer> customerPage =
-                customerRepository.findByKeywordContainingAndStatusAndGender(pageRequest,statusValue,genderValue,keyword);
+                customerRepository.findByKeywordContainingAndStatusAndGender(pageRequest, statusValue, genderValue, keyword);
         List<CustomerResponse> customerResponseList = mapper.toEntityDtoList(customerPage.getContent());
 
         return PageResponse.builder()
