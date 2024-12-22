@@ -9,8 +9,8 @@ import org.springframework.lang.Nullable;
 public enum DiscountStatus {
 
     UPCOMING(0),
-    ONGOING(1),
-    ENDED(2);
+    ACTIVE(1),
+    EXPIRED(2);
 
     private final int value;
 
