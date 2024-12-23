@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-      context-path: /api/v1
+    context-path: /api/v1
 
 spring:
   application:
@@ -21,6 +21,7 @@ spring:
     username: root
     password: locnhph38787
 
+
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -38,7 +39,7 @@ spring:
           batch_versioned_data: true
         order_updates: true
         order_inserts: true
-#        generate_statistics: true
+  #        generate_statistics: true
 
   data:
     web:
