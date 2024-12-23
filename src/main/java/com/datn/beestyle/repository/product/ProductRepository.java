@@ -78,7 +78,6 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
     )
     List<UserProductResponse> findAllProductUser();
 
-
     @Query(value = """
             select new com.datn.beestyle.dto.product.user.UserProductResponse(
                 p.id,\s
@@ -132,5 +131,4 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
     boolean existsByProductCode(String code);
 
     Optional<Product> findByProductNameAndIdNot(String productName, Long id);
-
 }
