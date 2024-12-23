@@ -15,28 +15,26 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateStaffRequest {
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống username")
     String username;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống họ tên")
     String fullName;
 
     LocalDate dateOfBirth;
 
-//    @NotNull(message = "Khong duoc de trong")
     String gender;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống số điện thoại")
     String phoneNumber;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống email")
     String email;
 
     String avatar;
 
     String address;
 
-    @NotBlank(message = "Khong duoc de trong")
     String password;
 
 

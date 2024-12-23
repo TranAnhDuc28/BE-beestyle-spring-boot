@@ -28,7 +28,7 @@ public class CreateCustomerRequest {
 
     String gender;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống số điện thoại")
     String phoneNumber;
 
     String email;

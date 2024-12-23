@@ -24,8 +24,8 @@ public class Role {
     @Column(name = "description")
     String description;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<Staff> users = new HashSet<>();
+//    @ManyToMany(mappedBy = "roles")
+//    private Set<Staff> users = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "role_has_permission",

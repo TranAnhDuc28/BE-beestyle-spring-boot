@@ -23,29 +23,34 @@ public class AddressController {
     @GetMapping()
     public ApiResponse<?> getAllByCutomerId(Pageable pageable,
                                     @RequestParam(required = false) Long id) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Addresses",
+        return new ApiResponse<>(HttpStatus.OK.value(), "Địa chỉ",
                 addressService.getAllByCustomerId(pageable, id));
     }
     @PostMapping("/create")
     public ApiResponse<?> createAddress(@RequestBody CreateAddressRequest request) {
 
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Address add successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới địa chỉ thành công",
                 addressService.create(request));
     }
     @PutMapping("/{id}")
     public ApiResponse<?> setIsDefault(@PathVariable("id") Long id, @RequestBody UpdateAddressRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Address updated to isDefault successfully",
+        return new ApiResponse<>(HttpStatus.OK.value(), "Đặt địa chỉ thành mặc định thành công",
                 addressService.setUpdateIsDefault(id,request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateAddress(@Min(1) @PathVariable Long id,
                                       @Valid @RequestBody UpdateAddressRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Address updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật địa chỉ thành công",
                 addressService.update(id, request));
     }
     @GetMapping("/{id}")
     public ApiResponse<?> getAddress (@Min(1) @PathVariable Long id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Address", addressService.getDtoById(id));
+    }
+    @DeleteMapping("/delete/{id}")
+    public ApiResponse<?> deleteAddress (@Min(1) @PathVariable Long id){
+        addressService.delete(id);
+        return new ApiResponse<>(HttpStatus.OK.value(),"Xóa địa chỉ thành công",null);
     }
 
 }

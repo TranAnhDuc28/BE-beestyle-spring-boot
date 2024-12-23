@@ -7,6 +7,7 @@ import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.enums.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,7 +18,6 @@ import org.mapstruct.Named;
 public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
     @Mapping(target = "gender", source = ".", qualifiedByName = "genderName")
-    @Mapping(target = "password", ignore = true)
     @Override
     CustomerResponse toEntityDto(Customer entity);
 
@@ -25,6 +25,7 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", constant = "1")
+    @Mapping(target = "role",expression = "java(com.datn.beestyle.enums.Role.OWNER)")
     @Mapping(target = "addresses", source = "addresses")
     @Override
     Customer toCreateEntity(CreateCustomerRequest request);
@@ -56,6 +57,7 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     default int genderId(UpdateCustomerRequest request) {
         return Gender.valueOf(request.getGender()).getValue();
     }
+
 
 
 }

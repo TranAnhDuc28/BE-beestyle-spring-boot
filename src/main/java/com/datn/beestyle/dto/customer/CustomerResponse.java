@@ -18,11 +18,11 @@ public class CustomerResponse {
     Long id;
     String fullName;
     LocalDate dateOfBirth;
-    String password;
     String gender;
     String phoneNumber;
     String email;
     String status;
+    String role;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }
