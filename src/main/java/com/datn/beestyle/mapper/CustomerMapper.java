@@ -18,7 +18,6 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     @Mapping(target = "status", source = ".", qualifiedByName = "statusName")
     @Mapping(target = "gender", source = ".", qualifiedByName = "genderName")
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Override
     CustomerResponse toEntityDto(Customer entity);
 

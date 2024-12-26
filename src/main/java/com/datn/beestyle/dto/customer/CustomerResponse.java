@@ -1,6 +1,5 @@
 package com.datn.beestyle.dto.customer;
 
-import com.datn.beestyle.dto.address.AddressResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +22,7 @@ public class CustomerResponse {
     String gender;
     String phoneNumber;
     String email;
-    AddressResponse address;
+    String address;
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

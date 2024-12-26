@@ -19,7 +19,8 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
     @Query(value = """
                 select new com.datn.beestyle.dto.order.OrderResponse(
                     o.id, o.orderTrackingNumber, c.id, c.fullName, o.phoneNumber, o.totalAmount, o.paymentDate, 
-                    o.paymentMethod, o.orderChannel, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, o.updatedBy
+                    o.paymentMethod, o.orderChannel, o.orderType, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, 
+                    o.updatedBy
                 )
                 from Order o
                     left join Customer c on o.customer.id = c.id
@@ -47,7 +48,7 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
 
     @Query(value = """
                 select new com.datn.beestyle.dto.order.OrderResponse(
-                    o.id, o.orderTrackingNumber, c.id, o.orderChannel, o.orderStatus
+                    o.id, o.orderTrackingNumber, c.id, o.orderChannel, o.orderType, o.orderStatus
                 )
                 from Order o
                     left join Customer c on o.customer.id = c.id

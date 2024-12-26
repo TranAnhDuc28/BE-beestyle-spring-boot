@@ -5,8 +5,11 @@ import org.springframework.lang.Nullable;
 
 @Getter
 public enum OrderChannel {
-    OFFLINE(0),
-    ONLINE(1);
+    OFFLINE(0), // tại cửa hàng
+    ONLINE(1), // trực tuyến
+//    SOCIAL_MEDIA(2), // mạng xã hội
+//    PHONE(3) // telesales
+    ;
 
     private final int value;
     OrderChannel(int value) {
