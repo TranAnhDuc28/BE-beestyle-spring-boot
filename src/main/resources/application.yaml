@@ -71,5 +71,5 @@ vnpay:
 
 ghtk:
   api:
-    token: 7YTl2Keh8awcSpl45nhCp174NfVyI5u1AEor6s # Thay bằng Token của bạn
+    token: NBg6AVevmUIv22r3ONMLyzghX5jBn3Sz0ZeJ4D # Thay bằng Token của bạn
     url: https://services.giaohangtietkiem.vn/services/shipment/fee
