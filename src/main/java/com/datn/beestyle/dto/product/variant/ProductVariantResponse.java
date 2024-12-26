@@ -103,10 +103,10 @@ public class ProductVariantResponse {
         this.description = description;
     }
 
-    @JsonPropertyOrder({"productId", "id", "sku", "productName", "brandName", "materialName", "colorName", "sizeName", "originalPrice", "quantityInStock", "imageUrl", "promotionName"})
+    @JsonPropertyOrder({"productId", "id", "sku", "productName", "brandName", "materialName", "colorName", "sizeName", "originalPrice", "quantityInStock", "promotionName"})
     public ProductVariantResponse(Long productId, String productName, String brandName, String materialName, Long id,
                                   String sku, String colorName, String sizeName, BigDecimal originalPrice,
-                                  Integer quantityInStock, String imageUrl, String promotionName) {
+                                  Integer quantityInStock, String promotionName) {
         this.productId = productId;
         this.productName = productName;
         this.brandName = brandName;
@@ -117,7 +117,6 @@ public class ProductVariantResponse {
         this.sizeName = sizeName;
         this.originalPrice = originalPrice;
         this.quantityInStock = quantityInStock;
-        this.imageUrl = imageUrl;
         this.promotionName = promotionName;
     }
 }

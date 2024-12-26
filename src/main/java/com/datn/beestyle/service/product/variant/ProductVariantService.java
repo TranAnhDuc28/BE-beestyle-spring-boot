@@ -253,7 +253,6 @@ public class ProductVariantService
                         response.getSizeName(),
                         response.getOriginalPrice(),
                         response.getQuantityInStock(),
-                        response.getImageUrl(),
                         response.getPromotionName()
                 })
                 .collect(Collectors.toList());

@@ -74,17 +74,30 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 
     @Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
             "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
-            "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
+            "pv.quantityInStock, promo.promotionName) " +
             "FROM ProductVariant pv " +
             "JOIN pv.product p " +
             "LEFT JOIN p.brand b " +
             "LEFT JOIN p.material m " +
             "LEFT JOIN pv.color c " +
             "LEFT JOIN pv.size s " +
-            "LEFT JOIN p.productImages pi " +
             "LEFT JOIN pv.promotion promo " +
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
+//@Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
+//        "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
+//        "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
+//        "FROM ProductVariant pv " +
+//        "JOIN pv.product p " +
+//        "LEFT JOIN p.brand b " +
+//        "LEFT JOIN p.material m " +
+//        "LEFT JOIN pv.color c " +
+//        "LEFT JOIN pv.size s " +
+//        "LEFT JOIN p.productImages pi WHERE pi.isPrimary = true " +
+//        "LEFT JOIN pv.promotion promo " +
+//        "WHERE pv.product.id in :productIds")
+//List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
+
 
 
     @Modifying
