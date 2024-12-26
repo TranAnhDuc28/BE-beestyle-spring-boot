@@ -22,6 +22,7 @@ public class CustomerResponse {
     String gender;
     String phoneNumber;
     String email;
+    String address;
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

@@ -47,6 +47,9 @@ public class Order extends Auditable<Long> {
     @Column(name = "order_channel")
     int orderChannel;
 
+    @Column(name = "order_type")
+    int orderType;
+
     @Column(name = "order_status")
     int orderStatus;
 

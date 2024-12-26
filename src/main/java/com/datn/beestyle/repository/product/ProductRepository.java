@@ -132,5 +132,4 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
     boolean existsByProductCode(String code);
 
     Optional<Product> findByProductNameAndIdNot(String productName, Long id);
-
 }
