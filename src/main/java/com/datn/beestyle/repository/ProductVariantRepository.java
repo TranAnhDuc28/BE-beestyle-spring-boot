@@ -112,7 +112,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            p.id as id, p.product_code as productCode,
+                            pv.id as id, p.id as productId, p.product_code as productCode,
                         	p.product_name as productName, pv.sale_price as salePrice, 
                         	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
                         	pm.discount_value as discountValue, 
@@ -139,4 +139,29 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("colorCode") String colorCode,
             @Param("sizeId") Long sizeId
     );
+
+
+    @Query(
+            value = """
+                        select distinct
+                            pv.id as id, p.id as productId, p.product_code as productCode,
+                        	p.product_name as productName, pv.sale_price as salePrice,
+                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
+                        	pm.discount_value as discountValue,
+                        	pv.sku as sku, c.category_name as categoryName,
+                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
+                        	cl.color_code as colorCode, cl.color_name as colorName,
+                        	s.size_name as sizeName, p.description as description
+                        from product_variant pv
+                        inner join product p on p.id = pv.product_id
+                        inner join category c on c.id = p.category_id
+                        inner join brand b on p.brand_id = b.id
+                        inner join color cl on cl.id = pv.color_id
+                        inner join size s on s.id = pv.size_id
+                        left join promotion pm on pv.promotion_id = pm.id
+                        where pv.id in (:productVariantIds)
+                    """,
+            nativeQuery = true
+    )
+    List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
 }
