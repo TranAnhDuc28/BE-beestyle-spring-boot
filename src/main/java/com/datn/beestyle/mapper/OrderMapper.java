@@ -7,10 +7,7 @@ import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.product.attributes.Material;
-import com.datn.beestyle.enums.OrderChannel;
-import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.enums.PaymentMethod;
-import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.enums.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -30,6 +27,7 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Mapping(target = "addressId", source = "shippingAddress.id")
     @Mapping(target = "paymentMethod", source = ".", qualifiedByName = "paymentMethodName")
     @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelName")
+    @Mapping(target = "orderType", source = ".", qualifiedByName = "orderTypeName")
     @Mapping(target = "orderStatus", source = ".", qualifiedByName = "orderStatusName")
     OrderResponse toEntityDto(Order entity);
 
@@ -87,6 +85,12 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     default String orderChannelName(Order order) {
         OrderChannel orderChannel = OrderChannel.resolve(order.getOrderChannel());
         return orderChannel != null ? orderChannel.name() : null;
+    }
+
+    @Named("orderTypeName")
+    default String orderTypeName(Order order) {
+        OrderType orderType = OrderType.resolve(order.getOrderType());
+        return orderType != null ? orderType.name() : null;
     }
 
     @Named("orderStatusName")

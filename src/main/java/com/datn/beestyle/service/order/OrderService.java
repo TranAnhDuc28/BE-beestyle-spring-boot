@@ -110,10 +110,10 @@ public class OrderService
                 .build();
     }
 
-
     @Override
     public List<OrderResponse> getOrdersPending() {
-        return orderRepository.findOrdersByOrderChannelAndOrderStatus(0, 0);
+        return orderRepository.findOrdersByOrderChannelAndOrderStatus(OrderChannel.OFFLINE.getValue(),
+                OrderStatus.PENDING.getValue());
     }
 
     @Override
