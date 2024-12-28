@@ -7,7 +7,6 @@ import org.springframework.lang.Nullable;
 public enum OrderType {
     IN_STORE_PURCHASE(0), // Mua trực tiếp
     DELIVERY(1), // Giao hàng
-//    PICKUP(2) // Nhận tại cửa hàng
     ;
 
     private final int value;

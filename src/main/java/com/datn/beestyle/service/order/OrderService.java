@@ -130,8 +130,8 @@ public class OrderService
             orderResponse.setVoucherInfo(voucherResponse);
         }
 
-        if(orderResponse.getAddressId() != null) {
-            AddressResponse addressResponse = addressService.getDtoById(orderResponse.getAddressId());
+        if(orderResponse.getShippingAddressId() != null) {
+            AddressResponse addressResponse = addressService.getDtoById(orderResponse.getShippingAddressId());
             orderResponse.setShippingAddress(addressResponse);
         }
 
