@@ -84,21 +84,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "LEFT JOIN pv.promotion promo " +
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-//@Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
-//        "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
-//        "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
-//        "FROM ProductVariant pv " +
-//        "JOIN pv.product p " +
-//        "LEFT JOIN p.brand b " +
-//        "LEFT JOIN p.material m " +
-//        "LEFT JOIN pv.color c " +
-//        "LEFT JOIN pv.size s " +
-//        "LEFT JOIN p.productImages pi WHERE pi.isPrimary = true " +
-//        "LEFT JOIN pv.promotion promo " +
-//        "WHERE pv.product.id in :productIds")
-//List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-
-
 
     @Modifying
     @Transactional
@@ -152,4 +137,20 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("colorCode") String colorCode,
             @Param("sizeId") Long sizeId
     );
+
+    // thống kê
+    @Query(value = """
+                select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
+                    pv.id, pv.sku, p.id, p.productName, c.id, c.colorCode, c.colorName, s.id, s.sizeName, pv.salePrice, pv.quantityInStock)
+                from ProductVariant pv
+                    join Product p on pv.product.id = p.id
+                    left join Color c on pv.color.id = c.id
+                    left join Size s on pv.size.id = s.id
+                order by 
+                    case when :orderByStock = 'desc' then pv.quantityInStock end desc,
+                    case when :orderByStock = 'asc' then pv.quantityInStock end asc
+            """)
+    Page<ProductVariantResponse> filterProductVariantsByStock(Pageable pageable,
+                                                       @Param("orderByStock") String orderByStock);
+
 }
