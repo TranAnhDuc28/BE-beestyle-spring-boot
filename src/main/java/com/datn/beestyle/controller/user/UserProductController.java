@@ -1,10 +1,10 @@
 package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.service.user.product.UserProductService;
+import com.datn.beestyle.service.user.UserProductHomeService;
+import com.datn.beestyle.service.user.UserProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -18,15 +18,16 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "User Product Controller")
 public class UserProductController {
 
-    private final UserProductService productService;
+    private final UserProductHomeService productService;
+    private final UserProductVariantService productVariantService;
 
     @GetMapping
     public ApiResponse<?> featuredProducts(
             @PageableDefault(size = 8) Pageable pageable,
-            @RequestParam(name = "q", required = false) Integer q
+            @RequestParam(name = "q", required = false) Integer category
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Area",
-                productService.getFeaturedProducts(pageable, q)
+                productService.getFeaturedProducts(pageable, category)
         );
     }
 
@@ -44,17 +45,10 @@ public class UserProductController {
         );
     }
 
-    @GetMapping("/{productId}/variant/image")
-    public ApiResponse<?> getImageSingleProduct(@PathVariable Long productId) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Products Image Product Variant",
-                productService.getImageProducVariant(productId)
-        );
-    }
-
     @GetMapping("/{productId}/variant/color")
     public ApiResponse<?> getColorSingleProduct(@PathVariable Long productId) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Colors Product Variant",
-                productService.getAllColorLists(productId)
+                productVariantService.getAllColorLists(productId)
         );
     }
 
@@ -64,7 +58,7 @@ public class UserProductController {
             @RequestParam(name = "c") String colorCode
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Sizes Product Variant",
-                productService.getAllSizeByPdAndColor(productId, colorCode)
+                productVariantService.getAllSizeByPdAndColor(productId, colorCode)
         );
     }
 
@@ -75,7 +69,7 @@ public class UserProductController {
             @RequestParam(name = "s", required = false) Long sizeId
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products Variant",
-                productService.getProductVariantUser(productId, colorCode, sizeId)
+                productVariantService.getProductVariantUser(productId, colorCode, sizeId)
         );
     }
 }
