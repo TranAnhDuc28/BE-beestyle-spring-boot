@@ -19,7 +19,9 @@ spring:
 
     url: jdbc:mysql://localhost:3306/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
-    password: 123456
+    password: locnhph38787
+
+
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -63,11 +65,11 @@ openapi:
 # VNPay Configuration
 vnpay:
   tmn_code: NB1VPMR9              # Mã Tài Khoản Merchant
-  hash_secret: U8T6SITAE5S2R4QVBTHX1FG98V5II02Z        # Chuỗi bí mật dùng để mã hóa
+  hash_secret: 5ZIKVVHVSYA3KYT1BU443AWDOJ1MSSSH        # Chuỗi bí mật dùng để mã hóa
   pay_url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   return_url: http://localhost:8080/api/v1/payment/return # URL trả kết quả sau khi thanh toán
 
 ghtk:
   api:
-    token: 7YTl2Keh8awcSpl45nhCp174NfVyI5u1AEor6s # Thay bằng Token của bạn
+    token: NBg6AVevmUIv22r3ONMLyzghX5jBn3Sz0ZeJ4D # Thay bằng Token của bạn
     url: https://services.giaohangtietkiem.vn/services/shipment/fee

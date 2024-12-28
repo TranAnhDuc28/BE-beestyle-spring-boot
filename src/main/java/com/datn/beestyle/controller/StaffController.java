@@ -23,28 +23,28 @@ public class StaffController {
     public ApiResponse<?> getStaffs(Pageable pageable,
              @RequestParam(required = false) String keyword, @RequestParam(required = false) String gender
             ,@RequestParam(required = false) String status ) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Staff",
+        return new ApiResponse<>(HttpStatus.OK.value(), "Nhân viên",
                 staffService.getAllByKeywordAndStatusAndGender(pageable,status,gender,keyword));
     }
 
     @PostMapping("/create")
     public ApiResponse<?> createStaff(@Valid @RequestBody CreateStaffRequest request){
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff add successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới nhân viên thành công",
                 staffService.create(request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateStaff(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateStaffRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Staff updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật nhân viên thành công",
                 staffService.update(id, request));
     }
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deleteStaff(@Min(1) @PathVariable int id) {
         staffService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Staff deleted successfully.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Xóa nhân viên thành công");
     }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getStaff(@Min(1) @PathVariable int id) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Staff", staffService.getDtoById(id));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Nhân viên", staffService.getDtoById(id));
     }
 }

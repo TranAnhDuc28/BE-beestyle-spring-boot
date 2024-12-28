@@ -2,11 +2,8 @@ package com.datn.beestyle.entity.user;
 
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.BaseEntity;
-import com.datn.beestyle.entity.author.Role;
-import com.datn.beestyle.entity.cart.ShoppingCart;
-import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,6 +40,10 @@ public class Customer extends BaseEntity<Long> {
 
     @Column(name = "email")
     String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    Role role;
 
     @Column(name = "password")
     String password;
