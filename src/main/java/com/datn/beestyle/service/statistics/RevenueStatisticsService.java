@@ -1,6 +1,7 @@
 package com.datn.beestyle.service.statistics;
 
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.statistics.RevenueStatisticsDTO;
 import com.datn.beestyle.repository.statistics.StatisticsRepositoryImpl;
 import org.springframework.data.domain.Page;
@@ -104,6 +105,22 @@ public class RevenueStatisticsService {
                 .totalElements(page.getTotalElements())
                 .totalPages(page.getTotalPages())
                 .items(page.getContent())
+                .build();
+    }
+    //Thống kê sản phẩm tồn
+    public PageResponse<List<ProductVariantResponse>> getProductVariantsByStock(Pageable pageable) {
+
+        // Lấy danh sách sản phẩm theo số lượng tồn kho
+        Page<ProductVariantResponse> productVariantResponsePages = statisticsRepository.filterProductVariantsByStock(pageable);
+
+
+        // Trả về kết quả phân trang
+        return PageResponse.<List<ProductVariantResponse>>builder()
+                .pageNo(productVariantResponsePages.getNumber() + 1)
+                .pageSize(productVariantResponsePages.getSize())
+                .totalElements(productVariantResponsePages.getTotalElements())
+                .totalPages(productVariantResponsePages.getTotalPages())
+                .items(productVariantResponsePages.getContent())
                 .build();
     }
 }

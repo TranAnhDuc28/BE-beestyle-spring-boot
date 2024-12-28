@@ -1,5 +1,6 @@
 package com.datn.beestyle.entity.product;
 
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.product.attributes.Color;
@@ -21,6 +22,25 @@ import static jakarta.persistence.CascadeType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SqlResultSetMapping(
+        name = "ProductVariantResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = ProductVariantResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "sku", type = String.class),
+                        @ColumnResult(name = "productId", type = Long.class),
+                        @ColumnResult(name = "productName", type = String.class),
+                        @ColumnResult(name = "colorId", type = Integer.class),
+                        @ColumnResult(name = "colorCode", type = String.class),
+                        @ColumnResult(name = "colorName", type = String.class),
+                        @ColumnResult(name = "sizeId", type = Integer.class),
+                        @ColumnResult(name = "sizeName", type = String.class),
+                        @ColumnResult(name = "salePrice", type = BigDecimal.class),
+                        @ColumnResult(name = "quantityInStock", type = Integer.class)
+                }
+        )
+)
 public class ProductVariant extends Auditable<Long> {
 
     @Column(name = "sku")

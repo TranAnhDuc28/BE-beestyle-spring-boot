@@ -31,7 +31,7 @@ public class StatisticsController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
 
         return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê",
-                revenueStatisticsService.getRevenueByDate(startDate, endDate,pageable));
+                revenueStatisticsService.getRevenueByDate(startDate, endDate, pageable));
 
     }
 
@@ -41,11 +41,11 @@ public class StatisticsController {
             @RequestParam String period) {
 
         return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê theo ngày, tháng, năm",
-                revenueStatisticsService.getRevenueByPeriod(period,pageable));
+                revenueStatisticsService.getRevenueByPeriod(period, pageable));
 
     }
 
-//    @GetMapping("/revenue-by-month")
+    //    @GetMapping("/revenue-by-month")
 //    public ApiResponse<?> getRevenueByMonth(
 //            Pageable pageable,
 //            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -64,6 +64,11 @@ public class StatisticsController {
 //                revenueStatisticsService.getTopSellingProductsByFilterType(filterType,pageable));
 //
 //    }
-
+    @GetMapping("/filterByStock")
+    public ApiResponse<?> getProductVariants(Pageable pageable) {
+        // Gọi service để lấy sản phẩm có số lượng tồn kho dưới 10
+        return new ApiResponse<>(HttpStatus.OK.value(), "",
+                revenueStatisticsService.getProductVariantsByStock(pageable));
+    }
 
 }
