@@ -62,70 +62,63 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
 
     @Query(value = """
             SELECT
-                p.id,
-                p.product_name,
-                MAX(pi.image_url) AS image_url,
-                MAX(pv.sale_price) AS max_sale_price,
-                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS min_discounted_price,
-                MAX(pm.discount_value) AS discount_value
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue
             FROM product p
-            INNER JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = 1
             INNER JOIN product_variant pv ON p.id = pv.product_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-            WHERE (:q IS NULL OR p.gender = :q)
+            WHERE (:category IS NULL OR p.gender = :category)
             GROUP BY p.id, p.product_name
-            ORDER BY p.id
+            ORDER BY RAND()
             """,
             countQuery = """
                     SELECT COUNT(DISTINCT p.id)
                     FROM product p
-                    LEFT JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = 1
                     LEFT JOIN product_variant pv ON p.id = pv.product_id
                     LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-                    WHERE (:q IS NULL OR p.gender = :q)
+                    WHERE (:category IS NULL OR p.gender = :category)
                     """,
             nativeQuery = true)
-    Page<Object[]> getFeaturedProductsData(@Param("q") Integer q, Pageable pageable);
+    Page<Object[]> getFeaturedProductsData(@Param("category") Integer category, Pageable pageable);
 
     @Query(value = """
             SELECT
-                p.id,
-                p.product_name,
-                MAX(DISTINCT pi.image_url) AS image_url,
-                MAX(pv.sale_price) AS max_sale_price,
-                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS min_discounted_price,
-                MAX(pm.discount_value) AS discount_value,
-                COUNT(oi.product_variant_id) AS total_product,
-                SUM(oi.quantity) AS total_quantity_sold,
-                pv.id
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue
             FROM product p
-            INNER JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = 1
-            INNER JOIN product_variant pv ON p.id = pv.product_id
-            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-            INNER JOIN order_item oi ON pv.id = oi.product_variant_id
-            GROUP BY p.id, p.product_name, oi.product_variant_id
-            ORDER BY total_quantity_sold DESC, total_product DESC;
-            """,
-            nativeQuery = true)
-    Page<Object[]> getTopSellingProductsData(Pageable pageable);
-
-    @Query(value = """
-            SELECT
-                p.id,
-                p.product_name,
-                MAX(pi.image_url) AS image_url,
-                MAX(pv.sale_price) AS max_sale_price,
-                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS min_discounted_price,
-                MAX(pm.discount_value) AS discount_value
-            FROM product p
-            INNER JOIN product_image pi ON p.id = pi.product_id AND pi.is_default = 1
             INNER JOIN product_variant pv ON p.id = pv.product_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
             GROUP BY p.id, p.product_name
-            ORDER BY min_discounted_price asc
+            ORDER BY minDiscountedPrice asc
             """,
             nativeQuery = true)
     Page<Object[]> getOfferingProductsData(Pageable pageable);
+
+    @Query(value = """
+            SELECT
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue,
+                COUNT(oi.product_variant_id) AS totalProduct,
+                SUM(oi.quantity) AS totalQuantitySold,
+                pv.id AS productVariantId
+            FROM product p
+            INNER JOIN product_variant pv ON p.id = pv.product_id
+            INNER JOIN order_item oi ON pv.id = oi.product_variant_id
+            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            GROUP BY p.id, p.product_name, oi.product_variant_id
+            ORDER BY totalQuantitySold DESC, totalProduct DESC;
+            """,
+            nativeQuery = true)
+    Page<Object[]> getTopSellingProductsData(Pageable pageable);
 
     boolean existsByProductName(String name);
 
