@@ -76,10 +76,13 @@ public class StatisticsController {
 //
 //    }
     @GetMapping("/filterByStock")
-    public ApiResponse<?> getProductVariants(Pageable pageable) {
-        // Gọi service để lấy sản phẩm có số lượng tồn kho dưới 10
+    public ApiResponse<?> getProductVariants(Pageable pageable, @RequestParam("stock") int stock) {
         return new ApiResponse<>(HttpStatus.OK.value(), "",
-                revenueStatisticsService.getProductVariantsByStock(pageable));
+                revenueStatisticsService.getProductVariantsByStock(pageable, stock));
     }
-
+    @GetMapping("/topSellingProduct")
+    public ApiResponse<?> gettopSellingProduct(Pageable pageable, @RequestParam("top") int top) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "",
+                revenueStatisticsService.getTopSellingProduct(pageable, top));
+    }
 }

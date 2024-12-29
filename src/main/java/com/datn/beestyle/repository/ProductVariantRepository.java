@@ -85,6 +85,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
 
+
     @Modifying
     @Transactional
     @Query("update ProductVariant pv set pv.promotion.id = :promotionId where pv.id in :ids")
@@ -110,7 +111,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            pv.id as id, p.id as productId, p.product_code as productCode,
+                            p.id as id, p.product_code as productCode,
                         	p.product_name as productName, pv.sale_price as salePrice, 
                         	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
                         	pm.discount_value as discountValue, 
@@ -138,7 +139,8 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("sizeId") Long sizeId
     );
 
-//<<<<<<< HEAD
+
+
 //    // thống kê
 //    @Query(value = """
 //                select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
@@ -154,7 +156,8 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 //    Page<ProductVariantResponse> filterProductVariantsByStock(Pageable pageable,
 //                                                       @Param("orderByStock") String orderByStock);
 //
-//=======
+
+
 
     @Query(
             value = """
@@ -179,5 +182,8 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             nativeQuery = true
     )
     List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 71bf266117bb0048a55b689a8426bab01b827947
 }
