@@ -13,15 +13,15 @@ import java.util.List;
 public interface ImageRepository extends IGenericRepository<ProductImage, Long> {
     @Query(
             """
-                    select distinct 
-                    new com.datn.beestyle.dto.product.attributes.image.ImageReponse(
-                        pi.id,
-                        pi.imageUrl,
-                        pi.isDefault
-                    )
-                    from ProductImage pi
-                    where pi.product.id = :productId
-                    """
+                     select distinct 
+                            new com.datn.beestyle.dto.product.attributes.image.ImageReponse(
+                                pi.id,
+                                pi.imageUrl,
+                                pi.isDefault
+                            )
+                            from ProductImage pi
+                            where pi.product.id = :productId            
+             """
     )
-    List<ImageReponse> getImageByProductVariant(@Param("productId") Long productId);
+    List<ImageReponse> getImageByProductIds(@Param("productId") Long productId);
 }

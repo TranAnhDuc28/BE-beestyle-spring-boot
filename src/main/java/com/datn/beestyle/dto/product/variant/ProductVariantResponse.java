@@ -1,5 +1,6 @@
 package com.datn.beestyle.dto.product.variant;
 
+import com.datn.beestyle.dto.product.attributes.image.ImageReponse;
 import com.datn.beestyle.enums.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -8,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,6 +44,7 @@ public class ProductVariantResponse {
     String materialName;
     String imageUrl;
     String promotionName;
+    List<ImageReponse> images;
 
     public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
                                   String colorCode, String colorName, Integer sizeId, String sizeName, BigDecimal salePrice,
@@ -83,11 +86,12 @@ public class ProductVariantResponse {
     }
 
     public ProductVariantResponse(
-            Long id, String productCode, String productName, BigDecimal salePrice, BigDecimal discountPrice,
+            Long id, Long productId, String productCode, String productName, BigDecimal salePrice, BigDecimal discountPrice,
             Integer discountValue, String sku, String categoryName, String brandName, Integer quantity,
-            String colorCode, String colorName, String sizeName, String description
+            String colorCode, String colorName, String sizeName, String description, List<ImageReponse> images
     ) {
         this.id = id;
+        this.productId = productId;
         this.productCode = productCode;
         this.productName = productName;
         this.salePrice = salePrice;
@@ -101,6 +105,7 @@ public class ProductVariantResponse {
         this.colorName = colorName;
         this.sizeName = sizeName;
         this.description = description;
+        this.images = images;
     }
 
     @JsonPropertyOrder({"productId", "id", "sku", "productName", "brandName", "materialName", "colorName", "sizeName", "originalPrice", "quantityInStock", "promotionName"})

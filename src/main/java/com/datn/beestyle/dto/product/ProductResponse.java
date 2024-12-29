@@ -1,5 +1,6 @@
 package com.datn.beestyle.dto.product;
 
+import com.datn.beestyle.dto.product.attributes.image.ImageReponse;
 import com.datn.beestyle.enums.GenderProduct;
 import com.datn.beestyle.enums.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,18 +35,22 @@ public class ProductResponse {
     String categoryName;
     String description;
     String status;
+    List<ImageReponse> images;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Long createdBy;
     Long updatedBy;
 
-    public ProductResponse(Long id, String productName, String imageUrl, BigDecimal minSalePrice, BigDecimal minDiscountedPrice, BigDecimal discountValue) {
+    public ProductResponse(
+            Long id, String productName, BigDecimal minSalePrice,
+            BigDecimal minDiscountedPrice, Integer discountValue, List<ImageReponse> images
+    ) {
         this.id = id;
         this.productName = productName;
-        this.imageUrl = imageUrl;
         this.minSalePrice = minSalePrice;
         this.minDiscountedPrice = minDiscountedPrice;
-        this.discountValue = discountValue.intValue();
+        this.images = images;
+        this.discountValue = discountValue;
     }
 
     public ProductResponse(Long id, String productCode, String productName, String imageUrl, BigDecimal salePrice,

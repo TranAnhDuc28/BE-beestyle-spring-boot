@@ -110,7 +110,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            p.id as id, p.product_code as productCode,
+                            pv.id as id, p.id as productId, p.product_code as productCode,
                         	p.product_name as productName, pv.sale_price as salePrice, 
                         	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
                         	pm.discount_value as discountValue, 
@@ -138,19 +138,46 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("sizeId") Long sizeId
     );
 
-    // thống kê
-    @Query(value = """
-                select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
-                    pv.id, pv.sku, p.id, p.productName, c.id, c.colorCode, c.colorName, s.id, s.sizeName, pv.salePrice, pv.quantityInStock)
-                from ProductVariant pv
-                    join Product p on pv.product.id = p.id
-                    left join Color c on pv.color.id = c.id
-                    left join Size s on pv.size.id = s.id
-                order by 
-                    case when :orderByStock = 'desc' then pv.quantityInStock end desc,
-                    case when :orderByStock = 'asc' then pv.quantityInStock end asc
-            """)
-    Page<ProductVariantResponse> filterProductVariantsByStock(Pageable pageable,
-                                                       @Param("orderByStock") String orderByStock);
+//<<<<<<< HEAD
+//    // thống kê
+//    @Query(value = """
+//                select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
+//                    pv.id, pv.sku, p.id, p.productName, c.id, c.colorCode, c.colorName, s.id, s.sizeName, pv.salePrice, pv.quantityInStock)
+//                from ProductVariant pv
+//                    join Product p on pv.product.id = p.id
+//                    left join Color c on pv.color.id = c.id
+//                    left join Size s on pv.size.id = s.id
+//                order by
+//                    case when :orderByStock = 'desc' then pv.quantityInStock end desc,
+//                    case when :orderByStock = 'asc' then pv.quantityInStock end asc
+//            """)
+//    Page<ProductVariantResponse> filterProductVariantsByStock(Pageable pageable,
+//                                                       @Param("orderByStock") String orderByStock);
+//
+//=======
 
+    @Query(
+            value = """
+                        select distinct
+                            pv.id as id, p.id as productId, p.product_code as productCode,
+                        	p.product_name as productName, pv.sale_price as salePrice,
+                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
+                        	pm.discount_value as discountValue,
+                        	pv.sku as sku, c.category_name as categoryName,
+                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
+                        	cl.color_code as colorCode, cl.color_name as colorName,
+                        	s.size_name as sizeName, p.description as description
+                        from product_variant pv
+                        inner join product p on p.id = pv.product_id
+                        inner join category c on c.id = p.category_id
+                        inner join brand b on p.brand_id = b.id
+                        inner join color cl on cl.id = pv.color_id
+                        inner join size s on s.id = pv.size_id
+                        left join promotion pm on pv.promotion_id = pm.id
+                        where pv.id in (:productVariantIds)
+                    """,
+            nativeQuery = true
+    )
+    List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
+>>>>>>> 767fcb51b87fd6171d69c6b45bb9c2d7885def5f
 }

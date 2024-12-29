@@ -24,7 +24,7 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Mapping(target = "shippingAddress", ignore = true)
     @Mapping(target = "customerId", source = "customer.id")
     @Mapping(target = "voucherId", source = "voucher.id")
-    @Mapping(target = "addressId", source = "shippingAddress.id")
+    @Mapping(target = "shippingAddressId", source = "shippingAddress.id")
     @Mapping(target = "paymentMethod", source = ".", qualifiedByName = "paymentMethodName")
     @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelName")
     @Mapping(target = "orderType", source = ".", qualifiedByName = "orderTypeName")

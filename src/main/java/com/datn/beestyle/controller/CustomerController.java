@@ -24,29 +24,29 @@ public class CustomerController {
     @GetMapping
     public ApiResponse<?> getCustomers(Pageable pageable,@RequestParam(required = false) String status,@RequestParam(required = false) String gender
             ,@RequestParam(required = false) String keyword) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Customer",
+        return new ApiResponse<>(HttpStatus.OK.value(), "Khách hàng",
                 customerService.getAllByKeywordAndStatusAndGender(pageable,status,gender,keyword));
     }
 
     @PostMapping("/create")
     public ApiResponse<?> createCustomer(@Valid @RequestBody CreateCustomerRequest request){
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Customer add successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới khách hàng thành công",
                 customerService.create(request));
     }
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateCustomer(@Min(1) @PathVariable Long id, @Valid @RequestBody UpdateCustomerRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Customer updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật khách hàng thành công",
                 customerService.update(id, request));
     }
 
     @DeleteMapping("/delete/{id}")
     public ApiResponse<?> deleteCustomer(@Min(1) @PathVariable Long id) {
         customerService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Customer deleted successfully.");
+        return new ApiResponse<>(HttpStatus.OK.value(), "Xóa khách hàng thành công");
     }
 
     @GetMapping("/{id}")
     public ApiResponse<?> getCustomer(@Min(1) @PathVariable Long id) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Customer", customerService.getDtoById(id));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Khách hàng", customerService.getDtoById(id));
     }
 }
