@@ -84,20 +84,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "LEFT JOIN pv.promotion promo " +
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-//@Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
-//        "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
-//        "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
-//        "FROM ProductVariant pv " +
-//        "JOIN pv.product p " +
-//        "LEFT JOIN p.brand b " +
-//        "LEFT JOIN p.material m " +
-//        "LEFT JOIN pv.color c " +
-//        "LEFT JOIN pv.size s " +
-//        "LEFT JOIN p.productImages pi WHERE pi.isPrimary = true " +
-//        "LEFT JOIN pv.promotion promo " +
-//        "WHERE pv.product.id in :productIds")
-//List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-
 
 
     @Modifying
@@ -152,4 +138,27 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("colorCode") String colorCode,
             @Param("sizeId") Long sizeId
     );
+    @Query(
+            value = """
+                        select distinct
+                            pv.id as id, p.id as productId, p.product_code as productCode,
+                        	p.product_name as productName, pv.sale_price as salePrice,
+                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
+                        	pm.discount_value as discountValue,
+                        	pv.sku as sku, c.category_name as categoryName,
+                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
+                        	cl.color_code as colorCode, cl.color_name as colorName,
+                        	s.size_name as sizeName, p.description as description
+                        from product_variant pv
+                        inner join product p on p.id = pv.product_id
+                        inner join category c on c.id = p.category_id
+                        inner join brand b on p.brand_id = b.id
+                        inner join color cl on cl.id = pv.color_id
+                        inner join size s on s.id = pv.size_id
+                        left join promotion pm on pv.promotion_id = pm.id
+                        where pv.id in (:productVariantIds)
+                    """,
+            nativeQuery = true
+    )
+    List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
 }

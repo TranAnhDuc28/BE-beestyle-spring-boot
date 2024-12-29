@@ -36,11 +36,31 @@ import static jakarta.persistence.CascadeType.*;
                         @ColumnResult(name = "colorName", type = String.class),
                         @ColumnResult(name = "sizeId", type = Integer.class),
                         @ColumnResult(name = "sizeName", type = String.class),
-                        @ColumnResult(name = "salePrice", type = BigDecimal.class),
-                        @ColumnResult(name = "quantityInStock", type = Integer.class)
+                        @ColumnResult(name = "quantityInStock", type = Integer.class),
+                        @ColumnResult(name = "imageUrl", type = String.class)
                 }
         )
 )
+@SqlResultSetMapping(
+        name = "ProductVariantResponseMapping2",
+        classes = @ConstructorResult(
+                targetClass = ProductVariantResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "productId", type = Long.class),
+                        @ColumnResult(name = "productName", type = String.class),
+                        @ColumnResult(name = "sku", type = String.class),
+                        @ColumnResult(name = "colorId", type = Integer.class),
+                        @ColumnResult(name = "colorCode", type = String.class),
+                        @ColumnResult(name = "colorName", type = String.class),
+                        @ColumnResult(name = "sizeId", type = Integer.class),
+                        @ColumnResult(name = "sizeName", type = String.class),
+                        @ColumnResult(name = "imageUrl", type = String.class),
+                        @ColumnResult(name = "totalQuantitySold", type = Long.class)
+                }
+        )
+)
+
 public class ProductVariant extends Auditable<Long> {
 
     @Column(name = "sku")

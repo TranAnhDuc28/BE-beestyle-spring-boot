@@ -46,6 +46,8 @@ public class ProductVariantResponse {
     String promotionName;
     List<ImageReponse> images;
 
+    Long totalQuantitySold;
+
     public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
                                   String colorCode, String colorName, Integer sizeId, String sizeName, BigDecimal salePrice,
                                   Integer quantityInStock, BigDecimal originalPrice, Integer status, LocalDateTime createdAt,
@@ -83,6 +85,22 @@ public class ProductVariantResponse {
         this.sizeName = sizeName;
         this.salePrice = salePrice;
         this.quantityInStock = quantityInStock;
+    }
+
+    public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
+                                  String colorCode, String colorName, Integer sizeId, String sizeName,
+                                  BigDecimal salePrice,Long totalQuantitySold) {
+        this.id = id;
+        this.sku = sku;
+        this.productId = productId;
+        this.productName = productName;
+        this.colorId = colorId;
+        this.colorCode = colorCode;
+        this.colorName = colorName;
+        this.sizeId = sizeId;
+        this.sizeName = sizeName;
+        this.salePrice = salePrice;
+        this.totalQuantitySold = totalQuantitySold;
     }
 
     public ProductVariantResponse(
