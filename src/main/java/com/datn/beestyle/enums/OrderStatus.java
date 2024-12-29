@@ -6,12 +6,17 @@ import org.springframework.lang.Nullable;
 @Getter
 public enum OrderStatus {
     PENDING(0), // chờ thanh toán
-    PAID(1), // đã thanh toán
+
+    // đã thanh toán dành cho bán trực tiếp
+    PAID(1),
+
     AWAITING_CONFIRMATION(2), // chờ xác nhận
     CONFIRMED(3), // đã xác nhận
     AWAITING_SHIPMENT(4), // chờ giao hàng
     OUT_FOR_DELIVERY(5), // đang giao hàng
-    DELIVERED(6), // đã giao hàng
+
+    // đã thanh toán dành cho bán giao hàng
+    DELIVERED(6),
     CANCELLED(7) // đã hủy
 //    RETURN_REQUESTED(7), // yêu cầu trả hàng
 //    RETURNED(8), // đã trả hàng

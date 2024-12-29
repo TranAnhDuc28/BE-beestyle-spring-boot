@@ -20,14 +20,14 @@ import java.util.Set;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateCustomerRequest {
-    @NotBlank(message = "Khong de trong")
+//    @NotBlank(message = "Khong de trong")
     String fullName;
 
     LocalDate dateOfBirth;
 
     String gender;
 
-    @NotBlank(message = "Khong duoc de trong")
+    @NotBlank(message = "Không được để trống số điện thoại")
     String phoneNumber;
 
     String email;

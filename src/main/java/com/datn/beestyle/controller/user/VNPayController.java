@@ -87,11 +87,11 @@ public class VNPayController {
     @GetMapping("/return")
     public void handleVNPayReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws IOException {
         // 1. Kiểm tra tính toàn vẹn của dữ liệu trả về
-        if (!isValidVNPayResponse(params)) {
-            // Redirect đến trang lỗi nếu dữ liệu không hợp lệ
-            response.sendRedirect("http://localhost:3000/vnpay/error");
-            return;
-        }
+//        if (!isValidVNPayResponse(params)) {
+//            // Redirect đến trang lỗi nếu dữ liệu không hợp lệ
+//            response.sendRedirect("http://localhost:3000/vnpay/error");
+//            return;
+//        }
 
         // 2. Lấy mã phản hồi từ VNPay
         String vnp_ResponseCode = params.get("vnp_ResponseCode");

@@ -29,7 +29,7 @@ public class OrderResponse {
     CustomerResponse customerInfo;
     Integer voucherId;
     VoucherResponse voucherInfo;
-    Long addressId;
+    Long shippingAddressId;
     AddressResponse shippingAddress;
     String phoneNumber;
     BigDecimal shippingFee;

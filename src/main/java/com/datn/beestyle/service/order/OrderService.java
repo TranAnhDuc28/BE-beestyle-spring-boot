@@ -4,16 +4,20 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.address.AddressResponse;
+import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.InvalidDataException;
-import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.service.address.IAddressService;
+import com.datn.beestyle.service.customer.ICustomerService;
+import com.datn.beestyle.service.voucher.IVoucherService;
 import com.datn.beestyle.util.AppUtils;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +26,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,12 +40,18 @@ public class OrderService
         implements IOrderService {
 
     private final OrderRepository orderRepository;
+    private final ICustomerService customerService;
+    private final IVoucherService voucherService;
+    private final IAddressService addressService;
 
     public OrderService(IGenericRepository<Order, Long> entityRepository,
                         IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
-                        EntityManager entityManager, OrderRepository orderRepository) {
+                        EntityManager entityManager, OrderRepository orderRepository, ICustomerService customerService, IVoucherService voucherService, IAddressService addressService) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
+        this.customerService = customerService;
+        this.voucherService = voucherService;
+        this.addressService = addressService;
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -109,7 +118,24 @@ public class OrderService
 
     @Override
     public OrderResponse getOrderDetailById(Long id) {
-        return null;
+        OrderResponse orderResponse = this.getDtoById(id);
+
+        if(orderResponse.getCustomerId() != null) {
+            CustomerResponse customerResponse = customerService.getDtoById(orderResponse.getCustomerId());
+            orderResponse.setCustomerInfo(customerResponse);
+        }
+
+        if(orderResponse.getVoucherId() != null) {
+            VoucherResponse voucherResponse = voucherService.getDtoById(orderResponse.getVoucherId());
+            orderResponse.setVoucherInfo(voucherResponse);
+        }
+
+        if(orderResponse.getShippingAddressId() != null) {
+            AddressResponse addressResponse = addressService.getDtoById(orderResponse.getShippingAddressId());
+            orderResponse.setShippingAddress(addressResponse);
+        }
+
+        return orderResponse;
     }
 
     @Override
@@ -136,8 +162,6 @@ public class OrderService
     @Override
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
         entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
-        entity.setCreatedBy(1L);
-        entity.setUpdatedBy(1L);
     }
 
     @Override
