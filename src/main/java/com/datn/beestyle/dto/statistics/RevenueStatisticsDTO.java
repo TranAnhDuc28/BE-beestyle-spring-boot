@@ -14,11 +14,14 @@ public class RevenueStatisticsDTO {
     private Date date;  // Ngày hoặc tháng hoặc năm
     private BigDecimal revenue;  // Doanh thu
     private Long quantity;
+    private Long totalOderSuccess;
+    private Long totalOderFailed;
     private Integer month;
     private Integer year;
     private String productName;
     private BigDecimal salePrice;
     private String period;
+
 
     // Constructors, getters, setters
     public RevenueStatisticsDTO(Date date, BigDecimal revenue, Long quantity) {
@@ -26,10 +29,16 @@ public class RevenueStatisticsDTO {
         this.revenue = revenue;
         this.quantity = quantity;
     }
+    public RevenueStatisticsDTO(String period,Long totalOderSuccess, Long totalOderFailed) {
+        this.period = period;
+        this.totalOderSuccess = totalOderSuccess;
+        this.totalOderFailed = totalOderFailed;
+    }
     public RevenueStatisticsDTO(String period, BigDecimal revenue, Long quantity) {
         this.period = period;
         this.revenue = revenue;
         this.quantity = quantity;
+
     }
 
     public RevenueStatisticsDTO(Integer month, Integer year, BigDecimal revenue, Long quantity) {

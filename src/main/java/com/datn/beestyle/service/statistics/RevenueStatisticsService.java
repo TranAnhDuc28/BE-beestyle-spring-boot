@@ -4,13 +4,12 @@ import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.statistics.RevenueStatisticsDTO;
 import com.datn.beestyle.repository.statistics.StatisticsRepositoryImpl;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +38,28 @@ public class RevenueStatisticsService {
                 .build();
     }
 
-    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByPeriod(String period, Pageable pageable) {
+    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByPeriod(String period, Pageable pageable,String periodValue ) {
 
 
-        Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findRevenueByPeriod(period,pageable);
+        // Nếu period là null, gán giá trị mặc định là "day"
+        if (period == null) {
+            period = "day";
+        }
+
+        // Nếu periodValue là null hoặc rỗng, gán giá trị mặc định là ngày hôm nay
+        if (periodValue == null || periodValue.isEmpty()) {
+            switch (period) {
+                case "range":
+                    // Nếu period là "range" và periodValue rỗng, tự động lấy ngày hôm nay làm ngày bắt đầu và kết thúc
+                    periodValue = LocalDate.now().toString() + "," + LocalDate.now().toString();
+                    break;
+                default:
+                    periodValue = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); // Định dạng ngày theo "yyyy-MM-dd"
+            }
+        }
+
+
+        Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findRevenueByPeriod(period,pageable,periodValue);
 
         // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
         return PageResponse.<List<RevenueStatisticsDTO>>builder()
@@ -53,6 +70,40 @@ public class RevenueStatisticsService {
                 .items(revenueStatisticsDTOPages.getContent())
                 .build();
     }
+
+    public PageResponse<List<RevenueStatisticsDTO>> getOrderStatusByPeriod(String period, Pageable pageable,String periodValue ) {
+
+
+        // Nếu period là null, gán giá trị mặc định là "day"
+        if (period == null) {
+            period = "day";
+        }
+
+        // Nếu periodValue là null hoặc rỗng, gán giá trị mặc định là ngày hôm nay
+        if (periodValue == null || periodValue.isEmpty()) {
+            switch (period) {
+                case "range":
+                    // Nếu period là "range" và periodValue rỗng, tự động lấy ngày hôm nay làm ngày bắt đầu và kết thúc
+                    periodValue = LocalDate.now().toString() + "," + LocalDate.now().toString();
+                    break;
+                default:
+                    periodValue = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); // Định dạng ngày theo "yyyy-MM-dd"
+            }
+        }
+
+
+        Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findOrderStatusByPeriod(period,pageable,periodValue);
+
+        // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
+        return PageResponse.<List<RevenueStatisticsDTO>>builder()
+                .pageNo(revenueStatisticsDTOPages.getNumber() + 1)
+                .pageSize(revenueStatisticsDTOPages.getSize())
+                .totalElements(revenueStatisticsDTOPages.getTotalElements())
+                .totalPages(revenueStatisticsDTOPages.getTotalPages())
+                .items(revenueStatisticsDTOPages.getContent())
+                .build();
+    }
+
 
 
 //    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByMonth(LocalDate startDate, LocalDate endDate, Pageable pageable) {

@@ -45,6 +45,17 @@ import static jakarta.persistence.CascadeType.ALL;
                 }
         )
 )
+@SqlResultSetMapping(
+        name = "OrderStatusByPeriodMapping",
+        classes = @ConstructorResult(
+                targetClass = com.datn.beestyle.dto.statistics.RevenueStatisticsDTO.class,
+                columns = {
+                        @ColumnResult(name = "period", type = String.class),
+                        @ColumnResult(name = "total_success", type = Long.class),
+                        @ColumnResult(name = "total_failed", type = Long.class)
+                }
+        )
+)
 public class Order extends Auditable<Long> {
 
     @Column(name = "order_tracking_number")

@@ -38,10 +38,21 @@ public class StatisticsController {
     @GetMapping("/revenue-by-period")
     public ApiResponse<?> getRevenueByPeriod(
             Pageable pageable,
-            @RequestParam String period) {
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) String periodValue) {
 
-        return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê theo ngày, tháng, năm",
-                revenueStatisticsService.getRevenueByPeriod(period, pageable));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê doanh thu, sản phẩm theo ngày, tháng, năm",
+                revenueStatisticsService.getRevenueByPeriod(period, pageable,periodValue));
+
+    }
+    @GetMapping("/orderStatus-by-period")
+    public ApiResponse<?> getOrderStatusByPeriod(
+            Pageable pageable,
+            @RequestParam(required = false) String period,
+            @RequestParam(required = false) String periodValue) {
+
+        return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê đơn hàng theo ngày, tháng, năm",
+                revenueStatisticsService.getOrderStatusByPeriod(period, pageable,periodValue));
 
     }
 
