@@ -66,83 +66,20 @@ public class StatisticsRepositoryImpl {
         return new PageImpl<>(results, pageable, totalElements);
     }
 
+//    Thống kê doanh thu, sản phẩm theo ngày, tháng, năm
     public Page<RevenueStatisticsDTO> findRevenueByPeriod(String period, Pageable pageable, String periodValue) {
-        // Validate period to avoid SQL injection
+        // Validate period
         if (!List.of("day", "month", "year", "range").contains(period)) {
             throw new IllegalArgumentException("Invalid period. Must be 'day', 'month', 'year', or 'range'.");
         }
 
-        // Nếu periodValue là null hoặc rỗng, lấy thời gian hiện tại theo kiểu ngày, tháng, năm
-        if (periodValue == null || periodValue.isEmpty()) {
-            switch (period) {
-                case "day":
-                    periodValue = LocalDate.now().toString(); // Lấy ngày hiện tại (yyyy-MM-dd)
-                    break;
-                case "month":
-                    periodValue = String.valueOf(LocalDate.now().getYear()); // Lấy năm hiện tại
-                    break;
-                case "year":
-                    periodValue = String.valueOf(LocalDate.now().getYear()); // Lấy năm hiện tại
-                    break;
-                case "range":
-                    // Cố định ngày bắt đầu và kết thúc là hôm nay
-                    periodValue = LocalDate.now().toString() + "," + LocalDate.now().toString();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid period. Must be 'day', 'month', 'year', or 'range'.");
-            }
-        }
+        // Xử lý periodValue mặc định nếu null hoặc rỗng
+        periodValue = getDefaultPeriodValue(period, periodValue);
 
-        // Dynamically build the SELECT and WHERE clause based on the period
-        String selectClause = "";
-        String groupByClause = "";
-        String whereClause = "";
-        String orderBy = "";
+        // Xây dựng các thành phần truy vấn động
+        QueryComponents components = buildQueryComponents(period, periodValue);
 
-        switch (period) {
-            case "day":
-                selectClause = "DATE(o.payment_date) AS period";
-                groupByClause = "DATE(o.payment_date)";
-                whereClause = String.format(
-                        "DATE(o.payment_date) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
-                        periodValue, periodValue
-                );
-                orderBy = "DATE(o.payment_date) ASC";
-                break;
-            case "month":
-                selectClause = "DATE_FORMAT(o.payment_date, '%Y-%m') AS period";
-                groupByClause = "DATE_FORMAT(o.payment_date, '%Y-%m')";
-                whereClause = "YEAR(o.payment_date) = '" + periodValue + "'"; // '2024'
-                orderBy = "DATE_FORMAT(o.payment_date, '%Y-%m') ASC";
-                break;
-            case "year":
-                selectClause = "YEAR(o.payment_date) AS period";
-                groupByClause = "YEAR(o.payment_date)";
-                whereClause = "YEAR(o.payment_date) = '" + periodValue + "'"; // '2024'
-                orderBy = "YEAR(o.payment_date) ASC";
-                break;
-            case "range":
-                // Split periodValue into startDate and endDate
-                String[] dateRange = periodValue.split(",");
-                if (dateRange.length != 2) {
-                    throw new IllegalArgumentException("Invalid range format. Expected 'startDate,endDate' (e.g., '2024-01-01,2024-12-31').");
-                }
-                String startDate = dateRange[0];
-                String endDate = dateRange[1];
-
-                selectClause = "'ranger' AS period";
-                whereClause = String.format(
-                        "DATE(o.payment_date) BETWEEN '%s' AND '%s'",
-                        startDate, endDate
-                );
-                // Không sử dụng SELECT và GROUP BY trong "range"
-                orderBy = "DATE(o.payment_date) ASC";  // Chỉ có ORDER BY ở đây
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + period);
-        }
-
-        // Query for data (with or without GROUP BY based on period)
+        // Thực thi truy vấn chính
         String sql = String.format("""
         SELECT %s, 
                SUM(oi.sale_price * oi.quantity) AS revenue,
@@ -152,104 +89,45 @@ public class StatisticsRepositoryImpl {
           WHERE o.order_status = 6 AND %s
           %s
           ORDER BY %s;
-    """, selectClause, whereClause,
-                period.equals("range") ? "" : "GROUP BY " + groupByClause, orderBy);
+    """, components.selectClause, components.whereClause,
+                period.equals("range") ? "" : "GROUP BY " + components.groupByClause, components.orderByClause);
 
         Query query = entityManager.createNativeQuery(sql, "RevenueByPeriodMapping");
-
-        // Apply pagination using Pageable directly
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
+        @SuppressWarnings("unchecked")
         List<RevenueStatisticsDTO> results = query.getResultList();
 
-        // Query for total count (without GROUP BY for range)
+        // Thực thi truy vấn đếm tổng phần tử
         String countSql = String.format("""
         SELECT COUNT(*) 
           FROM `order` o
           JOIN `order_item` oi ON o.id = oi.order_id
           WHERE o.order_status = 6 AND %s
-    """, whereClause);
+    """, components.whereClause);
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
 
-        // Return Page
+        // Trả về kết quả phân trang
         return new PageImpl<>(results, pageable, totalElements);
     }
 
-
-
+    //    Thống kê hóa đơn theo ngày, tháng, năm
     public Page<RevenueStatisticsDTO> findOrderStatusByPeriod(String period, Pageable pageable, String periodValue) {
+        // Validate period
         if (!List.of("day", "month", "year", "range").contains(period)) {
             throw new IllegalArgumentException("Invalid period. Must be 'day', 'month', 'year', or 'range'.");
         }
 
-        if (periodValue == null || periodValue.isEmpty()) {
-            switch (period) {
-                case "day":
-                    periodValue = LocalDate.now().toString();
-                    break;
-                case "month":
-                    periodValue = String.valueOf(LocalDate.now().getYear());
-                    break;
-                case "year":
-                    periodValue = String.valueOf(LocalDate.now().getYear());
-                    break;
-                case "range":
-                    periodValue = LocalDate.now().toString() + "," + LocalDate.now().toString();
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid period.");
-            }
-        }
+        // Xử lý periodValue mặc định nếu null hoặc rỗng
+        periodValue = getDefaultPeriodValue(period, periodValue);
 
-        String selectClause = "";
-        String groupByClause = "";
-        String whereClause = "";
-        String orderBy = "";
+        // Xây dựng các thành phần truy vấn động
+        QueryComponents components = buildQueryComponents(period, periodValue);
 
-        switch (period) {
-            case "day":
-                selectClause = "DATE(o.payment_date) AS period";
-                groupByClause = "DATE(o.payment_date)";
-                whereClause = String.format(
-                        "DATE(o.payment_date) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
-                        periodValue, periodValue
-                );
-                orderBy = "DATE(o.payment_date) ASC";
-                break;
-            case "month":
-                selectClause = "DATE_FORMAT(o.payment_date, '%Y-%m') AS period";
-                groupByClause = "DATE_FORMAT(o.payment_date, '%Y-%m')";
-                whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
-                orderBy = "DATE_FORMAT(o.payment_date, '%Y-%m') ASC";
-                break;
-            case "year":
-                selectClause = "YEAR(o.payment_date) AS period";
-                groupByClause = "YEAR(o.payment_date)";
-                whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
-                orderBy = "YEAR(o.payment_date) ASC";
-                break;
-            case "range":
-                String[] dateRange = periodValue.split(",");
-                if (dateRange.length != 2) {
-                    throw new IllegalArgumentException("Invalid range format. Expected 'startDate,endDate'.");
-                }
-                String startDate = dateRange[0];
-                String endDate = dateRange[1];
-                selectClause = "'range' AS period";
-                whereClause = String.format(
-                        "DATE(o.payment_date) BETWEEN '%s' AND '%s'",
-                        startDate, endDate
-                );
-                orderBy = "DATE(o.payment_date) ASC";
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + period);
-        }
-
-        // Cập nhật SELECT để chỉ đếm hóa đơn thành công và thất bại
+        // Cập nhật SELECT để đếm trạng thái đơn hàng
         String sql = String.format("""
         SELECT %s, 
                COUNT(CASE WHEN o.order_status IN (1, 6) THEN 1 END) AS total_success,
@@ -258,32 +136,29 @@ public class StatisticsRepositoryImpl {
           WHERE %s
           %s
           ORDER BY %s;
-    """, selectClause, whereClause,
-                period.equals("range") ? "" : "GROUP BY " + groupByClause, orderBy);
+    """, components.selectClause, components.whereClause,
+                period.equals("range") ? "" : "GROUP BY " + components.groupByClause, components.orderByClause);
 
         Query query = entityManager.createNativeQuery(sql, "OrderStatusByPeriodMapping");
-
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
+        @SuppressWarnings("unchecked")
         List<RevenueStatisticsDTO> results = query.getResultList();
 
-        // Đếm tổng số dòng (không GROUP BY cho range)
+        // Truy vấn đếm tổng phần tử
         String countSql = String.format("""
         SELECT COUNT(*) 
           FROM `order` o
           WHERE %s
-    """, whereClause);
+    """, components.whereClause);
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
 
+        // Trả về kết quả phân trang
         return new PageImpl<>(results, pageable, totalElements);
     }
-
-
-
-
 
 
     public Page<InventoryResponse> filterProductVariantsByStock(Pageable pageable, int stock) {
@@ -415,4 +290,82 @@ public class StatisticsRepositoryImpl {
         // Trả về kết quả phân trang
         return new PageImpl<>(results, pageable, totalElements);
     }
+
+
+
+
+
+
+    // Lấy giá trị mặc định cho periodValue
+    private String getDefaultPeriodValue(String period, String periodValue) {
+        if (periodValue == null || periodValue.isEmpty()) {
+            switch (period) {
+                case "day": return LocalDate.now().toString(); // Ngày hiện tại
+                case "month": return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
+                case "year": return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
+                case "range": return LocalDate.now().toString() + "," + LocalDate.now().toString(); // Hôm nay
+            }
+        }
+        return periodValue;
+    }
+    // Tạo các thành phần truy vấn động
+    private QueryComponents buildQueryComponents(String period, String periodValue) {
+        QueryComponents components = new QueryComponents();
+
+        switch (period) {
+            case "day":
+                components.selectClause = "DATE(o.payment_date) AS period";
+                components.groupByClause = "DATE(o.payment_date)";
+                components.whereClause = String.format(
+                        "DATE(o.payment_date) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
+                        periodValue, periodValue
+                );
+                components.orderByClause = "DATE(o.payment_date) ASC";
+                break;
+
+            case "month":
+                components.selectClause = "DATE_FORMAT(o.payment_date, '%Y-%m') AS period";
+                components.groupByClause = "DATE_FORMAT(o.payment_date, '%Y-%m')";
+                components.whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
+                components.orderByClause = "DATE_FORMAT(o.payment_date, '%Y-%m') ASC";
+                break;
+
+            case "year":
+                components.selectClause = "YEAR(o.payment_date) AS period";
+                components.groupByClause = "YEAR(o.payment_date)";
+                components.whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
+                components.orderByClause = "YEAR(o.payment_date) ASC";
+                break;
+
+            case "range":
+                String[] dateRange = periodValue.split(",");
+                if (dateRange.length != 2) {
+                    throw new IllegalArgumentException("Invalid range format. Expected 'startDate,endDate'.");
+                }
+                String startDate = dateRange[0];
+                String endDate = dateRange[1];
+
+                components.selectClause = "'range' AS period";
+                components.whereClause = String.format(
+                        "DATE(o.payment_date) BETWEEN '%s' AND '%s'",
+                        startDate, endDate
+                );
+                components.orderByClause = "DATE(o.payment_date) ASC";
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + period);
+        }
+        return components;
+    }
+
+    // Lớp hỗ trợ cấu hình các thành phần truy vấn
+    private static class QueryComponents {
+        String selectClause = "";
+        String groupByClause = "";
+        String whereClause = "";
+        String orderByClause = "";
+    }
+
+
 }
