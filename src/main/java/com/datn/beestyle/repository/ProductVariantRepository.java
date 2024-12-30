@@ -182,8 +182,5 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             nativeQuery = true
     )
     List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
-<<<<<<< HEAD
 
-=======
->>>>>>> 71bf266117bb0048a55b689a8426bab01b827947
 }
