@@ -1,8 +1,7 @@
 package com.datn.beestyle.repository.statistics;
 
-import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.statistics.InventoryResponse;
-import com.datn.beestyle.dto.statistics.RevenueStatisticsDTO;
+import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Repository
@@ -23,7 +21,7 @@ public class StatisticsRepositoryImpl {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Page<RevenueStatisticsDTO> findRevenueByDate(Date startDate, Date endDate, Pageable pageable) {
+    public Page<RevenueStatisticsResponse> findRevenueByDate(Date startDate, Date endDate, Pageable pageable) {
         String sql = """
                   SELECT DATE(o.payment_date) AS date, 
                          SUM(oi.sale_price * oi.quantity) AS revenue,
@@ -44,7 +42,7 @@ public class StatisticsRepositoryImpl {
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
-        List<RevenueStatisticsDTO> results = query.getResultList();
+        List<RevenueStatisticsResponse> results = query.getResultList();
 
         // Query for total count
         String countSql = """
@@ -67,7 +65,7 @@ public class StatisticsRepositoryImpl {
     }
 
 //    Thống kê doanh thu, sản phẩm theo ngày, tháng, năm
-    public Page<RevenueStatisticsDTO> findRevenueByPeriod(String period, Pageable pageable, String periodValue) {
+    public Page<RevenueStatisticsResponse> findRevenueByPeriod(String period, Pageable pageable, String periodValue) {
         // Validate period
         if (!List.of("day", "month", "year", "range").contains(period)) {
             throw new IllegalArgumentException("Invalid period. Must be 'day', 'month', 'year', or 'range'.");
@@ -97,7 +95,7 @@ public class StatisticsRepositoryImpl {
         query.setMaxResults(pageable.getPageSize());
 
         @SuppressWarnings("unchecked")
-        List<RevenueStatisticsDTO> results = query.getResultList();
+        List<RevenueStatisticsResponse> results = query.getResultList();
 
         // Thực thi truy vấn đếm tổng phần tử
         String countSql = String.format("""
@@ -115,7 +113,7 @@ public class StatisticsRepositoryImpl {
     }
 
     //    Thống kê hóa đơn theo ngày, tháng, năm
-    public Page<RevenueStatisticsDTO> findOrderStatusByPeriod(String period, Pageable pageable, String periodValue) {
+    public Page<RevenueStatisticsResponse> findOrderStatusByPeriod(String period, Pageable pageable, String periodValue) {
         // Validate period
         if (!List.of("day", "month", "year", "range").contains(period)) {
             throw new IllegalArgumentException("Invalid period. Must be 'day', 'month', 'year', or 'range'.");
@@ -144,7 +142,7 @@ public class StatisticsRepositoryImpl {
         query.setMaxResults(pageable.getPageSize());
 
         @SuppressWarnings("unchecked")
-        List<RevenueStatisticsDTO> results = query.getResultList();
+        List<RevenueStatisticsResponse> results = query.getResultList();
 
         // Truy vấn đếm tổng phần tử
         String countSql = String.format("""
@@ -334,7 +332,7 @@ public class StatisticsRepositoryImpl {
                 components.selectClause = "YEAR(o.payment_date) AS period";
                 components.groupByClause = "YEAR(o.payment_date)";
                 components.whereClause = String.format(
-                        "YEAR(o.payment_date) BETWEEN YEAR(DATE_SUB('%s', INTERVAL 4 DAY)) AND '%s'",
+                        "YEAR(o.payment_date) BETWEEN ('%s' - 4) AND '%s'",
                         periodValue, periodValue);
                 components.orderByClause = "YEAR(o.payment_date) ASC";
                 break;
