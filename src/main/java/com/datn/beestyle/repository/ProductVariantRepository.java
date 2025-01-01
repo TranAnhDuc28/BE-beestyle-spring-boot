@@ -99,7 +99,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
 //List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
 
 
-
     @Modifying
     @Transactional
     @Query("update ProductVariant pv set pv.promotion.id = :promotionId where pv.id in :ids")
@@ -157,14 +156,12 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            pv.id as id, p.id as productId, p.product_code as productCode,
+                            pv.id as id, p.id as productId,
                         	p.product_name as productName, pv.sale_price as salePrice,
                         	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
-                        	pm.discount_value as discountValue,
-                        	pv.sku as sku, c.category_name as categoryName,
-                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
-                        	cl.color_code as colorCode, cl.color_name as colorName,
-                        	s.size_name as sizeName, p.description as description
+                        	pm.discount_value as discountValue, pv.sku as sku,
+                        	pv.quantity_in_stock as quantityInStock, cl.color_name as colorName,
+                        	s.size_name as sizeName
                         from product_variant pv
                         inner join product p on p.id = pv.product_id
                         inner join category c on c.id = p.category_id

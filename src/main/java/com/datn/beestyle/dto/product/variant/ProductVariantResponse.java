@@ -44,6 +44,7 @@ public class ProductVariantResponse {
     String materialName;
     String imageUrl;
     String promotionName;
+    BigDecimal totalPrice;
     List<ImageReponse> images;
 
     public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
@@ -106,6 +107,23 @@ public class ProductVariantResponse {
         this.sizeName = sizeName;
         this.description = description;
         this.images = images;
+    }
+
+    public ProductVariantResponse(
+            Long id, Long productId, String productName, BigDecimal salePrice, BigDecimal discountPrice,
+            Integer discountValue, String sku, Integer quantity, String colorName, String sizeName, BigDecimal totalPrice
+    ) {
+        this.id = id;
+        this.productId = productId;
+        this.productName = productName;
+        this.salePrice = salePrice;
+        this.discountPrice = discountPrice;
+        this.discountValue = discountValue;
+        this.sku = sku;
+        this.quantityInStock = quantity;
+        this.colorName = colorName;
+        this.sizeName = sizeName;
+        this.totalPrice = totalPrice;
     }
 
     @JsonPropertyOrder({"productId", "id", "sku", "productName", "brandName", "materialName", "colorName", "sizeName", "originalPrice", "quantityInStock", "promotionName"})
