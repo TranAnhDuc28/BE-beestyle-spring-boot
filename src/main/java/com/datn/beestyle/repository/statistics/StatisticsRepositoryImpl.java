@@ -86,7 +86,7 @@ public class StatisticsRepositoryImpl {
                SUM(oi.quantity) AS quantity
           FROM `order` o
           JOIN `order_item` oi ON o.id = oi.order_id
-          WHERE o.order_status = 6 AND %s
+          WHERE (o.order_status = 6 OR o.order_status = 1) AND %s
           %s
           ORDER BY %s;
     """, components.selectClause, components.whereClause,
@@ -333,7 +333,9 @@ public class StatisticsRepositoryImpl {
             case "year":
                 components.selectClause = "YEAR(o.payment_date) AS period";
                 components.groupByClause = "YEAR(o.payment_date)";
-                components.whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
+                components.whereClause = String.format(
+                        "YEAR(o.payment_date) BETWEEN YEAR(DATE_SUB('%s', INTERVAL 4 DAY)) AND '%s'",
+                        periodValue, periodValue);
                 components.orderByClause = "YEAR(o.payment_date) ASC";
                 break;
 
