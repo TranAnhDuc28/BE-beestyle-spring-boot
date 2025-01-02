@@ -21,49 +21,6 @@ public class StatisticsRepositoryImpl {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Page<RevenueStatisticsResponse> findRevenueByDate(Date startDate, Date endDate, Pageable pageable) {
-        String sql = """
-                  SELECT DATE(o.payment_date) AS date, 
-                         SUM(oi.sale_price * oi.quantity) AS revenue,
-                         SUM(oi.quantity) AS quantity
-                  FROM `order` o
-                  JOIN `order_item` oi ON o.id = oi.order_id
-                  WHERE o.payment_date BETWEEN :startDate AND :endDate
-                    AND o.order_status = 6
-                  GROUP BY DATE(o.payment_date)
-                """;
-
-        // Query for data
-        Query query = entityManager.createNativeQuery(sql, "RevenueStatisticsDTOMapping");
-        query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate);
-
-        // Pagination
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
-        List<RevenueStatisticsResponse> results = query.getResultList();
-
-        // Query for total count
-        String countSql = """
-                  SELECT COUNT(*) 
-                  FROM (SELECT DATE(o.payment_date) 
-                        FROM `order` o
-                        JOIN `order_item` oi ON o.id = oi.order_id
-                        WHERE o.payment_date BETWEEN :startDate AND :endDate
-                          AND o.order_status = 6
-                        GROUP BY DATE(o.payment_date)) AS temp
-                """;
-
-        Query countQuery = entityManager.createNativeQuery(countSql);
-        countQuery.setParameter("startDate", startDate);
-        countQuery.setParameter("endDate", endDate);
-
-        long totalElements = ((Number) countQuery.getSingleResult()).longValue();
-
-        return new PageImpl<>(results, pageable, totalElements);
-    }
-
 //    Thống kê doanh thu, sản phẩm theo ngày, tháng, năm
     public Page<RevenueStatisticsResponse> findRevenueByPeriod(String period, Pageable pageable, String periodValue) {
         // Validate period
