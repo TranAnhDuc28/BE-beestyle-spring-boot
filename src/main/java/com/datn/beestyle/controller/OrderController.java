@@ -2,8 +2,10 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
+import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.service.order.OrderService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -40,5 +42,11 @@ public class OrderController {
     @PostMapping("/create")
     public ApiResponse<?> createOrder(@Valid  @RequestBody CreateOrderRequest request) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order pending added successfully.", orderService.create(request));
+    }
+
+    @PatchMapping("/{orderId}/update-status")
+    public ApiResponse<?> updateOrderStatus(@Min(1) @PathVariable("orderId") Long orderId, @RequestParam String status) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully.",
+                orderService.changeOrderStatus(orderId, status));
     }
 }

@@ -89,7 +89,7 @@ public class ProductService
     }
 
     @Override
-    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String categoryIds, String genderProduct,
+    public PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String keyword, String categoryIds, String genderProduct,
                                                                              String brandIds, String materialIds,
                                                                              BigDecimal minPrice, BigDecimal maxPrice) {
         Integer genderProductValue = null;
@@ -103,7 +103,7 @@ public class ProductService
         List<Integer> categoryIdList = AppUtils.handleStringIdsToIntegerIdList(categoryIds);
 
         Page<ProductResponse> productResponsePages =
-                productRepository.filterProduct(pageable, categoryIdList, genderProductValue, brandIdList, materialIdList,
+                productRepository.filterProduct(pageable, keyword, categoryIdList, genderProductValue, brandIdList, materialIdList,
                         minPrice, maxPrice, 1);
 
         return PageResponse.<List<ProductResponse>>builder()

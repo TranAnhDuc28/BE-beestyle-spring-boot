@@ -120,22 +120,44 @@ public class OrderService
     public OrderResponse getOrderDetailById(Long id) {
         OrderResponse orderResponse = this.getDtoById(id);
 
-        if(orderResponse.getCustomerId() != null) {
+        if (orderResponse.getCustomerId() != null) {
             CustomerResponse customerResponse = customerService.getDtoById(orderResponse.getCustomerId());
             orderResponse.setCustomerInfo(customerResponse);
         }
 
-        if(orderResponse.getVoucherId() != null) {
+        // kiểm tra hóa đơn được áp dụng voucher không
+        if (orderResponse.getVoucherId() != null) {
             VoucherResponse voucherResponse = voucherService.getDtoById(orderResponse.getVoucherId());
             orderResponse.setVoucherInfo(voucherResponse);
         }
 
-        if(orderResponse.getShippingAddressId() != null) {
+        // Lấy địa chỉ giao hàng của hóa đơn
+        if (orderResponse.getShippingAddressId() != null) {
             AddressResponse addressResponse = addressService.getDtoById(orderResponse.getShippingAddressId());
             orderResponse.setShippingAddress(addressResponse);
         }
 
         return orderResponse;
+    }
+
+    @Override
+    public String changeOrderStatus(Long id, String status) {
+        // Chuyển từ chuỗi sang enum
+        OrderStatus orderStatus = OrderStatus.fromString(status);
+
+        // kiểm tra key enum có chính xác
+        if (orderStatus == null) {
+            throw new IllegalArgumentException("Trạng thái hóa đơn " + status + " không hợp lệ.");
+        }
+
+        // Lấy order từ database
+        Order order = this.getById(id);
+
+        // Cập nhật trạng thái và lưu
+        order.setOrderStatus(orderStatus.getValue());
+        orderRepository.save(order);
+
+        return order.getOrderTrackingNumber();
     }
 
     @Override
@@ -151,7 +173,8 @@ public class OrderService
     @Override
     protected void beforeCreate(CreateOrderRequest request) {
         int countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(1L, OrderStatus.PENDING.getValue());
-        if (countOrderPending >= 20) throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
+        if (countOrderPending >= 20)
+            throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
     }
 
     @Override
