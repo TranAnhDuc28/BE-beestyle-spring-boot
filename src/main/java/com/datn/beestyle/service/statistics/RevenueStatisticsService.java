@@ -22,21 +22,6 @@ public class RevenueStatisticsService {
         this.statisticsRepository = statisticsRepository;
     }
 
-    public PageResponse<List<RevenueStatisticsResponse>> getRevenueByDate(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        Date sqlStartDate = Date.valueOf(startDate);
-        Date sqlEndDate = Date.valueOf(endDate);
-
-      Page<RevenueStatisticsResponse> revenueStatisticsDTOPages = statisticsRepository.findRevenueByDate(sqlStartDate,sqlEndDate,pageable);
-
-        // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
-        return PageResponse.<List<RevenueStatisticsResponse>>builder()
-                .pageNo(revenueStatisticsDTOPages.getNumber() + 1)
-                .pageSize(revenueStatisticsDTOPages.getSize())
-                .totalElements(revenueStatisticsDTOPages.getTotalElements())
-                .totalPages(revenueStatisticsDTOPages.getTotalPages())
-                .items(revenueStatisticsDTOPages.getContent())
-                .build();
-    }
 
     public PageResponse<List<RevenueStatisticsResponse>> getRevenueByPeriod(String period, Pageable pageable, String periodValue ) {
 
@@ -159,20 +144,10 @@ public class RevenueStatisticsService {
                 .build();
     }
     //Thống kê sản phẩm tồn
-    public PageResponse<List<InventoryResponse>> getProductVariantsByStock(Pageable pageable, int stock) {
-
-        // Lấy danh sách sản phẩm theo số lượng tồn kho
-        Page<InventoryResponse> productVariantResponsePages = statisticsRepository.filterProductVariantsByStock(pageable, stock);
-
-        // Trả về kết quả phân trang
-        return PageResponse.<List<InventoryResponse>>builder()
-                .pageNo(productVariantResponsePages.getNumber() + 1)
-                .pageSize(productVariantResponsePages.getSize())
-                .totalElements(productVariantResponsePages.getTotalElements())
-                .totalPages(productVariantResponsePages.getTotalPages())
-                .items(productVariantResponsePages.getContent())
-                .build();
+    public List<InventoryResponse> getProductVariantsByStock(int stock) {
+        return statisticsRepository.filterProductVariantsByStock(stock);
     }
+
     public PageResponse<List<InventoryResponse>> getTopSellingProduct(Pageable pageable, int top) {
 
         // Lấy danh sách sản phẩm theo số lượng tồn kho

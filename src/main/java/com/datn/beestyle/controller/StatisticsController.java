@@ -24,17 +24,6 @@ public class StatisticsController {
     @Autowired
     private RevenueStatisticsService revenueStatisticsService;
 
-    @GetMapping("/revenue-by-date")
-    public ApiResponse<?> getRevenueByDate(
-            Pageable pageable,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-
-        return new ApiResponse<>(HttpStatus.OK.value(), "Thống kê",
-                revenueStatisticsService.getRevenueByDate(startDate, endDate, pageable));
-
-    }
-
     @GetMapping("/revenue-by-period")
     public ApiResponse<?> getRevenueByPeriod(
             Pageable pageable,
@@ -76,9 +65,9 @@ public class StatisticsController {
 //
 //    }
     @GetMapping("/filterByStock")
-    public ApiResponse<?> getProductVariants(Pageable pageable, @RequestParam("stock") int stock) {
+    public ApiResponse<?> getProductVariants(@RequestParam("stock") int stock) {
         return new ApiResponse<>(HttpStatus.OK.value(), "",
-                revenueStatisticsService.getProductVariantsByStock(pageable, stock));
+                revenueStatisticsService.getProductVariantsByStock(stock));
     }
     @GetMapping("/topSellingProduct")
     public ApiResponse<?> gettopSellingProduct(Pageable pageable, @RequestParam("top") int top) {
