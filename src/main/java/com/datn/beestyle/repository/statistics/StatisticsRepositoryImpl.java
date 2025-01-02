@@ -80,7 +80,7 @@ public class StatisticsRepositoryImpl {
         // Thực thi truy vấn chính
         String sql = String.format("""
         SELECT %s, 
-               SUM(oi.sale_price * oi.quantity) AS revenue,
+               SUM(o.total_amount) AS revenue,
                SUM(oi.quantity) AS quantity
           FROM `order` o
           JOIN `order_item` oi ON o.id = oi.order_id
@@ -344,8 +344,7 @@ public class StatisticsRepositoryImpl {
                 }
                 String startDate = dateRange[0];
                 String endDate = dateRange[1];
-
-                components.selectClause = "'range' AS period";
+                components.selectClause = String.format("'%s - %s' AS period", startDate, endDate);
                 components.whereClause = String.format(
                         "DATE(o.payment_date) BETWEEN '%s' AND '%s'",
                         startDate, endDate
