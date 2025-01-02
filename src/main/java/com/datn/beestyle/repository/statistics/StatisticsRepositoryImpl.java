@@ -79,15 +79,15 @@ public class StatisticsRepositoryImpl {
 
         // Thực thi truy vấn chính
         String sql = String.format("""
-        SELECT %s, 
-               SUM(o.total_amount) AS revenue,
-               SUM(oi.quantity) AS quantity
-          FROM `order` o
-          JOIN `order_item` oi ON o.id = oi.order_id
-          WHERE (o.order_status = 6 OR o.order_status = 1) AND %s
-          %s
-          ORDER BY %s;
-    """, components.selectClause, components.whereClause,
+                            SELECT %s, 
+                                  SUM(DISTINCT o.total_amount) AS revenue,
+                                   SUM(oi.quantity) AS quantity
+                              FROM `order` o
+                              JOIN `order_item` oi ON o.id = oi.order_id
+                              WHERE (o.order_status = 6 OR o.order_status = 1) AND %s
+                              %s
+                              ORDER BY %s;
+                        """, components.selectClause, components.whereClause,
                 period.equals("range") ? "" : "GROUP BY " + components.groupByClause, components.orderByClause);
 
         Query query = entityManager.createNativeQuery(sql, "RevenueByPeriodMapping");
@@ -313,7 +313,7 @@ public class StatisticsRepositoryImpl {
         switch (period) {
             case "day":
                 components.selectClause = "DATE(o.payment_date) AS period";
-                components.groupByClause = "DATE(o.payment_date)";
+                components.groupByClause = "DATE(o.payment_date) ";
                 components.whereClause = String.format(
                         "DATE(o.payment_date) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
                         periodValue, periodValue
