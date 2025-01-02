@@ -1,9 +1,8 @@
 package com.datn.beestyle.service.statistics;
 
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.statistics.InventoryResponse;
-import com.datn.beestyle.dto.statistics.RevenueStatisticsDTO;
+import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import com.datn.beestyle.repository.statistics.StatisticsRepositoryImpl;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -23,14 +22,14 @@ public class RevenueStatisticsService {
         this.statisticsRepository = statisticsRepository;
     }
 
-    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByDate(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+    public PageResponse<List<RevenueStatisticsResponse>> getRevenueByDate(LocalDate startDate, LocalDate endDate, Pageable pageable) {
         Date sqlStartDate = Date.valueOf(startDate);
         Date sqlEndDate = Date.valueOf(endDate);
 
-      Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findRevenueByDate(sqlStartDate,sqlEndDate,pageable);
+      Page<RevenueStatisticsResponse> revenueStatisticsDTOPages = statisticsRepository.findRevenueByDate(sqlStartDate,sqlEndDate,pageable);
 
         // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
-        return PageResponse.<List<RevenueStatisticsDTO>>builder()
+        return PageResponse.<List<RevenueStatisticsResponse>>builder()
                 .pageNo(revenueStatisticsDTOPages.getNumber() + 1)
                 .pageSize(revenueStatisticsDTOPages.getSize())
                 .totalElements(revenueStatisticsDTOPages.getTotalElements())
@@ -39,7 +38,7 @@ public class RevenueStatisticsService {
                 .build();
     }
 
-    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByPeriod(String period, Pageable pageable,String periodValue ) {
+    public PageResponse<List<RevenueStatisticsResponse>> getRevenueByPeriod(String period, Pageable pageable, String periodValue ) {
 
 
         // Nếu period là null, gán giá trị mặc định là "day"
@@ -60,10 +59,10 @@ public class RevenueStatisticsService {
         }
 
 
-        Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findRevenueByPeriod(period,pageable,periodValue);
+        Page<RevenueStatisticsResponse> revenueStatisticsDTOPages = statisticsRepository.findRevenueByPeriod(period,pageable,periodValue);
 
         // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
-        return PageResponse.<List<RevenueStatisticsDTO>>builder()
+        return PageResponse.<List<RevenueStatisticsResponse>>builder()
                 .pageNo(revenueStatisticsDTOPages.getNumber() + 1)
                 .pageSize(revenueStatisticsDTOPages.getSize())
                 .totalElements(revenueStatisticsDTOPages.getTotalElements())
@@ -72,7 +71,7 @@ public class RevenueStatisticsService {
                 .build();
     }
 
-    public PageResponse<List<RevenueStatisticsDTO>> getOrderStatusByPeriod(String period, Pageable pageable,String periodValue ) {
+    public PageResponse<List<RevenueStatisticsResponse>> getOrderStatusByPeriod(String period, Pageable pageable, String periodValue ) {
 
 
         // Nếu period là null, gán giá trị mặc định là "day"
@@ -93,10 +92,10 @@ public class RevenueStatisticsService {
         }
 
 
-        Page<RevenueStatisticsDTO> revenueStatisticsDTOPages = statisticsRepository.findOrderStatusByPeriod(period,pageable,periodValue);
+        Page<RevenueStatisticsResponse> revenueStatisticsDTOPages = statisticsRepository.findOrderStatusByPeriod(period,pageable,periodValue);
 
         // Tạo và trả về đối tượng PageResponse với dữ liệu đã lấy
-        return PageResponse.<List<RevenueStatisticsDTO>>builder()
+        return PageResponse.<List<RevenueStatisticsResponse>>builder()
                 .pageNo(revenueStatisticsDTOPages.getNumber() + 1)
                 .pageSize(revenueStatisticsDTOPages.getSize())
                 .totalElements(revenueStatisticsDTOPages.getTotalElements())
@@ -107,40 +106,40 @@ public class RevenueStatisticsService {
 
 
 
-//    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByMonth(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+//    public PageResponse<List<RevenueStatisticsResponse>> getRevenueByMonth(LocalDate startDate, LocalDate endDate, Pageable pageable) {
 //        Date sqlStartDate = Date.valueOf(startDate);
 //        Date sqlEndDate = Date.valueOf(endDate);
 //
-//        List<RevenueStatisticsDTO> statistics = (List<RevenueStatisticsDTO>) statisticsRepository.findRevenueByMonth(sqlStartDate,sqlEndDate,pageable);
+//        List<RevenueStatisticsResponse> statistics = (List<RevenueStatisticsResponse>) statisticsRepository.findRevenueByMonth(sqlStartDate,sqlEndDate,pageable);
 //
 //        return createPageResponse(statistics, pageable);
 //    }
 
 
 //
-//    public PageResponse<List<RevenueStatisticsDTO>> getRevenueByYear(LocalDate startDate, LocalDate endDate, Pageable pageable) {
+//    public PageResponse<List<RevenueStatisticsResponse>> getRevenueByYear(LocalDate startDate, LocalDate endDate, Pageable pageable) {
 //        List<Object[]> results = orderRepository.findRevenueByYear(startDate, endDate);
 //
-//        List<RevenueStatisticsDTO> statistics = results.stream()
-//                .map(result -> new RevenueStatisticsDTO(result[0].toString(), (BigDecimal) result[1]))
+//        List<RevenueStatisticsResponse> statistics = results.stream()
+//                .map(result -> new RevenueStatisticsResponse(result[0].toString(), (BigDecimal) result[1]))
 //                .collect(Collectors.toList());
 //
 //        return createPageResponse(statistics, pageable);
 //    }
 
-//    public PageResponse<List<RevenueStatisticsDTO>> getTopSellingProductsByFilterType(String filterType,Pageable pageable) {
-//        List<RevenueStatisticsDTO> statistics = orderRepository.findTopSellingProductsByFilterType(pageable,filterType);
+//    public PageResponse<List<RevenueStatisticsResponse>> getTopSellingProductsByFilterType(String filterType,Pageable pageable) {
+//        List<RevenueStatisticsResponse> statistics = orderRepository.findTopSellingProductsByFilterType(pageable,filterType);
 //        return createPageResponse(statistics, pageable);
 //    }
 
 
 
-    private PageResponse<List<RevenueStatisticsDTO>> createPageResponse(List<RevenueStatisticsDTO> statistics, Pageable pageable) {
+    private PageResponse<List<RevenueStatisticsResponse>> createPageResponse(List<RevenueStatisticsResponse> statistics, Pageable pageable) {
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
 
-        List<RevenueStatisticsDTO> paginatedList;
+        List<RevenueStatisticsResponse> paginatedList;
 
         if (statistics.size() < startItem) {
             paginatedList = new ArrayList<>();
@@ -149,9 +148,9 @@ public class RevenueStatisticsService {
             paginatedList = statistics.subList(startItem, toIndex);
         }
 
-        Page<RevenueStatisticsDTO> page = new PageImpl<>(paginatedList, pageable, statistics.size());
+        Page<RevenueStatisticsResponse> page = new PageImpl<>(paginatedList, pageable, statistics.size());
 
-        return PageResponse.<List<RevenueStatisticsDTO>>builder()
+        return PageResponse.<List<RevenueStatisticsResponse>>builder()
                 .pageNo(page.getNumber() + 1)
                 .pageSize(page.getSize())
                 .totalElements(page.getTotalElements())
