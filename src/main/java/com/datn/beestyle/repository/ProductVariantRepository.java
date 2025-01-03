@@ -139,12 +139,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("sizeId") Long sizeId
     );
 
-
-
-
-
-
-
     @Query(
             value = """
                         select distinct

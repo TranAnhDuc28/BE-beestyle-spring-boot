@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -145,8 +146,11 @@ public class RevenueStatisticsService {
     }
     //Thống kê sản phẩm tồn
     public List<InventoryResponse> getProductVariantsByStock(int stock) {
-        return statisticsRepository.filterProductVariantsByStock(stock);
+        List<InventoryResponse> responses = statisticsRepository.filterProductVariantsByStock(stock);
+        responses.sort(Comparator.comparingInt(InventoryResponse::getQuantityInStock));
+        return responses;
     }
+
 
     public PageResponse<List<InventoryResponse>> getTopSellingProduct(Pageable pageable, int top) {
 
