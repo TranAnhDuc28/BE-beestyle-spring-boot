@@ -108,24 +108,18 @@ public class UserProductVariantService {
                     try {
                         Long id = (Long) result[0];
                         Long productId = (Long) result[1];
-                        String productCode = (String) result[2];
-                        String productName = (String) result[3];
-                        BigDecimal salePrice = (BigDecimal) result[4];
-                        BigDecimal discountPrice = (BigDecimal) result[5];
-                        Integer discountValue = (Integer) result[6];
-                        String sku = (String) result[7];
-                        String categoryName = (String) result[8];
-                        String brandName = (String) result[9];
-                        Integer quantity = (Integer) result[10];
-                        String colorCodeResult = (String) result[11];
-                        String colorName = (String) result[12];
-                        String sizeName = (String) result[13];
-                        String description = (String) result[14];
+                        String productName = (String) result[2];
+                        BigDecimal salePrice = (BigDecimal) result[3];
+                        BigDecimal discountPrice = (BigDecimal) result[4];
+                        Integer discountValue = (Integer) result[5];
+                        String sku = (String) result[6];
+                        Integer quantity = (Integer) result[7];
+                        String colorName = (String) result[8];
+                        String sizeName = (String) result[9];
 
                         ProductVariantResponse pv = new ProductVariantResponse(
-                                id, productId, productCode, productName, salePrice, discountPrice,
-                                discountValue, sku, categoryName, brandName, quantity,
-                                colorCodeResult, colorName, sizeName, description, null
+                                id, productId, productName, salePrice, discountPrice,
+                                discountValue, sku, quantity, colorName, sizeName, null
                         );
                         productVariants.add(pv);
                     } catch (ClassCastException e) {
