@@ -139,26 +139,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("sizeId") Long sizeId
     );
 
-
-
-//    // thống kê
-//    @Query(value = """
-//                select new com.datn.beestyle.dto.product.variant.ProductVariantResponse(
-//                    pv.id, pv.sku, p.id, p.productName, c.id, c.colorCode, c.colorName, s.id, s.sizeName, pv.salePrice, pv.quantityInStock)
-//                from ProductVariant pv
-//                    join Product p on pv.product.id = p.id
-//                    left join Color c on pv.color.id = c.id
-//                    left join Size s on pv.size.id = s.id
-//                order by
-//                    case when :orderByStock = 'desc' then pv.quantityInStock end desc,
-//                    case when :orderByStock = 'asc' then pv.quantityInStock end asc
-//            """)
-//    Page<ProductVariantResponse> filterProductVariantsByStock(Pageable pageable,
-//                                                       @Param("orderByStock") String orderByStock);
-//
-
-
-
     @Query(
             value = """
                         select distinct

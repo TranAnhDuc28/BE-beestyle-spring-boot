@@ -21,50 +21,7 @@ public class StatisticsRepositoryImpl {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Page<RevenueStatisticsResponse> findRevenueByDate(Date startDate, Date endDate, Pageable pageable) {
-        String sql = """
-                  SELECT DATE(o.payment_date) AS date, 
-                         SUM(oi.sale_price * oi.quantity) AS revenue,
-                         SUM(oi.quantity) AS quantity
-                  FROM `order` o
-                  JOIN `order_item` oi ON o.id = oi.order_id
-                  WHERE o.payment_date BETWEEN :startDate AND :endDate
-                    AND o.order_status = 6
-                  GROUP BY DATE(o.payment_date)
-                """;
-
-        // Query for data
-        Query query = entityManager.createNativeQuery(sql, "RevenueStatisticsDTOMapping");
-        query.setParameter("startDate", startDate);
-        query.setParameter("endDate", endDate);
-
-        // Pagination
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
-        List<RevenueStatisticsResponse> results = query.getResultList();
-
-        // Query for total count
-        String countSql = """
-                  SELECT COUNT(*) 
-                  FROM (SELECT DATE(o.payment_date) 
-                        FROM `order` o
-                        JOIN `order_item` oi ON o.id = oi.order_id
-                        WHERE o.payment_date BETWEEN :startDate AND :endDate
-                          AND o.order_status = 6
-                        GROUP BY DATE(o.payment_date)) AS temp
-                """;
-
-        Query countQuery = entityManager.createNativeQuery(countSql);
-        countQuery.setParameter("startDate", startDate);
-        countQuery.setParameter("endDate", endDate);
-
-        long totalElements = ((Number) countQuery.getSingleResult()).longValue();
-
-        return new PageImpl<>(results, pageable, totalElements);
-    }
-
-//    Thống kê doanh thu, sản phẩm theo ngày, tháng, năm
+    //    Thống kê doanh thu, sản phẩm theo ngày, tháng, năm
     public Page<RevenueStatisticsResponse> findRevenueByPeriod(String period, Pageable pageable, String periodValue) {
         // Validate period
         if (!List.of("day", "month", "year", "range").contains(period)) {
@@ -99,11 +56,11 @@ public class StatisticsRepositoryImpl {
 
         // Thực thi truy vấn đếm tổng phần tử
         String countSql = String.format("""
-        SELECT COUNT(*) 
-          FROM `order` o
-          JOIN `order_item` oi ON o.id = oi.order_id
-          WHERE o.order_status = 6 AND %s
-    """, components.whereClause);
+                    SELECT COUNT(*) 
+                      FROM `order` o
+                      JOIN `order_item` oi ON o.id = oi.order_id
+                      WHERE o.order_status = 6 AND %s
+                """, components.whereClause);
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
@@ -127,14 +84,14 @@ public class StatisticsRepositoryImpl {
 
         // Cập nhật SELECT để đếm trạng thái đơn hàng
         String sql = String.format("""
-        SELECT %s, 
-               COUNT(CASE WHEN o.order_status IN (1, 6) THEN 1 END) AS total_success,
-               COUNT(CASE WHEN o.order_status = 7 THEN 1 END) AS total_failed
-          FROM `order` o
-          WHERE %s
-          %s
-          ORDER BY %s;
-    """, components.selectClause, components.whereClause,
+                            SELECT %s, 
+                                   COUNT(CASE WHEN o.order_status IN (1, 6) THEN 1 END) AS total_success,
+                                   COUNT(CASE WHEN o.order_status = 7 THEN 1 END) AS total_failed
+                              FROM `order` o
+                              WHERE %s
+                              %s
+                              ORDER BY %s;
+                        """, components.selectClause, components.whereClause,
                 period.equals("range") ? "" : "GROUP BY " + components.groupByClause, components.orderByClause);
 
         Query query = entityManager.createNativeQuery(sql, "OrderStatusByPeriodMapping");
@@ -146,10 +103,10 @@ public class StatisticsRepositoryImpl {
 
         // Truy vấn đếm tổng phần tử
         String countSql = String.format("""
-        SELECT COUNT(*) 
-          FROM `order` o
-          WHERE %s
-    """, components.whereClause);
+                    SELECT COUNT(*) 
+                      FROM `order` o
+                      WHERE %s
+                """, components.whereClause);
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
@@ -158,10 +115,7 @@ public class StatisticsRepositoryImpl {
         return new PageImpl<>(results, pageable, totalElements);
     }
 
-
-    public Page<InventoryResponse> filterProductVariantsByStock(Pageable pageable, int stock) {
-        // Truy vấn chính để lấy dữ liệu
-
+    public List<InventoryResponse> filterProductVariantsByStock(int stock) {
         String sql = """
                     SELECT 
                         pv.id AS id, 
@@ -189,72 +143,55 @@ public class StatisticsRepositoryImpl {
                         pv.quantity_in_stock <= ?
                 """;
 
-
-        Query query = entityManager.createNativeQuery(sql, "ProductVariantResponseMapping");
-        query.setParameter(1, stock); // Thiết lập tham số
-
-        // Pagination
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
+        Query query = entityManager.createNativeQuery(sql, "ProductVariantResponseMappingByStock");
+        query.setParameter(1, stock);
 
         @SuppressWarnings("unchecked")
         List<InventoryResponse> results = query.getResultList();
 
-        // Truy vấn để đếm tổng số phần tử
-        String countSql = """
-                    SELECT COUNT(*)
-                    FROM product_variant pv
-                    WHERE pv.quantity_in_stock <= ?
-                """;
-
-        Query countQuery = entityManager.createNativeQuery(countSql);
-        countQuery.setParameter(1, stock); // Thiết lập tham số
-        long totalElements = ((Number) countQuery.getSingleResult()).longValue();
-
-        // Trả về kết quả phân trang
-        return new PageImpl<>(results, pageable, totalElements);
+        return results; // Trả về toàn bộ danh sách
     }
 
     public Page<InventoryResponse> TopSellingProduct(Pageable pageable, int top) {
         // Truy vấn chính để lấy dữ liệu với LIMIT và OFFSET
         String sql = """
-            SELECT
-                pv.id AS id, 
-                p.id AS productId, 
-                p.product_name AS productName, 
-                pv.sku AS sku, 
-                c.id AS colorId,
-                c.color_code AS colorCode,
-                c.color_name AS colorName, 
-                s.id AS sizeId,
-                s.size_name AS sizeName, 
-                pi.image_url AS imageUrl,
-                SUM(oi.quantity) AS totalQuantitySold
-            FROM
-                product_variant pv
-            INNER JOIN
-                product p ON pv.product_id = p.id
-            LEFT JOIN
-                color c ON pv.color_id = c.id
-            LEFT JOIN
-                size s ON pv.size_id = s.id
-            INNER JOIN
-                order_item oi ON pv.id = oi.product_variant_id
-            INNER JOIN
-                `order` o ON oi.order_id = o.id
-            LEFT JOIN
-                product_image pi ON p.id = pi.product_id AND pi.is_default = 1
-            WHERE
-                o.order_status IN (1, 6)
-            GROUP BY
-                pv.id, p.id, p.product_name, c.color_name, s.size_name, pv.sku, pi.image_url
-            ORDER BY
-                totalQuantitySold DESC
-            LIMIT :limit OFFSET :offset
-            """;
+                SELECT
+                    pv.id AS id, 
+                    p.id AS productId, 
+                    p.product_name AS productName, 
+                    pv.sku AS sku, 
+                    c.id AS colorId,
+                    c.color_code AS colorCode,
+                    c.color_name AS colorName, 
+                    s.id AS sizeId,
+                    s.size_name AS sizeName, 
+                    pi.image_url AS imageUrl,
+                    SUM(oi.quantity) AS totalQuantitySold
+                FROM
+                    product_variant pv
+                INNER JOIN
+                    product p ON pv.product_id = p.id
+                LEFT JOIN
+                    color c ON pv.color_id = c.id
+                LEFT JOIN
+                    size s ON pv.size_id = s.id
+                INNER JOIN
+                    order_item oi ON pv.id = oi.product_variant_id
+                INNER JOIN
+                    `order` o ON oi.order_id = o.id
+                LEFT JOIN
+                    product_image pi ON p.id = pi.product_id AND pi.is_default = 1
+                WHERE
+                    o.order_status IN (1, 6)
+                GROUP BY
+                    pv.id, p.id, p.product_name, c.color_name, s.size_name, pv.sku, pi.image_url
+                ORDER BY
+                    totalQuantitySold DESC
+                LIMIT :limit OFFSET :offset
+                """;
 
         // Tạo câu truy vấn với tham số LIMIT và OFFSET
-        Query query = entityManager.createNativeQuery(sql, "ProductVariantResponseMapping2");
+        Query query = entityManager.createNativeQuery(sql, "ProductVariantResponseMappingByQuantitySold");
 
         // Thiết lập tham số LIMIT và OFFSET cho câu truy vấn
         query.setParameter("limit", top);  // Lấy top N sản phẩm bán chạy nhất
@@ -265,22 +202,22 @@ public class StatisticsRepositoryImpl {
 
         // Truy vấn để đếm tổng số phần tử (tổng số sản phẩm bán chạy nhất)
         String countSql = """
-            SELECT COUNT(DISTINCT p.id)
-            FROM
-                product_variant pv
-            INNER JOIN
-                product p ON pv.product_id = p.id
-            LEFT JOIN
-                color c ON pv.color_id = c.id
-            LEFT JOIN
-                size s ON pv.size_id = s.id
-            INNER JOIN
-                order_item oi ON pv.id = oi.product_variant_id
-            INNER JOIN
-                `order` o ON oi.order_id = o.id
-            WHERE
-                o.order_status IN (1, 6)
-            """;
+                SELECT COUNT(DISTINCT p.id)
+                FROM
+                    product_variant pv
+                INNER JOIN
+                    product p ON pv.product_id = p.id
+                LEFT JOIN
+                    color c ON pv.color_id = c.id
+                LEFT JOIN
+                    size s ON pv.size_id = s.id
+                INNER JOIN
+                    order_item oi ON pv.id = oi.product_variant_id
+                INNER JOIN
+                    `order` o ON oi.order_id = o.id
+                WHERE
+                    o.order_status IN (1, 6)
+                """;
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
@@ -290,22 +227,23 @@ public class StatisticsRepositoryImpl {
     }
 
 
-
-
-
-
     // Lấy giá trị mặc định cho periodValue
     private String getDefaultPeriodValue(String period, String periodValue) {
         if (periodValue == null || periodValue.isEmpty()) {
             switch (period) {
-                case "day": return LocalDate.now().toString(); // Ngày hiện tại
-                case "month": return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
-                case "year": return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
-                case "range": return LocalDate.now().toString() + "," + LocalDate.now().toString(); // Hôm nay
+                case "day":
+                    return LocalDate.now().toString(); // Ngày hiện tại
+                case "month":
+                    return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
+                case "year":
+                    return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
+                case "range":
+                    return LocalDate.now().toString() + "," + LocalDate.now().toString(); // Hôm nay
             }
         }
         return periodValue;
     }
+
     // Tạo các thành phần truy vấn động
     private QueryComponents buildQueryComponents(String period, String periodValue) {
         QueryComponents components = new QueryComponents();

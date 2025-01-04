@@ -19,17 +19,18 @@ public class InventoryResponse {
     Long productId;
     String sku;
     String productName;
-    Long colorId;
+    Integer colorId;
     String colorCode;
     String colorName;
-    Long sizeId;
+    Integer sizeId;
     String sizeName;
     Integer quantityInStock;
     String imageUrl;
+    Integer totalQuantitySold;
 
     public InventoryResponse(Long id, Long productId, String productName,
-                             String sku, Long colorId,String colorCode, String colorName,
-                             Long sizeId, String sizeName,
+                             String sku, Integer colorId, String colorCode, String colorName,
+                             Integer sizeId, String sizeName,
                              Integer quantityInStock, String imageUrl) {
         this.id = id;
         this.productId = productId;
@@ -42,5 +43,22 @@ public class InventoryResponse {
         this.sizeName = sizeName;
         this.quantityInStock = quantityInStock;
         this.imageUrl = imageUrl;
+    }
+
+    public InventoryResponse(Long id, Long productId, String productName,
+                             String sku, Integer colorId, String colorCode, String colorName,
+                             Integer sizeId, String sizeName,
+                             String imageUrl, Integer totalQuantitySold) {
+        this.id = id;
+        this.productId = productId;
+        this.productName = productName;
+        this.sku = sku;
+        this.colorId = colorId;
+        this.colorCode = colorCode;
+        this.colorName = colorName;
+        this.sizeId = sizeId;
+        this.sizeName = sizeName;
+        this.imageUrl = imageUrl;
+        this.totalQuantitySold = totalQuantitySold;
     }
 }

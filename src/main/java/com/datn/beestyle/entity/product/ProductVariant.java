@@ -1,6 +1,7 @@
 package com.datn.beestyle.entity.product;
 
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
+import com.datn.beestyle.dto.statistics.InventoryResponse;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.product.attributes.Color;
@@ -23,9 +24,9 @@ import static jakarta.persistence.CascadeType.*;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SqlResultSetMapping(
-        name = "ProductVariantResponseMapping",
+        name = "ProductVariantResponseMappingByStock",
         classes = @ConstructorResult(
-                targetClass = ProductVariantResponse.class,
+                targetClass = InventoryResponse.class,
                 columns = {
                         @ColumnResult(name = "id", type = Long.class),
                         @ColumnResult(name = "sku", type = String.class),
@@ -42,9 +43,9 @@ import static jakarta.persistence.CascadeType.*;
         )
 )
 @SqlResultSetMapping(
-        name = "ProductVariantResponseMapping2",
+        name = "ProductVariantResponseMappingByQuantitySold",
         classes = @ConstructorResult(
-                targetClass = ProductVariantResponse.class,
+                targetClass = InventoryResponse.class,
                 columns = {
                         @ColumnResult(name = "id", type = Long.class),
                         @ColumnResult(name = "productId", type = Long.class),
@@ -56,7 +57,7 @@ import static jakarta.persistence.CascadeType.*;
                         @ColumnResult(name = "sizeId", type = Integer.class),
                         @ColumnResult(name = "sizeName", type = String.class),
                         @ColumnResult(name = "imageUrl", type = String.class),
-                        @ColumnResult(name = "totalQuantitySold", type = Long.class)
+                        @ColumnResult(name = "totalQuantitySold", type = Integer.class)
                 }
         )
 )
