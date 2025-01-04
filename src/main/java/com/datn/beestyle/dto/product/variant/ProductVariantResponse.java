@@ -87,22 +87,6 @@ public class ProductVariantResponse {
         this.quantityInStock = quantityInStock;
     }
 
-    public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
-                                  String colorCode, String colorName, Integer sizeId, String sizeName,
-                                  BigDecimal salePrice,Long totalQuantitySold) {
-        this.id = id;
-        this.sku = sku;
-        this.productId = productId;
-        this.productName = productName;
-        this.colorId = colorId;
-        this.colorCode = colorCode;
-        this.colorName = colorName;
-        this.sizeId = sizeId;
-        this.sizeName = sizeName;
-        this.salePrice = salePrice;
-        this.totalQuantitySold = totalQuantitySold;
-    }
-
     public ProductVariantResponse(
             Long id, Long productId, String productCode, String productName, BigDecimal salePrice, BigDecimal discountPrice,
             Integer discountValue, String sku, String categoryName, String brandName, Integer quantity,

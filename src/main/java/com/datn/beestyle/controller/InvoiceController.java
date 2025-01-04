@@ -27,13 +27,22 @@ public class InvoiceController {
 
     @PostMapping("/preview")
     public ResponseEntity<byte[]> previewInvoice(@RequestBody InvoiceRequest request) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=invoice.pdf");
+        headers.add("Content-Type", "application/pdf");
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             invoicePDFExporter.exportInvoice(request, outputStream); // Xuất file PDF
-            byte[] pdfBytes = outputStream.toByteArray();
-            return ResponseEntity.ok().body(pdfBytes); // Trả về PDF dưới dạng byte[]
+
+            // Kiểm tra xem có dữ liệu hay không
+            byte[] pdfContent = outputStream.toByteArray();
+            if (pdfContent.length == 0) {
+                logger.error("Generated PDF content is empty.");
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            return new ResponseEntity<>(pdfContent, headers, HttpStatus.OK); // Trả về PDF dưới dạng byte[]
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
