@@ -170,7 +170,7 @@ public class InvoicePDFExporter {
 
             document.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
