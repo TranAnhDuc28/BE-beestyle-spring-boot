@@ -23,6 +23,17 @@ spring:
 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  mail:
+    from: locnhph38787@fpt.edu.vn
+    host: smtp.gmail.com
+    port: 587
+    username: locnhph38787@fpt.edu.vn
+    password: vgmzbizgspwoawlt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
   jpa:
     show_sql: true
     hibernate:
