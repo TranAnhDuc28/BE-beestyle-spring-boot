@@ -28,13 +28,13 @@ public class Address extends BaseEntity<Long> {
     String city;
 
     @Column(name = "district_code")
-    String districtCode;
+    Integer districtCode;
 
     @Column(name = "district")
     String district;
 
     @Column(name = "commune_code")
-    String communeCode;
+    Integer communeCode;
 
     @Column(name = "commune")
     String commune;

@@ -1,9 +1,12 @@
 package com.datn.beestyle.util;
 
+import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.invoice.InvoiceRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
+import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.repository.AddressRepository;
 import com.datn.beestyle.repository.OrderItemRepository;
 import com.datn.beestyle.repository.OrderRepository;
 import com.itextpdf.kernel.font.PdfFont;
@@ -35,6 +38,7 @@ public class InvoicePDFExporter {
 
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
+    private final AddressRepository addressRepository;
 
     public void exportInvoice(Long orderId, OutputStream out) {
         try {
@@ -46,6 +50,8 @@ public class InvoicePDFExporter {
             if (listOrderItem == null) {
                 listOrderItem = List.of(); // Khởi tạo danh sách rỗng nếu products là null
             }
+
+
 
             PdfWriter writer = new PdfWriter(out);
             PdfDocument pdfDoc = new PdfDocument(writer);
@@ -108,15 +114,17 @@ public class InvoicePDFExporter {
             // Thêm nội dung
             OrderResponse order = listOrder.get(0);
 
+            AddressResponse addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+//            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
             paragraph.add("Tên khách hàng: " + order.getCustomerName());
             paragraph.add(new Tab());
             paragraph.add("Mã hóa đơn: " + order.getOrderTrackingNumber());
             paragraph.add("\n");
-//            paragraph.add("Địa chỉ: " + order.getShippingAddress().getAddressName()+","
-//                    +order.getShippingAddress().getDistrict()+","
-//                    +order.getShippingAddress().getCity());
-//            paragraph.add(new Tab());
+            paragraph.add("Địa chỉ: " + addressResponse.getAddressName()+","
+                    +addressResponse.getDistrict()+","
+                    +addressResponse.getCity());
+            paragraph.add(new Tab());
             paragraph.add("N: " + order.getShippingAddressId());
             paragraph.add("Ngày tạo: " + order.getCreatedAt());
             paragraph.add("\n");
