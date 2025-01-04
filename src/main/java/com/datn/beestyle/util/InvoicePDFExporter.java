@@ -4,11 +4,13 @@ import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.invoice.InvoiceRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.repository.AddressRepository;
 import com.datn.beestyle.repository.OrderItemRepository;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.repository.VoucherRepository;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -39,7 +41,6 @@ public class InvoicePDFExporter {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
     private final AddressRepository addressRepository;
-
     public void exportInvoice(Long orderId, OutputStream out) {
         try {
             List<OrderResponse> listOrder = orderRepository.findOrderById(orderId);
@@ -125,14 +126,11 @@ public class InvoicePDFExporter {
                     +addressResponse.getDistrict()+","
                     +addressResponse.getCity());
             paragraph.add(new Tab());
-            paragraph.add("N: " + order.getShippingAddressId());
             paragraph.add("Ngày tạo: " + order.getCreatedAt());
             paragraph.add("\n");
             paragraph.add("Số điện thoại: " + order.getPhoneNumber());
 // Thêm vào tài liệu
             document.add(paragraph);
-
-
 
 //            document.add(new Paragraph("Thu ngân: " + order.getCreatedBy())
 //                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
@@ -192,24 +190,32 @@ public class InvoicePDFExporter {
 
             // **Tổng số lượng**
             document.add(new Paragraph("Tổng số lượng sản phẩm: " + totalQuantity).setFont(font).setBold().setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-//            if (order.getVoucherInfo().getDiscountType() == ) {
-//                // Giảm giá tiền mặt
-//                discountAmount = order.getDis(); // Giảm giá bằng số tiền (ví dụ: 50,000 VNĐ)
-//                totalAmount -= discountAmount;  // Trừ vào tổng tiền
-//            } else if (order.getVoucherInfo().getDiscountType() == DiscountType.PERCENTAGE) {
-//                // Giảm giá phần trăm
-//                double discountPercentage = order.getDis(); // Giảm giá theo phần trăm
-//                double discountAmountPercentage = totalAmount * (discountPercentage / 100);  // Tính giảm giá theo phần trăm
+
+//            double discountAmount = 0;
 //
-//                // Giảm giá tối đa (ví dụ: 200,000 VNĐ)
-//                double maxDiscount = 200000;  // Giảm tối đa 200,000 VNĐ
-//                discountAmount = Math.min(discountAmountPercentage, maxDiscount);  // Giới hạn giảm giá không vượt quá maxDiscount
+//            double maxDiscount = order.getVoucherInfo().getMaxDiscount() != null
+//                    ? order.getVoucherInfo().getMaxDiscount()
+//                    : Double.MAX_VALUE; // Không giới hạn nếu không có maxDiscount
 //
-//                totalAmount -= discountAmount;  // Trừ vào tổng tiền
+//            if (order.getVoucherInfo().getDiscountType().toString().equals("CASH")) {
+//                discountAmount = order.getVoucherInfo().getDiscountValue();
+//            } else if (order.getVoucherInfo().getDiscountType().toString().equals("PERCENTAGE")) {
+//                double discountPercentage = order.getVoucherInfo().getDiscountValue();
+//                double discountAmountPercentage = totalAmount * (discountPercentage / 100);
+//                discountAmount = Math.min(discountAmountPercentage, maxDiscount);
 //            }
+//
+//            totalAmount -= discountAmount;
+//
+//// Hiển thị thông tin
+//            document.add(new Paragraph("Giảm giá: -" + currencyFormatter.format(discountAmount)
+//                    + " (" + order.getVoucherInfo().getVoucherName() + ")")
+//                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+
             // **6. Tổng tiền và các khoản khác**
+
             document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount)).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Giảm giá:"+ order.getVoucherInfo()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+            document.add(new Paragraph("Giảm giá:"+ order.getVoucherId()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
             document.add(new Paragraph("Phí ship: 0 đ").setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
             document.add(new Paragraph("Tổng hóa đơn: " + currencyFormatter.format(totalAmount))
                     .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
