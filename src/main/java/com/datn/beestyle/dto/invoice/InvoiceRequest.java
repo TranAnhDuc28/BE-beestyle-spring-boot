@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 
 public class InvoiceRequest {
-    private String orderId;
+    private Long orderId;
     private String customerName;
     private String orderDate;
     private String paymentMethod;
