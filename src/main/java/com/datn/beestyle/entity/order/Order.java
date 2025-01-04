@@ -1,5 +1,6 @@
 package com.datn.beestyle.entity.order;
 
+import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Voucher;
@@ -23,6 +24,39 @@ import static jakarta.persistence.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SqlResultSetMapping(
+        name = "RevenueStatisticsDTOMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "date", type = java.sql.Date.class),
+                        @ColumnResult(name = "revenue", type = BigDecimal.class),
+                        @ColumnResult(name = "quantity", type = Long.class)
+                }
+        )
+)
+@SqlResultSetMapping(
+        name = "RevenueByPeriodMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "period", type = String.class),
+                        @ColumnResult(name = "revenue", type = BigDecimal.class),
+                        @ColumnResult(name = "quantity", type = Long.class)
+                }
+        )
+)
+@SqlResultSetMapping(
+        name = "OrderStatusByPeriodMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "period", type = String.class),
+                        @ColumnResult(name = "total_success", type = Long.class),
+                        @ColumnResult(name = "total_failed", type = Long.class)
+                }
+        )
+)
 public class Order extends Auditable<Long> {
 
     @Column(name = "order_tracking_number")

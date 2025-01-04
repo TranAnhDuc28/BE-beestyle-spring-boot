@@ -1,5 +1,7 @@
 package com.datn.beestyle.entity.product;
 
+import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
+import com.datn.beestyle.dto.statistics.InventoryResponse;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.product.attributes.Color;
@@ -21,6 +23,45 @@ import static jakarta.persistence.CascadeType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SqlResultSetMapping(
+        name = "ProductVariantResponseMappingByStock",
+        classes = @ConstructorResult(
+                targetClass = InventoryResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "sku", type = String.class),
+                        @ColumnResult(name = "productId", type = Long.class),
+                        @ColumnResult(name = "productName", type = String.class),
+                        @ColumnResult(name = "colorId", type = Integer.class),
+                        @ColumnResult(name = "colorCode", type = String.class),
+                        @ColumnResult(name = "colorName", type = String.class),
+                        @ColumnResult(name = "sizeId", type = Integer.class),
+                        @ColumnResult(name = "sizeName", type = String.class),
+                        @ColumnResult(name = "quantityInStock", type = Integer.class),
+                        @ColumnResult(name = "imageUrl", type = String.class)
+                }
+        )
+)
+@SqlResultSetMapping(
+        name = "ProductVariantResponseMappingByQuantitySold",
+        classes = @ConstructorResult(
+                targetClass = InventoryResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "productId", type = Long.class),
+                        @ColumnResult(name = "productName", type = String.class),
+                        @ColumnResult(name = "sku", type = String.class),
+                        @ColumnResult(name = "colorId", type = Integer.class),
+                        @ColumnResult(name = "colorCode", type = String.class),
+                        @ColumnResult(name = "colorName", type = String.class),
+                        @ColumnResult(name = "sizeId", type = Integer.class),
+                        @ColumnResult(name = "sizeName", type = String.class),
+                        @ColumnResult(name = "imageUrl", type = String.class),
+                        @ColumnResult(name = "totalQuantitySold", type = Integer.class)
+                }
+        )
+)
+
 public class ProductVariant extends Auditable<Long> {
 
     @Column(name = "sku")

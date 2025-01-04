@@ -84,20 +84,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "LEFT JOIN pv.promotion promo " +
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-//@Query("SELECT NEW com.datn.beestyle.dto.product.variant.ProductVariantResponse(" +
-//        "p.id, p.productName, b.brandName, m.materialName, pv.id, pv.sku, c.colorName, s.sizeName, pv.originalPrice, " +
-//        "pv.quantityInStock, pi.imageUrl, promo.promotionName) " +
-//        "FROM ProductVariant pv " +
-//        "JOIN pv.product p " +
-//        "LEFT JOIN p.brand b " +
-//        "LEFT JOIN p.material m " +
-//        "LEFT JOIN pv.color c " +
-//        "LEFT JOIN pv.size s " +
-//        "LEFT JOIN p.productImages pi WHERE pi.isPrimary = true " +
-//        "LEFT JOIN pv.promotion promo " +
-//        "WHERE pv.product.id in :productIds")
-//List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
-
 
 
     @Modifying
@@ -125,7 +111,7 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
     @Query(
             value = """
                         select distinct
-                            pv.id as id, p.id as productId, p.product_code as productCode,
+                            p.id as id, p.product_code as productCode,
                         	p.product_name as productName, pv.sale_price as salePrice, 
                         	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
                         	pm.discount_value as discountValue, 
@@ -153,7 +139,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             @Param("sizeId") Long sizeId
     );
 
-
     @Query(
             value = """
                         select distinct
@@ -177,4 +162,5 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             nativeQuery = true
     )
     List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
+
 }
