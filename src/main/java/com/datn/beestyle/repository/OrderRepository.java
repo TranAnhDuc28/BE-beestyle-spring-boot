@@ -62,4 +62,18 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
 
     int countByCreatedByAndAndOrderStatus(Long staffId, Integer orderStatus);
 
+    @Query(value = """
+                select new com.datn.beestyle.dto.order.OrderResponse(
+                    o.id, o.orderTrackingNumber, c.id, c.fullName, o.phoneNumber, o.totalAmount, o.paymentDate, 
+                    o.paymentMethod, o.orderChannel, o.orderType, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, 
+                    o.updatedBy, o.shippingAddress.id
+                )
+                from Order o
+                    left join Customer c on o.customer.id = c.id
+                where
+                    (:id is null or o.id = :id)
+            """
+    )
+    List<OrderResponse> findOrderById(@Param("id") Long id);
+
 }
