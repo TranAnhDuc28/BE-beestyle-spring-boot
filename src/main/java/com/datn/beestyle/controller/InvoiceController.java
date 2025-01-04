@@ -88,6 +88,29 @@ public class InvoiceController {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final InvoicePDFExporter invoicePDFExporter;
+    /**
+     * API để xem trước hóa đơn PDF
+     *
+     * @param orderId ID của đơn hàng
+     * @return ResponseEntity chứa file PDF
+     */
+    @GetMapping("/invoice/preview/{orderId}")
+    public ResponseEntity<byte[]> previewInvoice(@PathVariable Long orderId) {
+        try {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            // Gọi phương thức để xuất hóa đơn PDF
+            invoicePDFExporter.exportInvoice(orderId, byteArrayOutputStream);
+
+            // Trả về file PDF
+            return ResponseEntity.ok()
+                    .header("Content-Type", "application/pdf") // Loại file PDF
+                    .body(byteArrayOutputStream.toByteArray());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
     /**
      * API để xuất hóa đơn PDF từ thông tin đơn hàng

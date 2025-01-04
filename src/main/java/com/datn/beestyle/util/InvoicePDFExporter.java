@@ -116,19 +116,13 @@ public class InvoicePDFExporter {
 //            paragraph.add("Địa chỉ: " + order.getShippingAddress().getAddressName()+","
 //                    +order.getShippingAddress().getDistrict()+","
 //                    +order.getShippingAddress().getCity());
-//            paragraph.add(new Tab());
+            paragraph.add(new Tab());
             paragraph.add("N: " + order.getShippingAddressId());
             paragraph.add("Ngày tạo: " + order.getCreatedAt());
             paragraph.add("\n");
             paragraph.add("Số điện thoại: " + order.getPhoneNumber());
 // Thêm vào tài liệu
             document.add(paragraph);
-
-
-
-//            document.add(new Paragraph("Thu ngân: " + order.getCreatedBy())
-//                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
 
             // **3. Dòng nội dung đơn hàng**
             double totalAmount = 0;
