@@ -1,6 +1,7 @@
 package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
+import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.entity.Address;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,5 +21,23 @@ public interface AddressRepository extends IGenericRepository<Address, Long> {
     void updateIsDefaultFalseForOtherAddresses(Long customerId, Long addressId);
 
     boolean existsByCustomerIdAndIsDefaultTrue(Long customerId);
+
+    @Query("""
+    select new com.datn.beestyle.dto.address.AddressResponse(
+        a.id as id,
+        a.addressName as addressName,
+        a.cityCode as cityCode,
+        a.city as city,
+        a.districtCode as districtCode,
+        a.district as district,
+        a.communeCode as communeCode,
+        a.commune as commune
+    )
+    from Address a
+    where (:addressId is null or a.id = :addressId)
+""")
+    AddressResponse findByAddressId(@Param("addressId") Long addressId);
+
+
 
 }

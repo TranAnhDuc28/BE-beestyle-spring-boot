@@ -17,12 +17,23 @@ spring:
       max-lifetime: 1800000
       pool-name: HikariConnPool
 
-    url: jdbc:mysql://localhost:3307/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
-    password: 123456
+    password: locnhph38787
 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  mail:
+    from: locnhph38787@fpt.edu.vn
+    host: smtp.gmail.com
+    port: 587
+    username: locnhph38787@fpt.edu.vn
+    password: vgmzbizgspwoawlt
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
   jpa:
     show_sql: true
     hibernate:
