@@ -5,15 +5,14 @@ import com.datn.beestyle.common.GenericServiceAbstract;
 import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
-import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.staff.CreateStaffRequest;
 import com.datn.beestyle.dto.staff.StaffResponse;
 import com.datn.beestyle.dto.staff.UpdateStaffRequest;
-import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.repository.StaffRepository;
+import com.datn.beestyle.service.mail.MailService;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,20 +22,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
+
 public class StaffService
     extends GenericServiceAbstract<Staff,Integer, CreateStaffRequest, UpdateStaffRequest, StaffResponse>
     implements IStaffService{
 
     private final StaffRepository staffRepository;
+    private final MailService mailService;
 
     public StaffService(IGenericRepository<Staff, Integer> entityRepository, IGenericMapper<Staff, CreateStaffRequest,
             UpdateStaffRequest, StaffResponse> mapper, EntityManager entityManager,
-                        StaffRepository staffRepository) {
+                        StaffRepository staffRepository, MailService mailService) {
         super(entityRepository, mapper, entityManager);
         this.staffRepository = staffRepository;
+        this.mailService = mailService;
     }
 
     @Override
@@ -103,4 +106,37 @@ public class StaffService
                 .build();
 
     }
+
+    @Override
+    public StaffResponse create(CreateStaffRequest request) {
+        if (staffRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+
+        // Tạo mật khẩu ngẫu nhiên và gán vào request
+        String generatedPassword = UUID.randomUUID().toString().substring(0, 8);
+        request.setPassword(generatedPassword);
+
+        // Chuyển request sang entity
+        Staff entity = mapper.toCreateEntity(request);
+
+        // Lưu entity vào cơ sở dữ liệu
+        Staff savedEntity = entityRepository.save(entity);
+        log.info("staff",entity.getFullName());
+
+        if (savedEntity.getId() != null) {
+            try {
+                // Gửi email thông báo tài khoản
+                mailService.sendLoginStaffEmail(entity);
+                log.info("Registration email sent successfully to {}", entity.getEmail());
+            } catch (Exception e) {
+                // Log lỗi nếu gửi email thất bại
+                log.error("Failed to send registration email to {}: {}", entity.getEmail(), e.getMessage());
+            }
+        }
+
+        // Chuyển entity đã lưu thành DTO để trả về
+        return mapper.toEntityDto(savedEntity);
+    }
+
 }

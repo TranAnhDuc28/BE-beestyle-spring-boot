@@ -103,7 +103,7 @@ public class MailService {
         }
     }
 
-    public String sendLoginStaffEmail(String recipient, Staff staff) throws MessagingException {
+    public String sendLoginStaffEmail(Staff staff) throws MessagingException {
 
         try {
             // Tạo dữ liệu gửi vào template
@@ -123,7 +123,7 @@ public class MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setFrom(emailFrom, "Beestyle");
-            helper.setTo(recipient);
+            helper.setTo(staff.getEmail());
             helper.setSubject("Wellcome to Beestyle!");
             helper.setText(htmlContent, true);
 
@@ -132,7 +132,7 @@ public class MailService {
             return "Email sent successfully";
         }
         catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Error sending email to {}: {}", recipient, e.getMessage(), e);
+            log.error("Error sending email to {}: {}", staff.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email", e);
         }
     }
