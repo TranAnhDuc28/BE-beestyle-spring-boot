@@ -26,7 +26,6 @@ public interface StaffMapper extends IGenericMapper<Staff, CreateStaffRequest, U
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status",constant = "1")
     @Mapping(target = "role",expression = "java(com.datn.beestyle.enums.Role.USER)")
-    @Mapping(target = "password",constant = "1")
     @Override
     Staff toCreateEntity(CreateStaffRequest request);
 

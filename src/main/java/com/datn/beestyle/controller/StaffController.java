@@ -3,6 +3,7 @@ package com.datn.beestyle.controller;
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.staff.CreateStaffRequest;
 import com.datn.beestyle.dto.staff.UpdateStaffRequest;
+import com.datn.beestyle.service.mail.MailService;
 import com.datn.beestyle.service.staff.IStaffService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class StaffController {
     private final IStaffService staffService;
+    private final MailService mailService;
 
     @GetMapping
     public ApiResponse<?> getStaffs(Pageable pageable,
