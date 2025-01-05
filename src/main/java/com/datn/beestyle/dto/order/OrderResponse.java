@@ -68,7 +68,7 @@ public class OrderResponse {
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
                          BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
                          Integer orderType, Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
-                         Long createdBy, Long updatedBy, Long shippingAddressId) {
+                         Long createdBy, Long updatedBy, Long shippingAddressId, BigDecimal shippingFee) {
         this.id = id;
         this.orderTrackingNumber = orderTrackingNumber;
         this.customerId = customerId;
@@ -85,6 +85,7 @@ public class OrderResponse {
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
         this.shippingAddressId = shippingAddressId;
+        this.shippingFee = shippingFee;
     }
 
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, Integer orderChannel, Integer orderType,
