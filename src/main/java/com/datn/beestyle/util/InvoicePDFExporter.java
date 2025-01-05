@@ -230,13 +230,9 @@ public class InvoicePDFExporter {
             // **6. Tổng tiền và các khoản khác**
 
             document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount)).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Giảm giá:"+ order.getVoucherId()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Phí ship: 0 đ").setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+            document.add(new Paragraph("Giảm giá: "+ order.getVoucherId()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+            document.add(new Paragraph("Phí ship: "+ order.getShippingFee()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
             document.add(new Paragraph("Tổng hóa đơn: " + currencyFormatter.format(totalAmount))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-            // **7. Thông tin thanh toán**
-            document.add(new Paragraph("Phương thức thanh toán: " + order.getPaymentMethod())
                     .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
 
             // **8. Tổng thanh toán**
