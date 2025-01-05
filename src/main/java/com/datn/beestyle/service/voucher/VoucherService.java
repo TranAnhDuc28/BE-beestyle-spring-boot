@@ -112,17 +112,6 @@ public class VoucherService
                 .build();
     }
 
-    //    public Page<Voucher> getVoucherByDiscountType(Pageable pageable, String discountType) {
-//        if (discountType != null) {
-//            if (discountType.equals("PERCENTAGE")) {
-//                return voucherRepository.findVouchersByDiscountType(DiscountType.PERCENTAGE, pageable);
-//            } else if (discountType.equals("CASH")) {
-//                return voucherRepository.findVouchersByDiscountType(DiscountType.CASH, pageable);
-//            }
-//        }
-//        // Nếu không có discountType, trả về tất cả
-//        return voucherRepository.findAll(pageable);
-//    }
     public List<VoucherResponse> getValidVouchers(BigDecimal totalAmount) {
         return voucherRepository.findValidVouchers(1, totalAmount);
     }
