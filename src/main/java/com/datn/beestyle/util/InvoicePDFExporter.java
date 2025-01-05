@@ -115,16 +115,31 @@ public class InvoicePDFExporter {
             // Thêm nội dung
             OrderResponse order = listOrder.get(0);
 
-            AddressResponse addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+            // Kiểm tra nếu ShippingAddressId không phải null trước khi truy vấn
+            AddressResponse addressResponse = null;
+            if (order.getShippingAddressId() != null) {
+                addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+                // Tiến hành xử lý addressResponse sau khi lấy được dữ liệu
+            } else {
+                // Xử lý trường hợp ShippingAddressId là null
+                System.out.println("Shipping address ID is null");
+            }
+
 //            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
             paragraph.add("Tên khách hàng: " + order.getCustomerName());
             paragraph.add(new Tab());
             paragraph.add("Mã hóa đơn: " + order.getOrderTrackingNumber());
             paragraph.add("\n");
-            paragraph.add("Địa chỉ: " + addressResponse.getAddressName()+","
-                    +addressResponse.getDistrict()+","
-                    +addressResponse.getCity());
+            if (addressResponse != null) {
+                // Chỉ sử dụng addressResponse nếu nó không phải null
+                paragraph.add("Địa chỉ: " + addressResponse.getAddressName() + ","
+                        + addressResponse.getDistrict() + ","
+                        + addressResponse.getCity());
+            } else {
+                // Xử lý trường hợp không có addressResponse
+                paragraph.add("Địa chỉ: ");
+            }
             paragraph.add(new Tab());
             paragraph.add("Ngày tạo: " + order.getCreatedAt());
             paragraph.add("\n");
