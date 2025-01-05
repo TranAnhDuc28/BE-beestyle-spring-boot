@@ -114,7 +114,8 @@ public class InvoicePDFExporter {
             // Thêm nội dung
             OrderResponse order = listOrder.get(0);
 
-            AddressResponse addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+            List<AddressResponse> listAddressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+            AddressResponse addressResponse = listAddressResponse.get(0);
 //            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
             paragraph.add("Tên khách hàng: " + order.getCustomerName());
