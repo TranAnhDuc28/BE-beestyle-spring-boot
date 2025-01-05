@@ -19,7 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Voucher extends Auditable<Long> {
+public class Voucher extends Auditable<Integer> {
     @Column(name = "voucher_name")
     String voucherName;
 
@@ -58,11 +58,4 @@ public class Voucher extends Auditable<Long> {
     @Column(name = "status")
     int status;
 
-//    public Status getStatus() {
-//        return Status.resolve(this.status);
-//    }
-//
-//    public void setStatus(Status status) {
-//        this.status = (status != null) ? status.getValue() : Status.INACTIVE.getValue();
-//    }
 }

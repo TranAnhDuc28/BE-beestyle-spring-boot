@@ -7,6 +7,7 @@ import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.repository.PromotionRepository;
 import com.datn.beestyle.repository.VoucherRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,7 +25,7 @@ public class StatusUpdateScheduler {
         this.productVariantRepository = productVariantRepository;
     }
 
-//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+    @Scheduled(cron = "0 */30 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -53,7 +54,7 @@ public class StatusUpdateScheduler {
         }
         voucherRepository.saveAll(vouchers);
     }
-//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+    @Scheduled(cron = "0 */30 * * * ?") // Chạy mỗi giờ
     public void checkAndExpirePromotions() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
