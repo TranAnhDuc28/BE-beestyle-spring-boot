@@ -1,5 +1,6 @@
 package com.datn.beestyle.service.ghtk;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +20,7 @@ public class GHTKService {
 
     private final RestTemplate restTemplate;
 
-    public GHTKService(RestTemplate restTemplate) {
+    public GHTKService(RestTemplate restTemplate, HttpSession httpSession) {
         this.restTemplate = restTemplate;
     }
 

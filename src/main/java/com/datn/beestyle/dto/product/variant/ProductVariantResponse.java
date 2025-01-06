@@ -90,7 +90,7 @@ public class ProductVariantResponse {
 
     public ProductVariantResponse(Long id, String sku, Long productId, String productName, Integer colorId,
                                   String colorCode, String colorName, Integer sizeId, String sizeName,
-                                  BigDecimal salePrice,Long totalQuantitySold) {
+                                  BigDecimal salePrice, Long totalQuantitySold) {
         this.id = id;
         this.sku = sku;
         this.productId = productId;

@@ -22,9 +22,8 @@ public class ShoppingCartCheckController {
     public ResponseEntity<List<ProductVariantResponse>> checkCart(
             @RequestBody List<CartCheckRequest> cartItemsRequest
     ) {
-        System.out.println(cartItemsRequest);
-        List<ProductVariantResponse> productVariantResponses =
-                this.productVariantService.getProductVariantByIds(cartItemsRequest);
+        List<ProductVariantResponse> productVariantResponses = this.productVariantService
+                .getProductVariantByIds(cartItemsRequest);
         return ResponseEntity.ok(productVariantResponses);
     }
 }

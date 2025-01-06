@@ -9,7 +9,7 @@ import com.datn.beestyle.repository.ColorRepository;
 import com.datn.beestyle.repository.ImageRepository;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.repository.SizeRepository;
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +31,8 @@ public class UserProductVariantService {
     public UserProductVariantService(
             ProductVariantRepository productVariantRepository,
             ImageRepository imageRepository, ColorRepository colorRepository,
-            SizeRepository sizeRepository
-    ) {
+            SizeRepository sizeRepository,
+            HttpSession httpSession) {
         this.productVariantRepository = productVariantRepository;
         this.imageRepository = imageRepository;
         this.colorRepository = colorRepository;
@@ -40,46 +40,14 @@ public class UserProductVariantService {
     }
 
     public ProductVariantResponse getProductVariantUser(Long productId, String colorCode, Long sizeId) {
-        List<Object[]> results = productVariantRepository.getProductVariantData(productId, colorCode, sizeId);
-
-        if (results == null || results.isEmpty()) {
-            throw new EntityNotFoundException("Product variant not found");
-        }
-
-        Object[] result = results.get(0);
-
-        Long id = (Long) result[0];
-        Long productIdR = (Long) result[1];
-        String productCode = (String) result[2];
-        String productName = (String) result[3];
-        BigDecimal salePrice = (BigDecimal) result[4];
-        BigDecimal discountPrice = (BigDecimal) result[5];
-        Integer discountValue = (Integer) result[6];
-        String sku = (String) result[7];
-        String categoryName = (String) result[8];
-        String brandName = (String) result[9];
-        Integer quantity = (Integer) result[10];
-        String colorCodeResult = (String) result[11];
-        String colorName = (String) result[12];
-        String sizeName = (String) result[13];
-        String description = (String) result[14];
-
+        ProductVariantResponse response = this.productVariantRepository
+                .findProductVariantData(productId, colorCode, sizeId)
+                .get(0);
         List<ImageReponse> images = productId != null ?
                 this.imageRepository.getImageByProductIds(productId) : null;
+        response.setImages(images);
 
-        return new ProductVariantResponse(
-                id, productIdR, productCode, productName, salePrice, discountPrice,
-                discountValue, sku, categoryName, brandName, quantity,
-                colorCodeResult, colorName, sizeName, description, images
-        );
-    }
-
-    public List<ColorResponse> getAllColorLists(Long productId) {
-        return this.colorRepository.findAllByProductVariant(productId);
-    }
-
-    public List<SizeResponse> getAllSizeByPdAndColor(Long productId, String colorCode) {
-        return this.sizeRepository.findAllByProductVariant(productId, colorCode);
+        return response;
     }
 
     public List<ProductVariantResponse> getProductVariantByIds(
@@ -95,42 +63,31 @@ public class UserProductVariantService {
             return new ArrayList<>();
         }
 
-        List<Object[]> results = this.productVariantRepository.getProductVariantDataByIds(productVariantIds);
+        List<ProductVariantResponse> responses = this.productVariantRepository
+                .findProductVariantIds(productVariantIds);
 
-        Map<Long, Object[]> resultsMap = results.stream()
-                .collect(Collectors.toMap(result -> (Long) result[0], result -> result));
+        Map<Long, Integer> cartQuantityMap = cartItemsRequest.stream()
+                .filter(cart -> cart != null && cart.getId() != null && cart.getQuantity() != null)
+                .collect(Collectors.toMap(CartCheckRequest::getId, CartCheckRequest::getQuantity));
 
-        List<ProductVariantResponse> productVariants = new ArrayList<>();
-        for (CartCheckRequest cart : cartItemsRequest) {
-            if (cart != null && cart.getId() != null) {
-                Object[] result = resultsMap.get(cart.getId());
-                if (result != null) {
-                    try {
-                        Long id = (Long) result[0];
-                        Long productId = (Long) result[1];
-                        String productName = (String) result[2];
-                        BigDecimal salePrice = (BigDecimal) result[3];
-                        BigDecimal discountPrice = (BigDecimal) result[4];
-                        Integer discountValue = (Integer) result[5];
-                        String sku = (String) result[6];
-                        Integer quantity = (Integer) result[7];
-                        String colorName = (String) result[8];
-                        String sizeName = (String) result[9];
-
-                        ProductVariantResponse pv = new ProductVariantResponse(
-                                id, productId, productName, salePrice, discountPrice,
-                                discountValue, sku, quantity, colorName, sizeName, null
-                        );
-                        productVariants.add(pv);
-                    } catch (ClassCastException e) {
-                        System.err.println("Lỗi ép kiểu dữ liệu cho ProductVariant ID: " + cart.getId() +
-                                ". Chi tiết: " + e.getMessage());
-                    }
-                } else {
-                    System.err.println("Không tìm thấy dữ liệu cho ProductVariant ID: " + cart.getId());
-                }
+        for (ProductVariantResponse response : responses) {
+            Integer quantity = cartQuantityMap.get(response.getId());
+            if (quantity != null && response.getDiscountPrice() != null) {
+                BigDecimal totalPrice = response.getDiscountPrice().multiply(BigDecimal.valueOf(quantity));
+                response.setTotalPrice(totalPrice);
+            } else {
+                response.setTotalPrice(BigDecimal.ZERO);
             }
         }
-        return productVariants;
+
+        return responses;
+    }
+
+    public List<ColorResponse> getAllColorLists(Long productId) {
+        return this.colorRepository.findAllByProductVariant(productId);
+    }
+
+    public List<SizeResponse> getAllSizeByPdAndColor(Long productId, String colorCode) {
+        return this.sizeRepository.findAllByProductVariant(productId, colorCode);
     }
 }
