@@ -126,7 +126,7 @@ public class InvoicePDFExporter {
             }
 
 
-//            System.out.println("Địa chỉ: " + addressResponse);
+            //            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
             String customerName = (order.getCustomerName() == null || order.getCustomerName().isEmpty())
                     ? " Khách lẻ"
@@ -152,30 +152,22 @@ public class InvoicePDFExporter {
                     : order.getPhoneNumber();
             paragraph.add("Số điện thoại: " + phoneNumber);
 
-// Thêm vào tài liệu
+            // Thêm vào tài liệu
             document.add(paragraph);
-
-//            document.add(new Paragraph("Thu ngân: " + order.getCreatedBy())
-//                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-
             // **3. Dòng nội dung đơn hàng**
             double totalAmount = 0;
             int totalQuantity = 0; // Biến tổng số lượng
 
-// **Hiển thị dòng "Nội dung đơn hàng" trước bảng**
+            // **Hiển thị dòng "Nội dung đơn hàng" trước bảng**
             document.add(new Paragraph("Nội dung đơn hàng: ")
                     .setFont(font).setTextAlignment(TextAlignment.LEFT).setBold().setFontSize(14));
 
-// **5. Bảng chi tiết sản phẩm**
-            document.add(new Paragraph("\n"));
+            // **5. Bảng chi tiết sản phẩm**
             float[] columnWidths = {0.5f, 2f, 1.5f, 1f, 1.5f}; // Chia độ rộng cột: Cột "Tên sản phẩm" chiếm nhiều không gian hơn
             Table table = new Table(columnWidths);
             table.setWidth(UnitValue.createPercentValue(100));  // Đặt tổng chiều rộng bảng bằng 100% chiều rộng trang
 
-
-// Header
-
+            // Header
             table.addHeaderCell("STT").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Tên sản phẩm").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Đơn giá").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
@@ -212,40 +204,10 @@ public class InvoicePDFExporter {
                 totalAmount += itemTotal.doubleValue();  // Convert BigDecimal to double for totalAmount
                 totalQuantity += orderItem.getQuantity();
             }
-
             // Thêm bảng vào tài liệu
             document.add(table);
-
-
             // **Tổng số lượng**
             document.add(new Paragraph("Tổng số lượng sản phẩm: " + totalQuantity).setFont(font).setBold().setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-//            double discountAmount = 0;
-//
-//            double maxDiscount = order.getVoucherInfo().getMaxDiscount() != null
-//                    ? order.getVoucherInfo().getMaxDiscount()
-//                    : Double.MAX_VALUE; // Không giới hạn nếu không có maxDiscount
-//
-//            if (order.getVoucherInfo().getDiscountType().toString().equals("CASH")) {
-//                discountAmount = order.getVoucherInfo().getDiscountValue();
-//            } else if (order.getVoucherInfo().getDiscountType().toString().equals("PERCENTAGE")) {
-//                double discountPercentage = order.getVoucherInfo().getDiscountValue();
-//                double discountAmountPercentage = totalAmount * (discountPercentage / 100);
-//                discountAmount = Math.min(discountAmountPercentage, maxDiscount);
-//            }
-//
-//            totalAmount -= discountAmount;
-//
-//// Hiển thị thông tin
-//            document.add(new Paragraph("Giảm giá: -" + currencyFormatter.format(discountAmount)
-//                    + " (" + order.getVoucherInfo().getVoucherName() + ")")
-//                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-            // **6. Tổng tiền và các khoản khác**
-
-            // Tính giảm giá
-            // Chuyển đổi các giá trị sang BigDecimal
-
 
 // Tính giảm giá
             BigDecimal totalAmountBigDecimal = BigDecimal.valueOf(totalAmount); // Tổng tiền hàng
@@ -253,14 +215,11 @@ public class InvoicePDFExporter {
 
 // Thêm thông tin vào tài liệu
             document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
             document.add(new Paragraph("Giảm giá: " + currencyFormatter.format(discount))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
             document.add(new Paragraph("Phí ship: " + currencyFormatter.format(order.getShippingFee()))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Tổng hóa đơn: " + currencyFormatter.format(order.getTotalAmount()))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
 // Tổng thanh toán
             Paragraph total = new Paragraph("Tổng thanh toán: " + currencyFormatter.format(order.getTotalAmount()))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(12).setBold();
