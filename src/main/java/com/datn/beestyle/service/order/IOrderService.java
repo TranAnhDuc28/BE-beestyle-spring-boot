@@ -2,6 +2,7 @@ package com.datn.beestyle.service.order;
 
 import com.datn.beestyle.common.IGenericService;
 import com.datn.beestyle.dto.PageResponse;
+import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
@@ -16,5 +17,6 @@ public interface IOrderService
     PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters);
     List<OrderResponse> getOrdersPending();
     OrderResponse getOrderDetailById(Long id);
-    String changeOrderStatus(Long id, String status);
+    String changeOrderStatus(Long id, String status, String note);
+    OrderResponse createOrderOnline(CreateOrderOnlineRequest request);
 }

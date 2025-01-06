@@ -2,7 +2,7 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
-import com.datn.beestyle.enums.OrderStatus;
+import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.service.order.OrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -44,9 +44,16 @@ public class OrderController {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order pending added successfully.", orderService.create(request));
     }
 
+    @PostMapping("/update/{orderId}")
+    public ApiResponse<?> updateOrder(@Min(1) @PathVariable("orderId") Long orderId, @Valid @RequestBody UpdateOrderRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order updated successfully.", orderService.update(orderId, request));
+    }
+
     @PatchMapping("/{orderId}/update-status")
-    public ApiResponse<?> updateOrderStatus(@Min(1) @PathVariable("orderId") Long orderId, @RequestParam String status) {
+    public ApiResponse<?> updateOrderStatus(@Min(1) @PathVariable("orderId") Long orderId,
+                                            @RequestParam String status,
+                                            @RequestParam(required = false) String note) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully.",
-                orderService.changeOrderStatus(orderId, status));
+                orderService.changeOrderStatus(orderId, status, note));
     }
 }
