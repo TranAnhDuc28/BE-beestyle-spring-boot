@@ -125,6 +125,7 @@ public class InvoicePDFExporter {
                 System.out.println("Shipping address ID is null");
             }
 
+
 //            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
             String customerName = (order.getCustomerName() == null || order.getCustomerName().isEmpty())
