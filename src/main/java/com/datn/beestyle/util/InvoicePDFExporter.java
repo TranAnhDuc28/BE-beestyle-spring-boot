@@ -167,6 +167,7 @@ public class InvoicePDFExporter {
 
 
 // Header
+
             table.addHeaderCell("STT").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Tên sản phẩm").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Đơn giá").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
@@ -230,7 +231,7 @@ public class InvoicePDFExporter {
             // **6. Tổng tiền và các khoản khác**
 
             document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount)).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Giảm giá: "+ order.getVoucherId()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+            document.add(new Paragraph("Giảm giá: "+ order.getVoucherInfo()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
             document.add(new Paragraph("Phí ship: "+ order.getShippingFee()).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
             document.add(new Paragraph("Tổng hóa đơn: " + currencyFormatter.format(totalAmount))
                     .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
