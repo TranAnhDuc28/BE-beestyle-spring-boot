@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.management.RuntimeErrorException;
 import java.util.List;
 
 @Slf4j
@@ -104,5 +105,11 @@ public class CustomerService
                 .build();
     }
 
-
+    @Override
+    public CustomerResponse create(CreateCustomerRequest request) {
+        if(!customerRepository.existsByEmail(request.getEmail())){
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+        return super.create(request);
+    }
 }
