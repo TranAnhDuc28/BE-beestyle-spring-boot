@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class VoucherResponse {
-    Long id;
+    Integer id;
     String voucherName;
     String voucherCode;
     String discountType;
@@ -34,7 +34,7 @@ public class VoucherResponse {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-    public VoucherResponse(Long id, String voucherName, String voucherCode, Integer discountType,
+    public VoucherResponse(Integer id, String voucherName, String voucherCode, Integer discountType,
                            Integer discountValue, Integer maxDiscount, BigDecimal minOrderValue,
                            Timestamp startDate, Timestamp endDate, Integer usageLimit,
                            Integer usagePerUser, String note, Integer status,

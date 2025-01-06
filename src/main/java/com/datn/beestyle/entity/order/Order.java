@@ -4,6 +4,7 @@ import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.entity.product.ProductImage;
 import com.datn.beestyle.entity.user.Customer;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -61,6 +62,9 @@ public class Order extends Auditable<Long> {
 
     @Column(name = "order_tracking_number")
     String orderTrackingNumber;
+
+    @Column(name = "receiver_name")
+    String receiverName;
 
     @Column(name = "phone_number")
     String phoneNumber;

@@ -1,9 +1,7 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.order.item.PatchUpdateQuantityOrderItem;
 import com.datn.beestyle.dto.product.variant.PatchUpdateQuantityProductVariant;
-import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,9 +62,6 @@ public class ProductVariantController {
     public Optional<Object[]> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
         return productVariantService.getAllProductsWithDetails(productIds);
     }
-//    @GetMapping("/productVariant")
-//    public Optional<List<ProductVariantResponse>> getAllProductsWithDetails(@RequestParam List<Long> productIds) {
-//        return productVariantService.getAllProductsWithDetails(productIds);
 
     @PutMapping("/productVariant/update/{id}")
     public ApiResponse<?> updateProducrVariant(@Min(1) @PathVariable long id,
