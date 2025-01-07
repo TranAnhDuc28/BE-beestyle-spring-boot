@@ -184,7 +184,13 @@ public class InvoicePDFExporter {
                 table.addCell(String.valueOf(stt++)) // Thêm số thứ tự
                         .setTextAlignment(TextAlignment.CENTER)
                         .setFontSize(10);
-                table.addCell(orderItem.getProductName()).setFont(font).setFontSize(10);
+                String productName = orderItem.getProductName();
+                String productColor = orderItem.getColorName();
+                String productSize = orderItem.getSizeName();
+
+// Tạo chuỗi hiển thị
+                String displayText = String.format("%s / %s - %s", productName, productSize, productColor);
+                table.addCell(displayText).setFont(font).setFontSize(10);
 
                 // Sử dụng giá giảm nếu có, nếu không dùng giá bán
                 BigDecimal salePrice = (orderItem.getDiscountedPrice() != null && orderItem.getDiscountedPrice().compareTo(BigDecimal.ZERO) > 0)
