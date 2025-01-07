@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.authentication.jwt;
+package com.datn.beestyle.security.jwt;
 
 import com.datn.beestyle.entity.Token;
 import com.datn.beestyle.exception.ResourceNotFoundException;

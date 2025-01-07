@@ -1,5 +1,6 @@
 package com.datn.beestyle.security;
 
+import com.datn.beestyle.security.jwt.JwtService;
 import com.demo.service.JwtService;
 import com.demo.service.UserService;
 import io.micrometer.common.util.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.datn.beestyle.enums.TokenType.ACCESS_TOKEN;
 import static com.demo.enums.TokenType.ACCESS_TOKEN;
 
 @Component

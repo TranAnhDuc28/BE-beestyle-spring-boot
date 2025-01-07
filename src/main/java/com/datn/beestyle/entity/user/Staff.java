@@ -6,8 +6,13 @@ import com.datn.beestyle.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,13 +23,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Staff extends Auditable<Long> {
+public class Staff extends Auditable<Long> implements UserDetails {
 
     @Column(name = "full_name")
     String fullName;
-
-    @Column(name = "username")
-    String username;
 
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
@@ -45,20 +47,41 @@ public class Staff extends Auditable<Long> {
     @Column(name = "address")
     String address;
 
+    @Column(name = "username")
+    String username;
+
     @Column(name = "password")
     String password;
-
-    @Column(name = "status")
-    int status;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     Role role;
-//    @ManyToMany
-//    @JoinTable(name = "user_has_role",
-//            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-//            inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
-//    private Set<Role> roles = new HashSet<>();
 
+    @Column(name = "status")
+    int status;
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

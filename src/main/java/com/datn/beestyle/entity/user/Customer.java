@@ -8,8 +8,13 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +28,7 @@ import static jakarta.persistence.CascadeType.*;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Customer extends BaseEntity<Long> {
+public class Customer extends BaseEntity<Long> implements UserDetails {
 
     @Column(name = "full_name")
     String fullName;
@@ -41,12 +46,12 @@ public class Customer extends BaseEntity<Long> {
     @Column(name = "email")
     String email;
 
+    @Column(name = "password")
+    String password;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     Role role;
-
-    @Column(name = "password")
-    String password;
 
     @Column(name = "status")
     int status;
@@ -65,5 +70,35 @@ public class Customer extends BaseEntity<Long> {
             addresses.add(address);
             address.setCustomer(this); // save customer id
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("OWNER"));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.authentication;
+package com.datn.beestyle.security.authentication;
 
 import com.demo.dto.request.ResetPasswordDTO;
 import com.demo.dto.request.SignInRequest;

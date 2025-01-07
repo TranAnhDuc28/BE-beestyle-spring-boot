@@ -3,6 +3,8 @@ package com.datn.beestyle.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,25 +20,6 @@ public class ApplicationConfig {
         return new AuditAwareImpl<>();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001"));
-        config.setAllowedMethods(List.of("*")); // Allowed HTTP methods
-        config.setAllowedHeaders(List.of("*"));
-        source.registerCorsConfiguration("/**", config);
-//        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-//        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-//        return bean;
-        return new CorsFilter(source);
-    }
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

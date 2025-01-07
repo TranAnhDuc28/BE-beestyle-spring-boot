@@ -1,4 +1,4 @@
-package com.datn.beestyle.service.authentication.jwt;
+package com.datn.beestyle.security.jwt;
 
 import com.datn.beestyle.enums.TokenType;
 import org.springframework.security.core.userdetails.UserDetails;

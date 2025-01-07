@@ -1,7 +1,7 @@
-package com.datn.beestyle.service.authentication;
+package com.datn.beestyle.security.authentication;
 
-import com.datn.beestyle.service.authentication.jwt.JwtService;
-import com.datn.beestyle.service.authentication.jwt.TokenService;
+import com.datn.beestyle.security.jwt.JwtService;
+import com.datn.beestyle.security.jwt.TokenService;
 import com.demo.dto.request.ResetPasswordDTO;
 import com.demo.dto.request.SignInRequest;
 import com.demo.dto.response.TokenResponse;
