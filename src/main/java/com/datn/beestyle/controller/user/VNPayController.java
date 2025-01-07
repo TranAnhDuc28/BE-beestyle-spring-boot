@@ -1,6 +1,7 @@
 package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.dto.vnpay.PaymentRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,21 @@ public class VNPayController {
     private String vnp_ReturnUrl;
 
     @PostMapping("/create-payment")
-    public ResponseEntity<?> createPayment(@RequestBody PaymentRequest request) throws UnsupportedEncodingException {
+    public ResponseEntity<?> createPayment(
+            @RequestBody PaymentRequest request
+    ) throws UnsupportedEncodingException, JsonProcessingException {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_OrderInfo = "Thanh toan don hang: " + request.getOrderId();
         String vnp_OrderType = "billpayment";
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
         String vnp_IpAddr = request.getIpAddress();
-        String vnp_Amount = String.valueOf(request.getAmount() * 100);
+        Map<String, Object> combinedData = request.getCombinedData();
+        String amountStr = combinedData.get("totalAmount").toString();
+        Long amount = Long.parseLong(amountStr) * 100;
+        String vnp_Amount = String.valueOf(amount);
+
+        System.out.println(combinedData);
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
@@ -84,8 +92,12 @@ public class VNPayController {
         String paymentUrl = vnp_PayUrl + "?" + query.toString();
         return ResponseEntity.ok(Map.of("paymentUrl", paymentUrl));
     }
+
     @GetMapping("/return")
-    public void handleVNPayReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws IOException {
+    public void handleVNPayReturn(
+            @RequestParam Map<String, String> params,
+            HttpServletResponse response
+    ) throws IOException {
         // 1. Kiểm tra tính toàn vẹn của dữ liệu trả về
 //        if (!isValidVNPayResponse(params)) {
 //            // Redirect đến trang lỗi nếu dữ liệu không hợp lệ
@@ -99,7 +111,8 @@ public class VNPayController {
         // 3. Phân loại trạng thái giao dịch và redirect đến trang tương ứng
         if ("00".equals(vnp_ResponseCode)) {
             // Giao dịch thành công
-            response.sendRedirect("http://localhost:3000/vnpay/success");
+            String orderId = params.get("vnp_TxnRef");
+            response.sendRedirect("http://localhost:3000/vnpay/success?orderId=" + orderId);
         } else if ("24".equals(vnp_ResponseCode)) {
             // Người dùng hủy giao dịch
             response.sendRedirect("http://localhost:3000/vnpay/cancel");
@@ -107,7 +120,6 @@ public class VNPayController {
             // Các lỗi khác
             response.sendRedirect("http://localhost:3000/vnpay/error");
         }
-
     }
 
     private String HmacSHA512(String key, String data) {
