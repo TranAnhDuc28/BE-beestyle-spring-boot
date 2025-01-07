@@ -219,7 +219,7 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
-        if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+        if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
             throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
         }
         order.setShippingFee(new BigDecimal(0));
@@ -264,7 +264,7 @@ public class OrderService
 
         // xử lý list order item của hóa đơn
         List<OrderItem> orderItems = handleOrderItemsOnline(request.getOrderItems());
-        order.setOrderItems(orderItems);
+        orderItems.forEach(order::addOrderItem);
 
         return orderMapper.toEntityDto(orderRepository.save(order));
     }
