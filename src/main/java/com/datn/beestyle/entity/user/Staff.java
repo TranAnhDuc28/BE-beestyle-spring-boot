@@ -1,8 +1,8 @@
 package com.datn.beestyle.entity.user;
 
 import com.datn.beestyle.entity.Auditable;
-import com.datn.beestyle.entity.author.Role;
 import com.datn.beestyle.enums.Gender;
+import com.datn.beestyle.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -51,11 +51,14 @@ public class Staff extends Auditable<Long> {
     @Column(name = "status")
     int status;
 
-    @ManyToMany
-    @JoinTable(name = "user_has_role",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
-    private Set<Role> roles = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    Role role;
+//    @ManyToMany
+//    @JoinTable(name = "user_has_role",
+//            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+//            inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "name")})
+//    private Set<Role> roles = new HashSet<>();
 
 
 }

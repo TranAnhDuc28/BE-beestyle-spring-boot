@@ -1,7 +1,7 @@
 package com.datn.beestyle.controller.user;
 
 
-import com.datn.beestyle.service.ghtk.GhtkService;
+import com.datn.beestyle.service.ghtk.GHTKService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,12 +11,11 @@ import java.util.Map;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/ghtk")
-public class GhtkController {
+public class GHTKController {
 
+    private final GHTKService ghtkService;
 
-    private final GhtkService ghtkService;
-
-    public GhtkController(GhtkService ghtkService) {
+    public GHTKController(GHTKService ghtkService) {
         this.ghtkService = ghtkService;
     }
 

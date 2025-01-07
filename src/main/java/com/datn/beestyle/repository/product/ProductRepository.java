@@ -2,7 +2,6 @@ package com.datn.beestyle.repository.product;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.product.ProductResponse;
-import com.datn.beestyle.dto.product.user.UserProductResponse;
 import com.datn.beestyle.entity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,6 +59,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
+<<<<<<< HEAD
     boolean existsByProductName(String name);
 
     boolean existsByProductCode(String code);
@@ -84,53 +83,75 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
     )
     List<UserProductResponse> findAllProductUser();
 
+=======
+>>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                p.id,\s
-                p.productName,\s
-                pi.imageUrl,\s
-                min(pv.salePrice),\s
-                max(pv.originalPrice))
-            from Product p
-                inner join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
-                inner join ProductVariant pv on p.id = pv.product.id
-            where (:q is null or p.gender = :q)
-            group by p.id, p.productName, pi.imageUrl\s
-            """)
-    Page<UserProductResponse> getProductForUser(Pageable pageable, @Param("q") Integer q);
+            SELECT
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue
+            FROM product p
+            INNER JOIN product_variant pv ON p.id = pv.product_id
+            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE (:category IS NULL OR p.gender = :category)
+            GROUP BY p.id, p.product_name
+            ORDER BY RAND()
+            """,
+            countQuery = """
+                    SELECT COUNT(DISTINCT p.id)
+                    FROM product p
+                    LEFT JOIN product_variant pv ON p.id = pv.product_id
+                    LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+                    WHERE (:category IS NULL OR p.gender = :category)
+                    """,
+            nativeQuery = true)
+    Page<Object[]> getFeaturedProductsData(@Param("category") Integer category, Pageable pageable);
 
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                    p.id,\s
-                    p.productName,\s
-                    max(pi2.imageUrl),
-                    max(pv.salePrice),
-                    max(pv.originalPrice)
-            )
-            from OrderItem oi
-                inner join ProductVariant pv on oi.productVariant.id = pv.id
-                inner join Product p on p.id = pv.product.id
-                inner join ProductImage pi2 on pi2.product.id = p.id
-            group by p.id, p.productName
-            order by count(p.id) desc
-            """)
-    Page<UserProductResponse> getSellingProducts(Pageable pageable);
+            SELECT
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue
+            FROM product p
+            INNER JOIN product_variant pv ON p.id = pv.product_id
+            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            GROUP BY p.id, p.product_name
+            ORDER BY minDiscountedPrice asc
+            """,
+            nativeQuery = true)
+    Page<Object[]> getOfferingProductsData(Pageable pageable);
 
     @Query(value = """
-            select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                    p.id,\s
-                    p.productName,\s
-                    min(pi2.imageUrl),
-                    min(pv.salePrice),
-                    min(pv.originalPrice)
-            )
-            from Product p
-                inner join ProductVariant pv on p.id = pv.product.id
-                inner join ProductImage pi2 on pi2.product.id = p.id
-            group by p.id, p.productName
-            order by min(pv.salePrice) asc
-            """)
-    Page<UserProductResponse> getOfferingProducts(Pageable pageable);
+            SELECT
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue,
+                COUNT(oi.product_variant_id) AS totalProduct,
+                SUM(oi.quantity) AS totalQuantitySold,
+                pv.id AS productVariantId
+            FROM product p
+            INNER JOIN product_variant pv ON p.id = pv.product_id
+            INNER JOIN order_item oi ON pv.id = oi.product_variant_id
+            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            GROUP BY p.id, p.product_name, oi.product_variant_id
+            ORDER BY totalQuantitySold DESC, totalProduct DESC;
+            """,
+            nativeQuery = true)
+    Page<Object[]> getTopSellingProductsData(Pageable pageable);
 
+<<<<<<< HEAD
+=======
+    boolean existsByProductName(String name);
+
+    boolean existsByProductCode(String code);
+
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
+>>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 }

@@ -39,7 +39,7 @@ public class Address extends BaseEntity<Long> {
     String commune;
 
     @Column(name = "is_default")
-    boolean isDefault;
+    Boolean isDefault;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")

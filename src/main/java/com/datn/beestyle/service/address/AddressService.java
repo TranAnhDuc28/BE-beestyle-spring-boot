@@ -34,6 +34,60 @@ public class AddressService
         this.addressRepository = addressRepository;
     }
 
+    @Override
+    public PageResponse<?> getAllByCustomerId(Pageable pageable, Long customerId) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+
+
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "isDefault"));
+
+
+        Page<Address> addressPage = addressRepository.findByCustomerId(pageRequest, customerId);
+        List<AddressResponse> addressResponseList = mapper.toEntityDtoList(addressPage.getContent());
+
+        return PageResponse.builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(addressPage.getTotalElements())
+                .totalPages(addressPage.getTotalPages())
+                .items(addressResponseList)
+                .build();
+    }
+
+    public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
+        // Kiểm tra nếu yêu cầu đặt địa chỉ này làm mặc định
+        if (request.getIsDefault()) {
+            Address currentAddress = addressRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
+
+            // Nếu địa chỉ hiện tại chưa được đặt là mặc định, tiến hành cập nhật
+            if (!currentAddress.getIsDefault()) {
+                // Đặt các địa chỉ khác của khách hàng này thành không mặc định
+                addressRepository.updateIsDefaultFalseForOtherAddresses(currentAddress.getCustomer().getId(), id);
+
+                // Đặt địa chỉ hiện tại thành mặc định
+                currentAddress.setIsDefault(true);
+                return mapper.toEntityDto(addressRepository.save(currentAddress));  // Lưu và trả về AddressResponse
+            }
+        } else {
+            // Nếu không cần mặc định, chỉ cập nhật `isDefault` thành false
+            Address addressToUpdate = addressRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id));
+
+            addressToUpdate.setIsDefault(false); // Đảm bảo địa chỉ này không là mặc định
+
+            // Thực hiện cập nhật khác từ request (nếu cần thiết)
+            // addressToUpdate.setAddressName(request.getAddressName());
+
+            return mapper.toEntityDto(addressRepository.save(addressToUpdate));
+        }
+
+        // Nếu không cần cập nhật gì, trả về địa chỉ hiện tại đã ở trạng thái mặc định
+        return mapper.toEntityDto(addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + id)));
+    }
 
     @Override
     protected List<CreateAddressRequest> beforeCreateEntities(List<CreateAddressRequest> requests) {
@@ -51,7 +105,7 @@ public class AddressService
         boolean existsDefaultAddress = addressRepository.existsByCustomerIdAndIsDefaultTrue(request.getCustomer().getId());
 
         // Nếu chưa có bản ghi nào có isDefault = true, đặt isDefault của bản ghi mới là true
-        request.setDefault(!existsDefaultAddress);
+        request.setIsDefault(!existsDefaultAddress);
     }
 
     @Override
@@ -59,6 +113,7 @@ public class AddressService
 
     }
 
+<<<<<<< HEAD
 
     public AddressResponse setUpdateIsDefault(Long id, UpdateAddressRequest request) {
         // Kiểm tra nếu yêu cầu đặt địa chỉ này làm mặc định
@@ -94,6 +149,8 @@ public class AddressService
     }
 
 
+=======
+>>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
     @Override
     protected void afterConvertCreateRequest(CreateAddressRequest request, Address entity) {
 
@@ -106,9 +163,10 @@ public class AddressService
 
     @Override
     protected String getEntityName() {
-        return null;
+        return "Address";
     }
 
+<<<<<<< HEAD
     @Override
     public PageResponse<?> getAllByCustomerId(Pageable pageable, Long customerId) {
         int page = 0;
@@ -130,4 +188,6 @@ public class AddressService
                 .items(addressResponseList)
                 .build();
     }
+=======
+>>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 }

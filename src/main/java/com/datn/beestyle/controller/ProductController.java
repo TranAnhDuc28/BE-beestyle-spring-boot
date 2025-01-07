@@ -40,6 +40,7 @@ public class ProductController {
 
     @GetMapping("/filter")
     public ApiResponse<?> getProducts(Pageable pageable,
+                                      @RequestParam(required = false) String keyword,
                                       @RequestParam(required = false) String category,
                                       @RequestParam(required = false) String gender,
                                       @RequestParam(required = false) String brand,
@@ -48,7 +49,7 @@ public class ProductController {
                                       @RequestParam(required = false) BigDecimal maxPrice
     ) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Products filter",
-                productService.filterProductByStatusIsActive(pageable, category, gender, brand, material, minPrice, maxPrice));
+                productService.filterProductByStatusIsActive(pageable, keyword, category, gender, brand, material, minPrice, maxPrice));
     }
 
     @GetMapping("/search")

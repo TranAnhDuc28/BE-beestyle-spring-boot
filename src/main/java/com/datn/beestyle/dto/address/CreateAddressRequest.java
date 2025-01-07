@@ -22,7 +22,7 @@ public class CreateAddressRequest {
     Integer communeCode;
     String commune;
 
-    boolean isDefault;
+    Boolean isDefault;
 
     Customer customer;
 }

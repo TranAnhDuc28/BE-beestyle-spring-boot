@@ -1,5 +1,6 @@
 package com.datn.beestyle.service.scheduler;
 
+import com.datn.beestyle.dto.promotion.PromotionResponse;
 import com.datn.beestyle.entity.Promotion;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.DiscountStatus;
@@ -24,7 +25,7 @@ public class StatusUpdateScheduler {
         this.productVariantRepository = productVariantRepository;
     }
 
-//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+    @Scheduled(cron = "0 */30 * * * ?") // Chạy mỗi giờ
     public void updateStatuses() {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
@@ -33,9 +34,9 @@ public class StatusUpdateScheduler {
             if (currentTimestamp.before(promotion.getStartDate())) {
                 promotion.setStatus(DiscountStatus.UPCOMING.getValue());
             } else if (currentTimestamp.after(promotion.getEndDate())) {
-                promotion.setStatus(DiscountStatus.ENDED.getValue());
+                promotion.setStatus(DiscountStatus.EXPIRED.getValue());
             } else {
-                promotion.setStatus(DiscountStatus.ONGOING.getValue());
+                promotion.setStatus(DiscountStatus.ACTIVE.getValue());
             }
         }
         promotionRepository.saveAll(promotions);
@@ -46,22 +47,21 @@ public class StatusUpdateScheduler {
             if (currentTimestamp.before(voucher.getStartDate())) {
                 voucher.setStatus(DiscountStatus.UPCOMING.getValue());
             } else if (currentTimestamp.after(voucher.getEndDate())) {
-                voucher.setStatus(DiscountStatus.ENDED.getValue());
+                voucher.setStatus(DiscountStatus.EXPIRED.getValue());
             } else {
-                voucher.setStatus(DiscountStatus.ONGOING.getValue());
+                voucher.setStatus(DiscountStatus.ACTIVE.getValue());
             }
         }
         voucherRepository.saveAll(vouchers);
     }
-//    @Scheduled(cron = "0 0 * * * ?") // Chạy mỗi giờ
+    @Scheduled(cron = "0 */30 * * * ?") // Chạy mỗi giờ
     public void checkAndExpirePromotions() {
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        List<Promotion> endedPromotions = promotionRepository.findEndedPromotions(currentTimestamp);
+        List<PromotionResponse> endedPromotions = promotionRepository.findEndedPromotions(currentTimestamp);
 
-        for (Promotion promotion : endedPromotions) {
-
-            productVariantRepository.updateProductVariantToNullByPromotionId(promotion.getId());
+        for (PromotionResponse promotionResponse : endedPromotions) {
+            productVariantRepository.updateProductVariantToNullByPromotionId(promotionResponse.getId());
         }
     }
 }

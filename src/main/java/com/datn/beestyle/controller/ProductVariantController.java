@@ -1,7 +1,6 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.order.item.PatchUpdateQuantityOrderItem;
 import com.datn.beestyle.dto.product.variant.PatchUpdateQuantityProductVariant;
 import com.datn.beestyle.dto.product.variant.UpdateProductVariantRequest;
 import com.datn.beestyle.service.product.variant.ProductVariantService;
@@ -71,24 +70,13 @@ public class ProductVariantController {
                 productVariantService.update(id, request));
     }
 
-    //    @PatchMapping("/updates")
-//    public ApiResponse<?> updateProductVariant(@RequestBody List<@Valid UpdateProductVariantRequest> requestList) {
-//        iProductVariantService.updateEntities(requestList);
-//        return new ApiResponse<>(HttpStatus.CREATED.value(), "ProductVariant cập nhật thành công");
-//    }
-
     @PutMapping("/productVariant/updates")
     public ResponseEntity<ApiResponse<String>> updateProductVariantCreate(@Valid @RequestBody UpdateProductVariantRequest request) {
         System.out.println(request);
         productVariantService.updateProductVariantCreate(request.getPromotionId(), request.getVariantIds());
         return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
     }
-    //    @PutMapping("/productVariant/updatess")
-//    public ResponseEntity<ApiResponse<String>> updateProductVariantUpdate(@Valid @RequestBody UpdateProductVariantRequest request) {
-//        System.out.println(request);
-//        productVariantService.updateProductVariantUpdate(request.getPromotionId(), request.getVariantIds());
-//        return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(HttpStatus.OK.value(), "Sửa chi tiết sản phẩm thành công!"));
-//    }
+
     @GetMapping("/products/{promotionId}")
     public ResponseEntity<Map<String, List<Long>>> getProductsByPromotionId(@PathVariable Long promotionId) {
         Map<String, List<Long>> productAndDetailIds = productVariantService.getProductAndDetailIdsByPromotionId(promotionId);
@@ -101,9 +89,9 @@ public class ProductVariantController {
 
         try {
             productVariantService.removePromotionFromNonSelectedVariants(promotionId, ids);
-            return ResponseEntity.ok().build(); // Trả về 200 OK nếu thành công
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // Trả về 500 nếu có lỗi
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

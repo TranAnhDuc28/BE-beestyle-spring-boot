@@ -1,7 +1,11 @@
 package com.datn.beestyle.dto.order;
 
+import com.datn.beestyle.dto.address.AddressResponse;
+import com.datn.beestyle.dto.customer.CustomerResponse;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
+import com.datn.beestyle.enums.OrderType;
 import com.datn.beestyle.enums.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -22,16 +26,24 @@ public class OrderResponse {
     String orderTrackingNumber;
     Long customerId;
     String customerName;
+    CustomerResponse customerInfo;
     Integer voucherId;
+<<<<<<< HEAD
     String voucherName;
     Long addressId;
     String shippingAddress;
+=======
+    VoucherResponse voucherInfo;
+    Long shippingAddressId;
+    AddressResponse shippingAddress;
+>>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
     String phoneNumber;
     BigDecimal shippingFee;
     BigDecimal totalAmount;
     Timestamp paymentDate;
     String paymentMethod;
     String orderChannel;
+    String orderType;
     String orderStatus;
     String note;
     LocalDateTime createdAt;
@@ -67,7 +79,8 @@ public class OrderResponse {
 
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
                          BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
-                         Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
+                         Integer orderType, Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
+                         Long createdBy, Long updatedBy) {
         this.id = id;
         this.orderTrackingNumber = orderTrackingNumber;
         this.customerId = customerId;
@@ -77,6 +90,7 @@ public class OrderResponse {
         this.paymentDate = paymentDate;
         this.paymentMethod = PaymentMethod.fromInteger(paymentMethod);
         this.orderChannel = OrderChannel.fromInteger(orderChannel);
+        this.orderType = OrderType.fromInteger(orderType);
         this.orderStatus = OrderStatus.fromInteger(orderStatus);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -84,11 +98,13 @@ public class OrderResponse {
         this.updatedBy = updatedBy;
     }
 
-    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, Integer orderChannel, Integer orderStatus) {
+    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, Integer orderChannel, Integer orderType,
+                         Integer orderStatus) {
         this.id = id;
         this.orderTrackingNumber = orderTrackingNumber;
         this.customerId = customerId;
         this.orderChannel = OrderChannel.fromInteger(orderChannel);
+        this.orderType = OrderType.fromInteger(orderType);
         this.orderStatus = OrderStatus.fromInteger(orderStatus);
     }
 }
