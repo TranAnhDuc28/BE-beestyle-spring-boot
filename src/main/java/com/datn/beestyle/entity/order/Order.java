@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.product.ProductImage;
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -82,6 +83,9 @@ public class Order extends Auditable<Long> {
     @Column(name = "payment_method")
     int paymentMethod;
 
+    @Column(name = "is_prepaid")
+    boolean isPrepaid;
+
     @Column(name = "order_channel")
     int orderChannel;
 
@@ -110,4 +114,13 @@ public class Order extends Auditable<Long> {
     @OneToMany(mappedBy = "order", cascade = ALL, fetch = FetchType.LAZY)
     List<OrderItem> orderItems = new ArrayList<>();
 
+    public void addOrderItem(OrderItem orderItem) {
+        if (orderItem != null) {
+            if (orderItems == null) {
+                orderItems = new ArrayList<>();
+            }
+            orderItems.add(orderItem);
+            orderItem.setOrder(this);
+        }
+    }
 }

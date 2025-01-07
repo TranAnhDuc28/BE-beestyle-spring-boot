@@ -42,7 +42,7 @@ public class UpdateOrderRequest {
     @Min(value = 0, message = "Total amount is not valid.")
     BigDecimal totalAmount;
 
-    @Min(value = 0, message = "Total amount is not valid.")
+    @Min(value = 0, message = "Amount paid is not valid.")
     BigDecimal amountPaid;
 
     @EnumValue(enumClass = PaymentMethod.class, name = "PaymentMethod", message = "Phương thức thanh toán không hợp lệ.")
@@ -58,8 +58,6 @@ public class UpdateOrderRequest {
     String orderStatus;
 
     Long shippingAddressId;
-
-    String shippingAddressJson;
 
     String note;
 }
