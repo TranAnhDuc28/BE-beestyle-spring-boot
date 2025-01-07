@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ import java.util.List;
 
 import java.util.Optional;
 
-
+@Repository
 public interface ProductVariantRepository extends IGenericRepository<ProductVariant, Long> {
 
     @Query(value = """
@@ -85,7 +86,6 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "WHERE pv.product.id in :productIds")
     List<ProductVariantResponse> findAllProductsWithDetails(@Param("productIds") List<Long> productIds);
 
-
     @Modifying
     @Transactional
     @Query("update ProductVariant pv set pv.promotion.id = :promotionId where pv.id in :ids")
@@ -108,59 +108,16 @@ public interface ProductVariantRepository extends IGenericRepository<ProductVari
             "AND pv.promotion.id = :promotionId")
     List<Object[]> findProductAndDetailIdsByPromotionId(Long promotionId);
 
-    @Query(
-            value = """
-                        select distinct
-                            p.id as id, p.product_code as productCode,
-                        	p.product_name as productName, pv.sale_price as salePrice, 
-                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
-                        	pm.discount_value as discountValue, 
-                        	pv.sku as sku, c.category_name as categoryName, 
-                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
-                        	cl.color_code as colorCode, cl.color_name as colorName,
-                        	s.size_name as sizeName, p.description as description
-                        from product_variant pv
-                        inner join product p on p.id = pv.product_id
-                        inner join category c on c.id = p.category_id
-                        inner join brand b on p.brand_id = b.id 
-                        inner join color cl on cl.id = pv.color_id 
-                        inner join size s on s.id = pv.size_id
-                        left join promotion pm on pv.promotion_id = pm.id
-                        where pv.product_id = :productId
-                        	and (:colorCode is null or cl.color_code like :colorCode)
-                        	and (:sizeId is null or s.id = :sizeId)
-                        limit 1
-                    """,
-            nativeQuery = true
-    )
-    List<Object[]> getProductVariantData(
-            @Param("productId") Long productId,
-            @Param("colorCode") String colorCode,
-            @Param("sizeId") Long sizeId
+    @Query(nativeQuery = true, name = "ProductVariant.getProductVariantData")
+    List<ProductVariantResponse> findProductVariantData(
+            @Param("product_id") Long productId,
+            @Param("color_code") String colorCode,
+            @Param("size_id") Long sizeId
     );
 
-    @Query(
-            value = """
-                        select distinct
-                            pv.id as id, p.id as productId, p.product_code as productCode,
-                        	p.product_name as productName, pv.sale_price as salePrice,
-                        	pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountedPrice,
-                        	pm.discount_value as discountValue,
-                        	pv.sku as sku, c.category_name as categoryName,
-                        	b.brand_name, pv.quantity_in_stock as quantityInStock,
-                        	cl.color_code as colorCode, cl.color_name as colorName,
-                        	s.size_name as sizeName, p.description as description
-                        from product_variant pv
-                        inner join product p on p.id = pv.product_id
-                        inner join category c on c.id = p.category_id
-                        inner join brand b on p.brand_id = b.id
-                        inner join color cl on cl.id = pv.color_id
-                        inner join size s on s.id = pv.size_id
-                        left join promotion pm on pv.promotion_id = pm.id
-                        where pv.id in (:productVariantIds)
-                    """,
-            nativeQuery = true
-    )
-    List<Object[]> getProductVariantDataByIds(@Param("productVariantIds") List<Long> productVariantIds);
+    @Query(nativeQuery = true, name = "ProductVariant.getProductVariantDataByIds")
+    List<ProductVariantResponse> findProductVariantIds(
+            @Param("productVariantIds") List<Long> productVariantIds
+    );
 
 }
