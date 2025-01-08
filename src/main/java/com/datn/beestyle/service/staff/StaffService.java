@@ -59,7 +59,23 @@ public class StaffService
 
     @Override
     protected void beforeUpdate(Integer id, UpdateStaffRequest request) {
+        Staff existingStaff = staffRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhân viên với ID: " + id));
 
+        if (!existingStaff.getEmail().equals(request.getEmail()) &&
+                staffRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+
+        if (!existingStaff.getUsername().equals(request.getUsername()) &&
+                staffRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username đã được đăng kí");
+        }
+
+        if (!existingStaff.getPhoneNumber().equals(request.getPhoneNumber()) &&
+                staffRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+        }
     }
 
     @Override
@@ -111,6 +127,12 @@ public class StaffService
     public StaffResponse create(CreateStaffRequest request) {
         if (staffRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email đã tồn tại");
+        }
+        if(staffRepository.existsByUsername(request.getUsername())){
+            throw new IllegalArgumentException("Username đã được đăng kí");
+        }
+        if(staffRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
         }
 
         // Tạo mật khẩu ngẫu nhiên và gán vào request

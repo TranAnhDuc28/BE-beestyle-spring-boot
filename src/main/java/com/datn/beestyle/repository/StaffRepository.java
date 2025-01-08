@@ -24,4 +24,6 @@ public interface StaffRepository extends IGenericRepository<Staff,Integer> {
                                                           @Param("gender") Integer gender, @Param("keyword") String keyword);
 
     boolean existsByEmail(String email);
+    boolean existsByUsername(String userName);
+    boolean existsByPhoneNumber(String phoneNumber);
 }

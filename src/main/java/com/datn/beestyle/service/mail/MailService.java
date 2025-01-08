@@ -1,6 +1,10 @@
 package com.datn.beestyle.service.mail;
 
+import com.datn.beestyle.dto.order.OrderResponse;
+import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
+import com.datn.beestyle.repository.CustomerRepository;
+import com.datn.beestyle.repository.OrderRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -15,6 +19,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -24,6 +29,8 @@ public class MailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
 
     @Value("${spring.mail.from}")
     private String emailFrom;
@@ -67,12 +74,21 @@ public class MailService {
             throw new RuntimeException("Failed to send email", e);
         }
     }
-    public String sendThankYouEmail(String recipient, String customerName,MultipartFile[] files) throws MessagingException {
+    public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
 
+        List<OrderResponse> listOrder = orderRepository.findOrderById(id);
+        if (listOrder == null || listOrder.isEmpty()) {
+            throw new IllegalArgumentException("Không có hóa đơn với ID: " + id);
+        }
+        // Lấy ra order
+        OrderResponse order = listOrder.get(0);
+        Customer customer = customerRepository.getReferenceById(order.getCustomerId());
         try {
+
+
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
-            context.setVariable("customerName", customerName);
+            context.setVariable("customerName", order.getCustomerName());
 
             // Xử lý template để tạo nội dung HTML
             String htmlContent = templateEngine.process("thankYouEmail", context);
@@ -89,7 +105,7 @@ public class MailService {
                 }
             }
             helper.setFrom(emailFrom, "Beestyle");
-            helper.setTo(recipient);
+            helper.setTo(customer.getEmail());
             helper.setSubject("Thank You for Your Purchase!");
             helper.setText(htmlContent, true);
 
@@ -98,7 +114,7 @@ public class MailService {
             return "Email sent successfully";
         }
         catch (MessagingException | UnsupportedEncodingException e) {
-            log.error("Error sending email to {}: {}", recipient, e.getMessage(), e);
+            log.error("Error sending email to {}: {}", customer.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email", e);
         }
     }

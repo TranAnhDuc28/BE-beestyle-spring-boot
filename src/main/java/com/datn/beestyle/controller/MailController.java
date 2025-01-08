@@ -30,9 +30,9 @@ public class MailController {
     }
 
     @PostMapping("/send-thanhYou-mail")
-    public ApiResponse<?> sendThankYouEmail(@RequestParam String recipient, @RequestParam String customerName,@RequestParam(required = false) MultipartFile[] files){
+    public ApiResponse<?> sendThankYouEmail(@RequestParam Long id, @RequestParam(required = false) MultipartFile[] files){
         try {
-            return new ApiResponse<>(HttpStatus.OK.value(), mailService.sendThankYouEmail(recipient,customerName,files));
+            return new ApiResponse<>(HttpStatus.OK.value(), mailService.sendThankYouEmail(id,files));
         }catch (Exception e){
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }

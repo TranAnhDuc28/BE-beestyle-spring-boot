@@ -22,6 +22,7 @@ public interface CustomerRepository extends IGenericRepository<Customer, Long> {
                                                              @Param("status") Integer status,
                                                              @Param("gender") Integer gender,
                                                              @Param("keyword") String keyword);
+
 }
 
 
