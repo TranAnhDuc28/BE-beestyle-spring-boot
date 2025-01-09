@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -177,4 +178,45 @@ public class GlobalExceptionHandler {
 
         return errorResponse;
     }
+
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "409", description = "Conflict",
+                    content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(
+                                    name = "409 Response",
+                                    summary = "Handle Duplicate Entry",
+                                    value = """
+                                        {
+                                            "timestamp": "2023-10-19T06:35:52.333+00:00",
+                                            "status": 409,
+                                            "path": "/api/v1/admin/customer/create",
+                                            "error": "Conflict",
+                                            "message": "Dữ liệu đã tồn tại. Vui lòng kiểm tra lại."
+                                        }
+                                        """
+                            ))})
+    })
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e, WebRequest request) {
+        ErrorResponse errorResponse;
+
+        // Kiểm tra thông báo lỗi xem có liên quan đến ràng buộc unique (duplicate entry)
+        if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry")) {
+            String message = "Dữ liệu đã tồn tại. Vui lòng kiểm tra lại.";
+            errorResponse = this.createErrorResponse(HttpStatus.CONFLICT, message, request);
+            errorResponse.setError("Conflict");
+        } else {
+            String message = "Lỗi vi phạm ràng buộc dữ liệu.";
+            errorResponse = this.createErrorResponse(HttpStatus.BAD_REQUEST, message, request);
+            errorResponse.setError("Bad Request");
+        }
+
+        log.error("Path: {} - Msg error: {}", errorResponse.getPath(), errorResponse.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse);
+
+    }
+
+
+
 }

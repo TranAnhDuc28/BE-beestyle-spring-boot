@@ -11,6 +11,8 @@ import com.datn.beestyle.dto.staff.UpdateStaffRequest;
 import com.datn.beestyle.entity.user.Staff;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.DuplicateEmailException;
+import com.datn.beestyle.repository.CustomerRepository;
 import com.datn.beestyle.repository.StaffRepository;
 import com.datn.beestyle.service.mail.MailService;
 import jakarta.persistence.EntityManager;
@@ -32,13 +34,15 @@ public class StaffService
     implements IStaffService{
 
     private final StaffRepository staffRepository;
+    private final CustomerRepository customerRepository;
     private final MailService mailService;
 
     public StaffService(IGenericRepository<Staff, Integer> entityRepository, IGenericMapper<Staff, CreateStaffRequest,
             UpdateStaffRequest, StaffResponse> mapper, EntityManager entityManager,
-                        StaffRepository staffRepository, MailService mailService) {
+                        StaffRepository staffRepository, CustomerRepository customerRepository, MailService mailService) {
         super(entityRepository, mapper, entityManager);
         this.staffRepository = staffRepository;
+        this.customerRepository = customerRepository;
         this.mailService = mailService;
     }
 
@@ -63,7 +67,7 @@ public class StaffService
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhân viên với ID: " + id));
 
         if (!existingStaff.getEmail().equals(request.getEmail()) &&
-                staffRepository.existsByEmail(request.getEmail())) {
+                (staffRepository.existsByEmail(request.getEmail()) || customerRepository.existsByEmail(request.getEmail()) )) {
             throw new IllegalArgumentException("Email đã tồn tại");
         }
 
@@ -125,11 +129,11 @@ public class StaffService
 
     @Override
     public StaffResponse create(CreateStaffRequest request) {
-        if (staffRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email đã tồn tại");
+        if (staffRepository.existsByEmail(request.getEmail()) || customerRepository.existsByEmail(request.getEmail()) ) {
+            throw new DuplicateEmailException("Email đã được đăng kí.");
         }
         if(staffRepository.existsByUsername(request.getUsername())){
-            throw new IllegalArgumentException("Username đã được đăng kí");
+            throw new IllegalArgumentException("Username đã được đăng kí.");
         }
         if(staffRepository.existsByPhoneNumber(request.getPhoneNumber())){
             throw new IllegalArgumentException("Số điện thoại đã được đăng kí");

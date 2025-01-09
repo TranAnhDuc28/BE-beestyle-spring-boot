@@ -152,4 +152,38 @@ public class MailService {
             throw new RuntimeException("Failed to send email", e);
         }
     }
+
+    public String sendLoginCustomerEmail(Customer customer) throws MessagingException {
+
+        try {
+            // Tạo dữ liệu gửi vào template
+            Context context = new Context();
+            context.setVariable("customerName", customer.getFullName());
+            context.setVariable("email", customer.getEmail());
+            context.setVariable("password", customer.getPassword());
+            context.setVariable("loginUrl", "http://localhost:3000/login");
+
+
+
+            // Xử lý template để tạo nội dung HTML
+            String htmlContent = templateEngine.process("loginCustomerEmail", context);
+
+            // Tạo và cấu hình email
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(emailFrom, "Beestyle");
+            helper.setTo(customer.getEmail());
+            helper.setSubject("Wellcome to Beestyle!");
+            helper.setText(htmlContent, true);
+
+            // Gửi email
+            mailSender.send(message);
+            return "Email sent successfully";
+        }
+        catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Error sending email to {}: {}", customer.getEmail(), e.getMessage(), e);
+            throw new RuntimeException("Failed to send email", e);
+        }
+    }
 }
