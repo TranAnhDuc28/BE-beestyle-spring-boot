@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
+import com.datn.beestyle.validation.PhoneNumber;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -28,6 +29,7 @@ public class UpdateCustomerRequest {
     String gender;
 
     @NotBlank(message = "Không được để trống số điện thoại")
+            @PhoneNumber(message = "Số điện thoại không đung")
     String phoneNumber;
 
     String email;

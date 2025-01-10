@@ -3,6 +3,7 @@ package com.datn.beestyle.dto.customer;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import java.util.Set;
 public class CreateCustomerRequest {
 
 
+    @NotNull(message = "Không được để trống tên")
     String fullName;
 
 
