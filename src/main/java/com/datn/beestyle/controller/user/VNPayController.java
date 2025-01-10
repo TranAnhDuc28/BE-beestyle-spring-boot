@@ -1,9 +1,14 @@
 package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.config.VNPayConfig;
+import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.vnpay.PaymentRequest;
+import com.datn.beestyle.service.order.IOrderService;
 import com.datn.beestyle.util.AppUtils;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,33 +85,18 @@ public class VNPayController extends VNPayConfig {
             @RequestParam Map<String, String> params,
             HttpServletResponse response
     ) throws IOException {
-        // 1. Kiểm tra tính toàn vẹn của dữ liệu trả về
-//        if (!isValidVNPayResponse(params)) {
-//            // Redirect đến trang lỗi nếu dữ liệu không hợp lệ
-//            response.sendRedirect("http://localhost:3000/vnpay/error");
-//            return;
-//        }
-
-        // 2. Lấy mã phản hồi từ VNPay
         String vnp_ResponseCode = params.get("vnp_ResponseCode");
+        String trackingNumber = params.get("vnp_TxnRef");
+        String redirectUrl = "http://localhost:3000/order/confirm?";
 
-        // 3. Phân loại trạng thái giao dịch và redirect đến trang tương ứng
         if ("00".equals(vnp_ResponseCode)) {
-            // Giao dịch thành công
-            String orderNumber = params.get("vnp_TxnRef");
-            response.sendRedirect("http://localhost:3000/vnpay/success?order=" + orderNumber);
+            redirectUrl += "vnp_ResponseCode=00&vnp_TxnRef=" + trackingNumber;
         } else if ("24".equals(vnp_ResponseCode)) {
-            // Người dùng hủy giao dịch
-            response.sendRedirect("http://localhost:3000/vnpay/cancel");
+            redirectUrl += "vnp_ResponseCode=24";
         } else {
-            // Các lỗi khác
-            response.sendRedirect("http://localhost:3000/vnpay/error");
+            redirectUrl += "vnp_ResponseCode=" + vnp_ResponseCode;
         }
-    }
 
-    @PostMapping("/success")
-    public ResponseEntity<?> paymentSuccess(@RequestBody Map<String, Object> pendingOrderData) {
-        System.out.println(pendingOrderData.toString());
-        return ResponseEntity.ok().body(pendingOrderData);
+        response.sendRedirect(redirectUrl);
     }
 }

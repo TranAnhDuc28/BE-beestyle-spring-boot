@@ -238,7 +238,7 @@ public class StatisticsRepositoryImpl {
                 case "year":
                     return String.valueOf(LocalDate.now().getYear()); // Năm hiện tại
                 case "range":
-                    return LocalDate.now().toString() + "," + LocalDate.now().toString(); // Hôm nay
+                    return LocalDate.now() + "," + LocalDate.now(); // Hôm nay
             }
         }
         return periodValue;

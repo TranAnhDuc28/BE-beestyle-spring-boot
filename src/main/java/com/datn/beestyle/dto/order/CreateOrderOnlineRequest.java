@@ -1,22 +1,25 @@
 package com.datn.beestyle.dto.order;
 
+import com.datn.beestyle.dto.order.item.CreateOrderItemOnlineRequest;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.OrderType;
 import com.datn.beestyle.enums.PaymentMethod;
 import com.datn.beestyle.validation.EnumValue;
 import com.datn.beestyle.validation.PhoneNumber;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
-@Builder
-@ToString
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateOrderOnlineRequest {
     Long customerId;
@@ -28,8 +31,16 @@ public class CreateOrderOnlineRequest {
     @PhoneNumber(message = "Số điện thoại không hợp lệ.")
     String phoneNumber;
 
+    @Min(value = 0, message = "Original amount is not valid.")
+    BigDecimal originalAmount;
+
+    @Min(value = 0, message = "Discount amount is not valid.")
+    BigDecimal discountAmount;
+
+    @Min(value = 0, message = "Shipping fee is not valid (value >= 0).")
     BigDecimal shippingFee;
 
+    @Min(value = 0, message = "Discount amount is not valid.")
     BigDecimal totalAmount;
 
     @EnumValue(enumClass = OrderChannel.class, name = "OrderChannel", message = "Invalid value for Order channel")
@@ -46,9 +57,9 @@ public class CreateOrderOnlineRequest {
 
     Boolean isPrepaid;
 
-    Long shippingAddressId;
-
     String shippingAddress;
 
     String note;
+
+    List<CreateOrderItemOnlineRequest> orderItems = new ArrayList<>();
 }
