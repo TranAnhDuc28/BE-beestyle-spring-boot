@@ -4,6 +4,7 @@ import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.BaseEntity;
 import com.datn.beestyle.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,6 +28,7 @@ import static jakarta.persistence.CascadeType.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Customer extends BaseEntity<Long> implements UserDetails {
 
@@ -100,5 +102,14 @@ public class Customer extends BaseEntity<Long> implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Customer(Long id, String fullName, LocalDate dateOfBirth, int gender, String email, Role role) {
+        super(id);
+        this.fullName = fullName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.email = email;
+        this.role = role;
     }
 }

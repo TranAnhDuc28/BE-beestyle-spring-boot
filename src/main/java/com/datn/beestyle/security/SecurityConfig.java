@@ -1,10 +1,8 @@
 package com.datn.beestyle.security;
 
-import com.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,10 +36,20 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final PreFilter preFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    private String[] WHITE_LIST = {"/auth/**"};
+    // những URL không bị chặn bởi security
+    private final String[] WHITE_LIST = {
+            "/auth/**",
+            "/product/**",
+            "/admin/product/filter",
+            "/admin/category/category-options",
+            "/admin/brand/brand-options",
+            "/admin/material/material-options",
+            "/admin/voucher/findByTotalAmount"
+    };
 
 
     @Bean
@@ -54,17 +62,23 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequest ->
-                        authorizeRequest.requestMatchers(WHITE_LIST).permitAll().anyRequest().authenticated())
+                        authorizeRequest
+                                .requestMatchers(WHITE_LIST).permitAll()
+//                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                .anyRequest().permitAll())
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(STATELESS)) // STATELESS: k lưu token ở phía server
-                .authenticationProvider(provider()).addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
+                        httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(jwtAuthenticationEntryPoint));
         return httpSecurity.build();
     }
 
     @Bean
-    public AuthenticationProvider provider() {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService.userDetailsService());
+        provider.setUserDetailsService(userDetailsServiceImpl);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
@@ -94,8 +108,8 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Allowed HTTP methods
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001"));
+        config.setAllowedMethods(List.of("*")); // Allowed HTTP methods
         config.setAllowedHeaders(List.of("*"));
         source.registerCorsConfiguration("/**", config);
 //        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
@@ -106,8 +120,6 @@ public class SecurityConfig {
 
     @Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
-
-
         return new GrantedAuthorityDefaults("");
     }
 }

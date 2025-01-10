@@ -59,32 +59,12 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("materialIds") List<Integer> materialIds,
                                           @Param("status") Integer status);
 
-<<<<<<< HEAD
+
     boolean existsByProductName(String name);
 
     boolean existsByProductCode(String code);
 
     Optional<Product> findByProductNameAndIdNot(String productName, Long id);
-
-    @Query(
-            value = """
-                    select new com.datn.beestyle.dto.product.user.UserProductResponse(
-                        p.id,
-                        p.productName,
-                        pi.imageUrl,
-                        pv.salePrice,
-                        pv.originalPrice
-                    )
-                    from Product p
-                    left join ProductImage pi on p.id = pi.product.id and pi.isDefault = true
-                    left join ProductVariant pv on p.id = pv.product.id
-                    order by p.productName asc
-                    """
-    )
-    List<UserProductResponse> findAllProductUser();
-
-=======
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 
     @Query(value = """
             SELECT
@@ -145,13 +125,4 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             """,
             nativeQuery = true)
     Page<Object[]> getTopSellingProductsData(Pageable pageable);
-
-<<<<<<< HEAD
-=======
-    boolean existsByProductName(String name);
-
-    boolean existsByProductCode(String code);
-
-    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 }

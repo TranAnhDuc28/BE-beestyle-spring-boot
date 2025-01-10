@@ -5,6 +5,7 @@ import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +20,9 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateCustomerRequest {
 
-
     String fullName;
 
-
     LocalDate dateOfBirth;
-
 
     String gender;
 
@@ -33,11 +31,10 @@ public class CreateCustomerRequest {
 
     String email;
 
+    @Size(min = 5, max = 10, message = "")
     String password;
 
 //    ShoppingCart shoppingCart;
 
     Set<Address> addresses = new HashSet<>();
-
-
 }

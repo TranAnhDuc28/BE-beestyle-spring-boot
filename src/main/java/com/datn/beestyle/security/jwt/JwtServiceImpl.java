@@ -36,21 +36,42 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.resetKey}")
     private String resetKey;
 
+    /**
+     * tạo ACCESS_TOKEN
+     * @param userDetails
+     * @return
+     */
     @Override
     public String generateAccessToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, ACCESS_TOKEN);
     }
 
+    /**
+     * tạo REFRESH_TOKEN
+     * @param userDetails
+     * @return
+     */
     @Override
     public String generateRefreshToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, REFRESH_TOKEN);
     }
 
+    /**
+     * tạo RESET_TOKEN
+     * @param userDetails
+     * @return
+     */
     @Override
     public String generateResetToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails, RESET_TOKEN);
     }
 
+    /**
+     * Giải mã token lấy Username
+     * @param token
+     * @param type
+     * @return
+     */
     @Override
     public String extractUsername(String token, TokenType type) {
         return extractClaim(token, type, Claims::getSubject);
@@ -84,9 +105,9 @@ public class JwtServiceImpl implements JwtService {
     private Key getKey(TokenType type) {
         byte[] key;
         if (ACCESS_TOKEN.equals(type)) {
-            key = Decoders.BASE64.decode(refreshKey);
-        } else if (REFRESH_TOKEN.equals(type)) {
             key = Decoders.BASE64.decode(accessKey);
+        } else if (REFRESH_TOKEN.equals(type)) {
+            key = Decoders.BASE64.decode(refreshKey);
         } else {
             key = Decoders.BASE64.decode(resetKey);
         }
@@ -106,6 +127,12 @@ public class JwtServiceImpl implements JwtService {
                 .getBody();
     }
 
+    /**
+     * kiểm tra token đã hết hạn chưa
+     * @param token
+     * @param type
+     * @return
+     */
     private boolean isTokenExpired(String token, TokenType type) {
         return extractExpiration(token, type).before(new Date());
     }

@@ -1,6 +1,5 @@
 package com.datn.beestyle.security.jwt;
 
-import com.datn.beestyle.entity.Token;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import com.datn.beestyle.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,26 +11,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final TokenRepository tokenRepository;
+//    private final TokenRepository tokenRepository;
 
-    public int save(Token token) {
-        Optional<Token> tokenOptional = tokenRepository.findByUsername(token.getUsername());
-        if (tokenOptional.isEmpty()) {
-            return tokenRepository.save(token).getId();
-        }
-        Token currentToken = tokenOptional.get();
-        currentToken.setAccessToken(token.getAccessToken());
-        currentToken.setRefreshToken(token.getRefreshToken());
-        return tokenRepository.save(currentToken).getId();
-    }
-
-    public String delete(Token token) {
-        tokenRepository.delete(token);
-        return "Deleted";
-    }
-
-    public Token getByUsername(String username) {
-        return tokenRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Token not exists"));
-    }
+//    public int save(Token token) {
+//        Optional<Token> tokenOptional = tokenRepository.findByUsername(token.getUsername());
+//        if (tokenOptional.isEmpty()) {
+//            return tokenRepository.save(token).getId();
+//        }
+//        Token currentToken = tokenOptional.get();
+//        currentToken.setAccessToken(token.getAccessToken());
+//        currentToken.setRefreshToken(token.getRefreshToken());
+//        return tokenRepository.save(currentToken).getId();
+//    }
+//
+//    public String delete(Token token) {
+//        tokenRepository.delete(token);
+//        return "Deleted";
+//    }
+//
+//    public Token getByUsername(String username) {
+//        return tokenRepository.findByUsername(username)
+//                .orElseThrow(() -> new ResourceNotFoundException("Token not exists"));
+//    }
 }

@@ -20,12 +20,6 @@ public class AddressResponse {
     String district;
     Integer communeCode;
     String commune;
-<<<<<<< HEAD
-
     Boolean isDefault;
 
-    Customer customer;
-=======
-    Boolean isDefault;
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 }

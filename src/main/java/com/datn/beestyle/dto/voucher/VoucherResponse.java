@@ -34,8 +34,6 @@ public class VoucherResponse {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
-<<<<<<< HEAD
-=======
     public VoucherResponse(Integer id, String voucherName, String voucherCode, Integer discountType,
                            Integer discountValue, Integer maxDiscount, BigDecimal minOrderValue,
                            Timestamp startDate, Timestamp endDate, Integer usageLimit,
@@ -57,5 +55,4 @@ public class VoucherResponse {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 }

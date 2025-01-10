@@ -1,8 +1,9 @@
 package com.datn.beestyle.security.authentication;
 
-import com.demo.dto.request.ResetPasswordDTO;
-import com.demo.dto.request.SignInRequest;
-import com.demo.dto.response.TokenResponse;
+
+import com.datn.beestyle.security.request.ResetPasswordRequest;
+import com.datn.beestyle.security.request.SignInRequest;
+import com.datn.beestyle.security.response.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthenticationService {
@@ -11,5 +12,5 @@ public interface AuthenticationService {
     String removeToken(HttpServletRequest request);
     String forgotPassword(String email);
     String resetPassword(String secretKey);
-    String changePassword(ResetPasswordDTO request);
+    String changePassword(ResetPasswordRequest request);
 }

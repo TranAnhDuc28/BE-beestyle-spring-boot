@@ -11,4 +11,6 @@ import org.springframework.data.domain.Pageable;
 public interface ICustomerService
         extends IGenericService<Customer, Long, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> {
     PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable, String status, String gender, String keyword);
+
+    Customer getCustomerByEmail(String email);
 }

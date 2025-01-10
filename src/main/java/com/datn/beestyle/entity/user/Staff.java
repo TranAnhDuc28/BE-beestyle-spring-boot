@@ -3,6 +3,7 @@ package com.datn.beestyle.entity.user;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Role;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +24,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Staff extends Auditable<Long> implements UserDetails {
 
     @Column(name = "full_name")
@@ -84,4 +86,5 @@ public class Staff extends Auditable<Long> implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

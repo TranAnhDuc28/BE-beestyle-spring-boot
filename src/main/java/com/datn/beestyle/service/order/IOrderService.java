@@ -16,12 +16,8 @@ public interface IOrderService
         extends IGenericService<Order, Long, CreateOrderRequest, UpdateOrderRequest, OrderResponse> {
     PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters);
     List<OrderResponse> getOrdersPending();
-<<<<<<< HEAD
-
-    OrderResponse getOrderByOrderId(Long orderId);
-=======
     OrderResponse getOrderDetailById(Long id);
     String changeOrderStatus(Long id, String status, String note);
     OrderResponse createOrderOnline(CreateOrderOnlineRequest request);
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
+
 }

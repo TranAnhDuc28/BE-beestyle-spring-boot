@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface CustomerRepository extends IGenericRepository<Customer, Long> {
     @Query("""
             select c from Customer c 
@@ -22,6 +24,9 @@ public interface CustomerRepository extends IGenericRepository<Customer, Long> {
                                                              @Param("status") Integer status,
                                                              @Param("gender") Integer gender,
                                                              @Param("keyword") String keyword);
+
+    Optional<Customer> findByEmail(String email);
+
 }
 
 

@@ -5,20 +5,6 @@ import com.datn.beestyle.common.IGenericMapper;
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.address.AddressResponse;
-<<<<<<< HEAD
-import com.datn.beestyle.dto.order.CreateOrderRequest;
-import com.datn.beestyle.dto.order.OrderResponse;
-import com.datn.beestyle.dto.order.UpdateOrderRequest;
-import com.datn.beestyle.entity.Voucher;
-import com.datn.beestyle.entity.order.Order;
-import com.datn.beestyle.enums.OrderChannel;
-import com.datn.beestyle.enums.OrderStatus;
-import com.datn.beestyle.exception.InvalidDataException;
-import com.datn.beestyle.exception.ResourceNotFoundException;
-import com.datn.beestyle.repository.OrderRepository;
-import com.datn.beestyle.service.address.AddressService;
-import com.datn.beestyle.service.voucher.VoucherService;
-=======
 import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
@@ -31,7 +17,6 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.entity.product.ProductVariant;
-import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.*;
 import com.datn.beestyle.exception.InvalidDataException;
@@ -42,7 +27,6 @@ import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.service.address.IAddressService;
 import com.datn.beestyle.service.customer.ICustomerService;
 import com.datn.beestyle.service.voucher.IVoucherService;
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 import com.datn.beestyle.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -52,11 +36,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
-=======
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -65,6 +46,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -73,18 +55,6 @@ public class OrderService
         implements IOrderService {
 
     private final OrderRepository orderRepository;
-<<<<<<< HEAD
-    private final AddressService addressService;
-    private final VoucherService voucherService;
-
-    public OrderService(IGenericRepository<Order, Long> entityRepository,
-                        IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
-                        EntityManager entityManager, OrderRepository orderRepository, AddressService addressService, VoucherService voucherService) {
-        super(entityRepository, mapper, entityManager);
-        this.orderRepository = orderRepository;
-        this.addressService = addressService;
-        this.voucherService = voucherService;
-=======
     private final ICustomerService customerService;
     private final IVoucherService voucherService;
     private final IAddressService addressService;
@@ -105,7 +75,6 @@ public class OrderService
         this.addressRepository = addressRepository;
         this.orderMapper = orderMapper;
         this.productVariantRepository = productVariantRepository;
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -166,50 +135,8 @@ public class OrderService
 
     @Override
     public List<OrderResponse> getOrdersPending() {
-<<<<<<< HEAD
-        return orderRepository.findOrdersByOrderChannelAndOrderStatus(OrderChannel.OFFLINE.getValue(), OrderStatus.PENDING.getValue());
-    }
-
-    /**
-     * Lấy thông tin chi tiết đầy đủ nhất của hóa đơn
-     *
-     * @param orderId
-     * @return
-     */
-    @Override
-    public OrderResponse getOrderByOrderId(Long orderId) {
-        // lấy thông tin hóa đơn
-        Optional<OrderResponse> order = orderRepository.findOrderById(orderId);
-        if (order.isEmpty()) throw new ResourceNotFoundException(this.getEntityName() + " not found.");
-
-        // lấy thông tin địa chỉ giao hàng
-        Long addressId = order.get().getAddressId();
-        if (addressId != null) {
-            AddressResponse address = addressService.getDtoById(addressId);
-            StringJoiner stringJoiner = new StringJoiner(", ");
-
-            if (address.getAddressName() != null && !address.getAddressName().isEmpty()) {
-                stringJoiner.add(address.getAddressName());
-            }
-            stringJoiner.add(address.getCommune());
-            stringJoiner.add(address.getDistrict());
-            stringJoiner.add(address.getCity());
-
-            order.get().setShippingAddress(stringJoiner.toString());
-        }
-
-        // lấy thông tin voucher áp dụng
-        Integer voucherId = order.get().getVoucherId();
-        if (voucherId != null) {
-            Voucher voucher = voucherService.getById(voucherId);
-            order.get().setVoucherName(voucher.getVoucherName());
-        }
-
-        return order.get();
-=======
         return orderRepository.findOrdersByOrderChannelAndOrderStatus(OrderChannel.OFFLINE.getValue(),
                 OrderStatus.PENDING.getValue());
->>>>>>> e8b22138f9a904dfd932b729f58e48ffc8365b78
     }
 
     @Override
@@ -291,7 +218,7 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
-        if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+        if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
             throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
         }
         order.setShippingFee(new BigDecimal(0));
@@ -336,7 +263,7 @@ public class OrderService
 
         // xử lý list order item của hóa đơn
         List<OrderItem> orderItems = handleOrderItemsOnline(request.getOrderItems());
-        order.setOrderItems(orderItems);
+        orderItems.forEach(order::addOrderItem);
 
         return orderMapper.toEntityDto(orderRepository.save(order));
     }

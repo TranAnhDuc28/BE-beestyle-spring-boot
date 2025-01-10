@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,50 +31,15 @@ public class CustomerService
         implements ICustomerService {
 
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public CustomerService(IGenericRepository<Customer, Long> entityRepository,
                            IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> mapper,
-                           EntityManager entityManager, CustomerRepository customerRepository) {
+                           EntityManager entityManager, CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
         super(entityRepository, mapper, entityManager);
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
     }
-
-
-    @Override
-    protected List<CreateCustomerRequest> beforeCreateEntities(List<CreateCustomerRequest> requests) {
-        return requests;
-    }
-
-    @Override
-    protected List<UpdateCustomerRequest> beforeUpdateEntities(List<UpdateCustomerRequest> requests) {
-        return null;
-    }
-
-    @Override
-    protected void beforeCreate(CreateCustomerRequest request) {
-        request.setPassword("");
-    }
-
-    @Override
-    protected void beforeUpdate(Long id, UpdateCustomerRequest request) {
-        request.setPassword("");
-    }
-
-    @Override
-    protected void afterConvertCreateRequest(CreateCustomerRequest request, Customer entity) {
-
-    }
-
-    @Override
-    protected void afterConvertUpdateRequest(UpdateCustomerRequest request, Customer entity) {
-
-    }
-
-    @Override
-    protected String getEntityName() {
-        return "Customer";
-    }
-
 
     @Override
     public PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable, String status, String gender, String keyword) {
@@ -103,6 +70,45 @@ public class CustomerService
                 .items(customerResponseList)
                 .build();
     }
+
+    @Override
+    public Customer getCustomerByEmail(String email) {
+        return customerRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+    }
+
+
+    @Override
+    protected List<CreateCustomerRequest> beforeCreateEntities(List<CreateCustomerRequest> requests) {
+        return requests;
+    }
+
+    @Override
+    protected List<UpdateCustomerRequest> beforeUpdateEntities(List<UpdateCustomerRequest> requests) {
+        return null;
+    }
+
+    @Override
+    protected void beforeCreate(CreateCustomerRequest request) {
+    }
+
+    @Override
+    protected void beforeUpdate(Long id, UpdateCustomerRequest request) {
+    }
+
+    @Override
+    protected void afterConvertCreateRequest(CreateCustomerRequest request, Customer entity) {
+    }
+
+    @Override
+    protected void afterConvertUpdateRequest(UpdateCustomerRequest request, Customer entity) {
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "Customer";
+    }
+
+
 
 
 }
