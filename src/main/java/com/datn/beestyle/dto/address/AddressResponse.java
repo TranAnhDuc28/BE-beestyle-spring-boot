@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AddressResponse {
     Long id;
+
     String addressName;
     Integer cityCode;
     String city;
@@ -20,7 +21,6 @@ public class AddressResponse {
     Integer communeCode;
     String commune;
     Boolean isDefault;
-
 
 
     public AddressResponse (Long id, String addressName, Integer cityCode, String city, Integer districtCode, String district, Integer communeCode,
@@ -35,4 +35,5 @@ public class AddressResponse {
         this.commune = commune;
 
     }
+
 }

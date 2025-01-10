@@ -43,7 +43,7 @@ public class InvoicePDFExporter {
     private final AddressRepository addressRepository;
     public void exportInvoice(Long orderId, OutputStream out) {
         try {
-            List<OrderResponse> listOrder = orderRepository.findOrderById(orderId);
+            List<OrderResponse> listOrder = orderRepository.findOrdersById(orderId);
             if (listOrder == null || listOrder.isEmpty()) {
                 throw new IllegalArgumentException("Không có hóa đơn với ID: " + orderId);
             }

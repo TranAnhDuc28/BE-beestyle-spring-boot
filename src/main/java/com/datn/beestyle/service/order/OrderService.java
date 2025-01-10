@@ -10,16 +10,20 @@ import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.dto.order.item.CreateOrderItemOnlineRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
+import com.datn.beestyle.entity.order.OrderItem;
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.*;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.AddressRepository;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.service.address.IAddressService;
 import com.datn.beestyle.service.customer.ICustomerService;
 import com.datn.beestyle.service.voucher.IVoucherService;
@@ -41,9 +45,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -57,12 +60,13 @@ public class OrderService
     private final IAddressService addressService;
     private final AddressRepository addressRepository;
     private final OrderMapper orderMapper;
+    private final ProductVariantRepository productVariantRepository;
 
     public OrderService(IGenericRepository<Order, Long> entityRepository,
                         IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
                         EntityManager entityManager, OrderRepository orderRepository, ICustomerService customerService,
                         IVoucherService voucherService, IAddressService addressService, AddressRepository addressRepository,
-                        OrderMapper orderMapper) {
+                        OrderMapper orderMapper, ProductVariantRepository productVariantRepository) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
         this.customerService = customerService;
@@ -70,6 +74,7 @@ public class OrderService
         this.addressService = addressService;
         this.addressRepository = addressRepository;
         this.orderMapper = orderMapper;
+        this.productVariantRepository = productVariantRepository;
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -185,23 +190,82 @@ public class OrderService
         return order.getOrderTrackingNumber();
     }
 
+    @Transactional
     @Override
     public OrderResponse createOrderOnline(CreateOrderOnlineRequest request) {
+        // Tạo đơn hàng mới
+        Order order = new Order();
+
+        // Kiểm tra có sản phẩm nào trong giỏ được gửi về không
+        if (request.getOrderItems() == null || request.getOrderItems().isEmpty()) {
+            throw new RuntimeException("Không có sản phẩm nào trong giỏ, vui lòng mua ít nhất 1 sản phẩm để tiến hành thanh toán.");
+        }
+
+        // Kiểm tra phương thức thanh toán
+        if (request.getPaymentMethod() == null) {
+            throw new InvalidDataException("Vui lòng chọn phương thức thanh toán.");
+        }
+
         // Kiểm tra địa chỉ giao hàng đã nhập chưa
-        if (StringUtils.hasText(request.getShippingAddress())) {
+        if (!StringUtils.hasText(request.getShippingAddress())) {
             throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
         }
 
+        // kiểm tra khách hàng có đăng nhập không
+        if (request.getCustomerId() != null) {
+            Customer customer = customerService.getById(request.getCustomerId());
+            order.setCustomer(customer);
+        }
+
+        // kiểm tra tiền ship có được miễn phí hay không
+        if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
+            throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+        }
+        order.setShippingFee(new BigDecimal(0));
+
+        order.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
+        order.setReceiverName(request.getReceiverName()); // tên người nhận
+        order.setPhoneNumber(request.getPhoneNumber()); // số điện thoại nhận hàng
+        order.setOrderChannel(OrderChannel.ONLINE.getValue());  // kênh online
+        order.setOrderType(OrderType.DELIVERY.getValue()); // loại giao hàng
+        order.setOrderStatus(OrderStatus.AWAITING_CONFIRMATION.getValue()); // trạng thái chờ xác nhận
+
+        // kiểm tra Address
         // chuyển đổi chỗi JSON sang obj Address
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+            order.setShippingAddress(address);
         } catch (Exception e) {
             throw new RuntimeException("Error deserializing address: " + e.getMessage());
         }
 
+        String paymentMethod = request.getPaymentMethod();
+        // nếu phương thức thanh toán là COD
+        if (paymentMethod.equalsIgnoreCase(PaymentMethod.CASH.name()) ||
+            paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
+            PaymentMethod paymentMethodEnum = PaymentMethod.fromString(paymentMethod);
+            order.setPaymentMethod(paymentMethodEnum.getValue());
+            order.setPrepaid(false);
+        } else if (request.getPaymentMethod().equalsIgnoreCase(PaymentMethod.BANK_TRANSFER.name())) { // nếu phương thức thanh toán là VNpay
+            order.setPaymentMethod(PaymentMethod.BANK_TRANSFER.getValue());
+            order.setPrepaid(true);
+        }
 
-        return null;
+        // kiểm tra hóa đơn có áp dụng voucher không
+        if (request.getVoucherId() != null) {
+            // kiểm tra voucher thỏa mãn sẽ lưu vào order
+            Voucher voucher = this.validateVoucherForOrder(request.getOriginalAmount(), request.getDiscountAmount(),
+                    request.getVoucherId());
+
+            order.setVoucher(voucher);
+        }
+
+        // xử lý list order item của hóa đơn
+        List<OrderItem> orderItems = handleOrderItemsOnline(request.getOrderItems());
+        orderItems.forEach(order::addOrderItem);
+
+        return orderMapper.toEntityDto(orderRepository.save(order));
     }
 
 
@@ -228,27 +292,19 @@ public class OrderService
 
         // kiểm tra hóa đơn có áp dụng voucher không
         if (request.getVoucherId() != null) {
-            Voucher voucher = voucherService.getById(request.getVoucherId());
-
-            // kiểm tra voucher đã hết hạn chưa
-            if (voucher.getEndDate().before(new Date())) {
-                throw new InvalidDataException("Voucher đã hết hạn sử dụng!");
-            }
-
-            // kiểm tra điều kiện voucher có áp dụng cho hóa đơn này được không
-            if (request.getOriginalAmount().compareTo(voucher.getMinOrderValue()) < 0) {
-                throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để áp dụng voucher.");
-            }
-
-            // tính giá trị giảm giá cho hóa đơn
-            BigDecimal discountAmount = this.calculateDiscountAmount(request.getOriginalAmount(), voucher);
-
-            // kiểm tra giá trị giảm được trả về có chính xác không
-            if (discountAmount.compareTo(request.getDiscountAmount()) != 0) {
-                throw new InvalidDataException("Giá trị giảm giá không chính xác.");
-            }
+            // kiểm tra voucher thỏa mãn sẽ lưu vào order
+            Voucher voucher = this.validateVoucherForOrder(request.getOriginalAmount(), request.getDiscountAmount(),
+                    request.getVoucherId());
 
             order.setVoucher(voucher);
+        }
+
+        // kiểm tra tiền ship nếu là đơn giao hàng
+        if (request.getOrderType().equalsIgnoreCase(OrderType.DELIVERY.name())) {
+            if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+                throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+            }
+            order.setShippingFee(new BigDecimal(0));
         }
 
         // kiểm tra tổng tiền phải trả cho đơn hàng trả về có chính xác không
@@ -280,9 +336,7 @@ public class OrderService
         order.setNote(request.getNote());
 
         // Lưu thông tin đơn hàng đã cập nhật vào cơ sở dữ liệu
-        order = orderRepository.save(order);
-
-        return orderMapper.toEntityDto(order);
+        return orderMapper.toEntityDto(orderRepository.save(order));
     }
 
 
@@ -308,9 +362,27 @@ public class OrderService
 
     }
 
+    /**
+     * sau khi convert data request sang entity order để tạo hóa đơn chờ bán hàng tại quầy
+     *
+     * @param request
+     * @param entity
+     */
     @Override
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
         entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
+        entity.setOrderChannel(OrderChannel.OFFLINE.getValue());
+
+        // kiểm tra loại hóa đơn cho kênh bán hàng OFFLINE
+        if (request.getOrderType().equalsIgnoreCase(OrderType.DELIVERY.name())) {
+            OrderType orderType = OrderType.fromString(request.getOrderType());
+            entity.setOrderType(orderType.getValue());
+        } else {
+            entity.setOrderType(OrderType.IN_STORE_PURCHASE.getValue());
+        }
+
+        // mặc định khi tạo hóa đơn chờ thì phương thức thanh toán là CASH
+        entity.setPaymentMethod(PaymentMethod.CASH.getValue());
     }
 
     @Override
@@ -344,6 +416,7 @@ public class OrderService
         return calculatedTotalAmount.compareTo(totalAmount) == 0;
     }
 
+
     /**
      * Hàm kiểm tra tiền khách trả có bằng hoặc lớn hơn số tiền cần thanh toán không
      *
@@ -355,6 +428,7 @@ public class OrderService
         // Kiểm tra tiền khách trả có lớn hơn hoặc bằng số tiền cần thanh toán
         return amountPaid.compareTo(totalAmount) < 0;
     }
+
 
     /**
      * tính giá giảm cho hóa đơn theo giá gốc tổng tiền hàng
@@ -387,5 +461,94 @@ public class OrderService
         return discountAmount;
     }
 
+    /**
+     * kiểm tra voucher áp dụng cho hóa đơn
+     *
+     * @param originalAmount
+     * @param discountAmountRequest
+     * @param voucherId
+     * @return trả ra voucher áp dụng cho đơn hàng
+     */
+    private Voucher validateVoucherForOrder(BigDecimal originalAmount, BigDecimal discountAmountRequest, Integer voucherId) {
+        Voucher voucher = voucherService.getById(voucherId);
 
+        // kiểm tra voucher đã hết hạn chưa
+        if (voucher.getEndDate().before(new Date())) {
+            throw new InvalidDataException("Voucher đã hết hạn sử dụng!");
+        }
+
+        // kiểm tra voucher đã hết số lần sử chưa
+        if (voucher.getUsageLimit() > 0) {
+            throw new InvalidDataException("Voucher đã hết số lần sử dụng sử dụng!");
+        }
+
+        // kiểm tra điều kiện voucher có áp dụng cho hóa đơn này được không
+        if (originalAmount.compareTo(voucher.getMinOrderValue()) < 0) {
+            throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để áp dụng voucher.");
+        }
+
+        // tính giá trị giảm giá cho hóa đơn
+        BigDecimal discountAmount = this.calculateDiscountAmount(originalAmount, voucher);
+
+        // kiểm tra giá trị giảm được trả về có chính xác không
+        if (discountAmount.compareTo(discountAmountRequest) != 0) {
+            throw new InvalidDataException("Giá trị giảm giá không chính xác.");
+        }
+
+        return voucher;
+    }
+
+
+    /**
+     * Xử lý list sản phẩm trong hóa đơn online khi tạo
+     *
+     * @param orderItemsRequest
+     */
+    private List<OrderItem> handleOrderItemsOnline(List<CreateOrderItemOnlineRequest> orderItemsRequest) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        // Lọc danh sách các orderItem có productVariantId hợp lệ
+        List<CreateOrderItemOnlineRequest> orderItemsRequestTemp = orderItemsRequest.stream()
+                .filter(itemRequest -> itemRequest.getProductVariantId() != null)
+                .toList();
+
+        if (orderItemsRequestTemp.isEmpty()) {
+            throw new InvalidDataException("Không có sản phẩm nào trong giỏ.");
+        }
+
+        // Tập hợp các productVariantId
+        Set<Long> listProductVariantId = orderItemsRequestTemp.stream()
+                .map(CreateOrderItemOnlineRequest::getProductVariantId)
+                .collect(Collectors.toSet());
+
+        // Kiểm tra sự tồn tại của productVariant
+        List<ProductVariant> productVariants = productVariantRepository.findAllById(listProductVariantId);
+        if (productVariants.isEmpty()) {
+            throw new InvalidDataException("Không có sản phẩm nào trong giỏ tồn tại.");
+        }
+
+        // chuyển đổi danh sách productVariant thỏa mãn sang Map
+        Map<Long, ProductVariant> productVariantMap = productVariants.stream()
+                .collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
+
+        // xử lý những orderItemRequest thỏa mãn
+        for (CreateOrderItemOnlineRequest itemRequest : orderItemsRequestTemp) {
+            ProductVariant productVariant = productVariantMap.get(itemRequest.getProductVariantId());
+
+            // bỏ qua những sản phẩm không tồn tại
+            if (productVariant == null) {
+                continue;
+            }
+
+            // lưu lại những order item thỏa mãn
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProductVariant(productVariant);
+            orderItem.setQuantity(itemRequest.getQuantity());
+            orderItem.setSalePrice(itemRequest.getSalePrice());
+            orderItem.setDiscountedPrice(itemRequest.getDiscountedPrice());
+            orderItems.add(orderItem);
+        }
+
+        return orderItems;
+    }
 }

@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import java.util.Optional;
+
+
 public interface CustomerRepository extends IGenericRepository<Customer, Long> {
     @Query("""
             select c from Customer c 
@@ -23,8 +26,13 @@ public interface CustomerRepository extends IGenericRepository<Customer, Long> {
                                                              @Param("status") Integer status,
                                                              @Param("gender") Integer gender,
                                                              @Param("keyword") String keyword);
+
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
+
+
+    Optional<Customer> findByEmail(String email);
+
 
 }
 

@@ -1,6 +1,7 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.service.order.OrderService;
@@ -36,17 +37,27 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ApiResponse<?> getOrderDetail(@PathVariable("orderId") Long orderId) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order detail", orderService.getOrderDetailById(orderId));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order detail",
+                orderService.getOrderDetailById(orderId));
     }
 
     @PostMapping("/create")
     public ApiResponse<?> createOrder(@Valid  @RequestBody CreateOrderRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order pending added successfully.", orderService.create(request));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order pending added successfully.",
+                orderService.create(request));
+    }
+
+    @PostMapping("/create-order-online")
+    public ApiResponse<?> createOrderOnline(@Valid @RequestBody CreateOrderOnlineRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order online created successfully.",
+                orderService.createOrderOnline(request));
     }
 
     @PostMapping("/update/{orderId}")
-    public ApiResponse<?> updateOrder(@Min(1) @PathVariable("orderId") Long orderId, @Valid @RequestBody UpdateOrderRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order updated successfully.", orderService.update(orderId, request));
+    public ApiResponse<?> updateOrder(@Min(1) @PathVariable("orderId") Long orderId,
+                                      @Valid @RequestBody UpdateOrderRequest request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Order updated successfully.",
+                orderService.update(orderId, request));
     }
 
     @PatchMapping("/{orderId}/update-status")

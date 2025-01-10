@@ -76,7 +76,7 @@ public class MailService {
     }
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
 
-        List<OrderResponse> listOrder = orderRepository.findOrderById(id);
+        List<OrderResponse> listOrder = orderRepository.findOrdersById(id);
         if (listOrder == null || listOrder.isEmpty()) {
             throw new IllegalArgumentException("Không có hóa đơn với ID: " + id);
         }
@@ -119,14 +119,14 @@ public class MailService {
         }
     }
 
-    public String sendLoginStaffEmail(Staff staff) throws MessagingException {
+    public String sendLoginStaffEmail(Staff staff,String generatedPassword) throws MessagingException {
 
         try {
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
             context.setVariable("employeeName", staff.getFullName());
             context.setVariable("email", staff.getEmail());
-            context.setVariable("password", staff.getPassword());
+            context.setVariable("password", generatedPassword);
             context.setVariable("loginUrl", "http://localhost:3000/login");
 
 
@@ -153,14 +153,14 @@ public class MailService {
         }
     }
 
-    public String sendLoginCustomerEmail(Customer customer) throws MessagingException {
+    public String sendLoginCustomerEmail(Customer customer,String generatedPassword) throws MessagingException {
 
         try {
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
             context.setVariable("customerName", customer.getFullName());
             context.setVariable("email", customer.getEmail());
-            context.setVariable("password", customer.getPassword());
+            context.setVariable("password", generatedPassword);
             context.setVariable("loginUrl", "http://localhost:3000/login");
 
 

@@ -6,8 +6,10 @@ import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.validation.EnumValue;
 import com.datn.beestyle.validation.PhoneNumber;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +23,7 @@ import java.util.Set;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateCustomerRequest {
-//    @NotBlank(message = "Khong de trong")
+    @NotBlank(message = "Không được để trống fullname")
     String fullName;
 
     LocalDate dateOfBirth;
@@ -29,11 +31,14 @@ public class UpdateCustomerRequest {
     String gender;
 
     @NotBlank(message = "Không được để trống số điện thoại")
-            @PhoneNumber(message = "Số điện thoại không đung")
+    @PhoneNumber(message = "Số điện thoại không đung")
     String phoneNumber;
 
+    @NotBlank(message = "Không được để trống email")
+    @Email(message = "Email không đúng định dạng")
     String email;
 
+    @Size(min = 5, max = 10, message = "Password phải có độ dài từ {min} đến {max} ký tự")
     String password;
 
     String status;

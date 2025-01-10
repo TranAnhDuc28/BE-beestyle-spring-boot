@@ -2,6 +2,7 @@ package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.customer.CreateCustomerRequest;
+import com.datn.beestyle.dto.customer.RegisterCustomerRequest;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
 import com.datn.beestyle.service.customer.ICustomerService;
 import jakarta.validation.Valid;
@@ -34,6 +35,12 @@ public class CustomerController {
     public ApiResponse<?> createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới khách hàng thành công",
                 customerService.create(request));
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<?> createCustomerByOwner(@Valid @RequestBody RegisterCustomerRequest request) {
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới khách hàng thành công",
+                customerService.createByOwner(request));
     }
 
     @PutMapping("/update/{id}")

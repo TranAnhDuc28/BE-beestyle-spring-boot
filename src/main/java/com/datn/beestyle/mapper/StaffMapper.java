@@ -43,13 +43,16 @@ public interface StaffMapper extends IGenericMapper<Staff, CreateStaffRequest, U
     }
 
     @Named("statusName")
-    default String statusName(Staff staff) {return Status.valueOf(staff.getStatus()).name(); }
+    default String statusName(Staff staff) {
+        return Status.valueOf(staff.getStatus()).name();
+    }
 
     @Named("genderName")
     default String genderName(Staff staff) {
         // Kiểm tra và ánh xạ số nguyên từ `gender` sang enum `Gender`
         return Gender.valueOf(staff.getGender()).name();
     }
+
     @Named("genderId")
     default int genderId(UpdateStaffRequest request) {
         return Gender.valueOf(request.getGender()).getValue();

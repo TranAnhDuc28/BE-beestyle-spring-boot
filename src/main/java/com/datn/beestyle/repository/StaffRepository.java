@@ -1,13 +1,13 @@
 package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
-import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
-import com.datn.beestyle.enums.Gender;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
 
 public interface StaffRepository extends IGenericRepository<Staff,Integer> {
     @Query("""
@@ -23,7 +23,11 @@ public interface StaffRepository extends IGenericRepository<Staff,Integer> {
     Page<Staff> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status,
                                                           @Param("gender") Integer gender, @Param("keyword") String keyword);
 
+
     boolean existsByEmail(String email);
     boolean existsByUsername(String userName);
     boolean existsByPhoneNumber(String phoneNumber);
+
+    Optional<Staff> findByUsername(String username);
+
 }
