@@ -25,8 +25,6 @@ public class RevenueStatisticsService {
 
 
     public PageResponse<List<RevenueStatisticsResponse>> getRevenueByPeriod(String period, Pageable pageable, String periodValue ) {
-
-
         // Nếu period là null, gán giá trị mặc định là "day"
         if (period == null) {
             period = "day";
@@ -58,7 +56,6 @@ public class RevenueStatisticsService {
     }
 
     public PageResponse<List<RevenueStatisticsResponse>> getOrderStatusByPeriod(String period, Pageable pageable, String periodValue ) {
-
 
         // Nếu period là null, gán giá trị mặc định là "day"
         if (period == null) {
@@ -153,7 +150,6 @@ public class RevenueStatisticsService {
 
 
     public PageResponse<List<InventoryResponse>> getTopSellingProduct(Pageable pageable, int top) {
-
         // Lấy danh sách sản phẩm theo số lượng tồn kho
         Page<InventoryResponse> productVariantResponsePages = statisticsRepository.TopSellingProduct(pageable, top);
 
