@@ -38,7 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final TokenService tokenService;
+//    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final StaffRepository staffRepository;
     private final CustomerRepository customerRepository;
@@ -61,7 +61,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         StaffResponse staffResponse = null;
         CustomerResponse customerResponse = null;
-        if (user instanceof Staff staff) {
+        if (user instanceof Staff) {
+            Staff staff = (Staff) user;
             staffResponse = new StaffResponse();
             staffResponse.setId(staff.getId());
             staffResponse.setFullName(staff.getFullName());
@@ -70,7 +71,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             staffResponse.setGender(Gender.fromInteger(staff.getGender()));
             staffResponse.setEmail(staff.getEmail());
             staffResponse.setRole(staff.getRole().name());
-        } else if (user instanceof Customer customer) {
+        } else if (user instanceof Customer) {
+            Customer customer = (Customer) user;
             customerResponse = new CustomerResponse();
             customerResponse.setId(customer.getId());
             customerResponse.setFullName(customer.getFullName());
@@ -116,7 +118,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         Staff staffResponse = null;
         Customer customerResponse = null;
-        if (user instanceof Staff staff) {
+        if (user instanceof Staff) {
+            Staff staff = (Staff) user;
             staffResponse = new Staff();
             staffResponse.setId(staff.getId());
             staffResponse.setFullName(staff.getFullName());
@@ -125,7 +128,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             staffResponse.setGender(staff.getGender());
             staffResponse.setEmail(staff.getEmail());
             staffResponse.setRole(staff.getRole());
-        } else if (user instanceof Customer customer) {
+        } else if (user instanceof Customer) {
+            Customer customer = (Customer) user;
             customerResponse = new Customer();
             customerResponse.setId(customer.getId());
             customerResponse.setFullName(customer.getFullName());
@@ -217,10 +221,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = this.validateToken(request.getSecretKey());
 
         // update password
-        if (user instanceof Staff staff) {
+        if (user instanceof Staff) {
+            Staff staff = (Staff) user;
             staff.setPassword(passwordEncoder.encode(request.getPassword()));
             staffRepository.save(staff);
-        } else if (user instanceof Customer customer){
+        } else if (user instanceof Customer){
+            Customer customer = (Customer) user;
             customer.setPassword(passwordEncoder.encode(request.getPassword()));
             customerRepository.save(customer);
         }
