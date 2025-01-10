@@ -17,7 +17,6 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.entity.product.ProductVariant;
-import com.datn.beestyle.entity.product.attributes.Color;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.*;
 import com.datn.beestyle.exception.InvalidDataException;
@@ -219,9 +218,17 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
-        if ((request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
-            throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+        if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+            // tiền ship đã được tính
+            if (request.getShippingFee().compareTo(new BigDecimal(0)) > 0) {
+                order.setShippingFee(request.getShippingFee());
+            } else {
+                throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+            }
+        } else {
+            order.setShippingFee(new BigDecimal(0));
         }
+
         order.setShippingFee(new BigDecimal(0));
 
         order.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
@@ -479,7 +486,7 @@ public class OrderService
         }
 
         // kiểm tra voucher đã hết số lần sử chưa
-        if (voucher.getUsageLimit() > 0) {
+        if (voucher.getUsageLimit() <= 0) {
             throw new InvalidDataException("Voucher đã hết số lần sử dụng sử dụng!");
         }
 

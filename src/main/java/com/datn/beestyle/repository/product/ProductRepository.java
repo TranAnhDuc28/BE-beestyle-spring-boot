@@ -60,6 +60,12 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("status") Integer status);
 
 
+    boolean existsByProductName(String name);
+
+    boolean existsByProductCode(String code);
+
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
+
     @Query(value = """
             SELECT
                 p.id AS productId,
@@ -123,10 +129,4 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             """,
             nativeQuery = true)
     Page<Object[]> getTopSellingProductsData(Pageable pageable);
-
-    boolean existsByProductName(String name);
-
-    boolean existsByProductCode(String code);
-
-    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 }

@@ -11,4 +11,6 @@ import org.springframework.data.domain.Pageable;
 public interface IStaffService
     extends IGenericService<Staff,Integer, CreateStaffRequest, UpdateStaffRequest, StaffResponse> {
     PageResponse<?> getAllByKeywordAndStatusAndGender(Pageable pageable,String status,String gender,String keyword);
+
+    Staff getStaffByUsername(String username);
 }

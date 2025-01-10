@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,9 +20,9 @@ public class CustomerResponse {
     String gender;
     String phoneNumber;
     String email;
+    String role;
     String address;
     String status;
-    String role;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

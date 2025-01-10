@@ -1,8 +1,7 @@
 package com.datn.beestyle.dto.staff;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
@@ -11,14 +10,17 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class StaffResponse {
     Long id;
     String fullName;
     LocalDate dateOfBirth;
     String username;
     String password;
+    String role;
     String gender;
     String phoneNumber;
     String email;
