@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -213,4 +214,31 @@ public class CustomerService
         log.info("password: {}", request.getPassword());
         return mapper.toEntityDto(savedEntity);
     }
+
+    @Override
+    public CustomerResponse changePasswordByOwner(ChangePasswordCustomerRequest request) {
+        Optional<Customer> exitingCustomer = customerRepository.findByEmail(request.getEmail());
+        if(exitingCustomer.isPresent()){
+            Customer customer = exitingCustomer.get();
+
+            if(checkPassword(request.getCurrentPassword(), exitingCustomer.get().getPassword())){
+
+                String encoderNewPassword = passwordEncoder.encode(request.getNewPassword());
+                customer.setPassword(encoderNewPassword);
+                customerRepository.save(customer);
+
+                return mapper.toEntityDto(customer);
+            }else {
+                throw new IllegalArgumentException("Mật khẩu hiện tại không đúng");
+            }
+        }
+        else {
+            throw new IllegalArgumentException("Tài khoản và mật khẩu không đúng, vui lòng kiểm tra lại");
+        }
+    }
+
+    public boolean checkPassword(String currentPassword, String storedHashedPassword) {
+        return passwordEncoder.matches(currentPassword, storedHashedPassword);
+    }
+
 }

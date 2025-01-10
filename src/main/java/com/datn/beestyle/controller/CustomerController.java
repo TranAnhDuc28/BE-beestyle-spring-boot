@@ -1,6 +1,7 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
+import com.datn.beestyle.dto.customer.ChangePasswordCustomerRequest;
 import com.datn.beestyle.dto.customer.CreateCustomerRequest;
 import com.datn.beestyle.dto.customer.RegisterCustomerRequest;
 import com.datn.beestyle.dto.customer.UpdateCustomerRequest;
@@ -47,6 +48,11 @@ public class CustomerController {
     public ApiResponse<?> updateCustomer(@Min(1) @PathVariable Long id, @Valid @RequestBody UpdateCustomerRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật khách hàng thành công",
                 customerService.update(id, request));
+    }
+    @PutMapping("/changePassword/{id}")
+    public ApiResponse<?> changePasswordCustomer(@Min(1) @PathVariable Long id, @Valid @RequestBody ChangePasswordCustomerRequest request) {
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thay đổi mật khẩu thành công",
+                customerService.changePasswordByOwner(request));
     }
 
     @DeleteMapping("/delete/{id}")
