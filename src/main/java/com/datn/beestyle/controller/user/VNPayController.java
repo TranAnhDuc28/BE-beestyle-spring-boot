@@ -1,14 +1,8 @@
 package com.datn.beestyle.controller.user;
 
 import com.datn.beestyle.config.VNPayConfig;
-import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.vnpay.PaymentRequest;
-import com.datn.beestyle.service.order.IOrderService;
-import com.datn.beestyle.util.AppUtils;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +24,7 @@ public class VNPayController extends VNPayConfig {
         String vnp_Command = "pay";
         String vnp_OrderInfo = "Thanh toan don hang: " + request.getOrderId();
         String vnp_OrderType = "billpayment";
-        String vnp_TxnRef = AppUtils.generateOrderTrackingNumber();
+        String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
         String vnp_IpAddr = request.getIpAddress();
         Long amount = request.getAmount() * 100;
         String vnp_Amount = String.valueOf(amount);

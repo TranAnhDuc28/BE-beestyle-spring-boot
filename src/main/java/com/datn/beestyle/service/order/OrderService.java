@@ -219,7 +219,7 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
-        if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
+        if ((request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
             throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
         }
         order.setShippingFee(new BigDecimal(0));
@@ -302,7 +302,7 @@ public class OrderService
 
         // kiểm tra tiền ship nếu là đơn giao hàng
         if (request.getOrderType().equalsIgnoreCase(OrderType.DELIVERY.name())) {
-            if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+            if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
                 throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
             }
             order.setShippingFee(new BigDecimal(0));

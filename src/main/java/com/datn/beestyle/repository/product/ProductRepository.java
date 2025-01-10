@@ -70,19 +70,23 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             FROM product p
             INNER JOIN product_variant pv ON p.id = pv.product_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-            WHERE (:category IS NULL OR p.gender = :category)
+            WHERE (
+                        CASE
+                            WHEN :result = 3 OR :result = 4 THEN TRUE
+                            ELSE (:result IS NULL OR p.gender = :result)
+                        END
+                    )
             GROUP BY p.id, p.product_name
-            ORDER BY RAND()
+            ORDER BY (
+                CASE
+                    WHEN :result = 3 THEN RAND()
+                    WHEN :result = 4 THEN MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100))
+                    ELSE p.product_name
+                END
+            )
             """,
-            countQuery = """
-                    SELECT COUNT(DISTINCT p.id)
-                    FROM product p
-                    LEFT JOIN product_variant pv ON p.id = pv.product_id
-                    LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-                    WHERE (:category IS NULL OR p.gender = :category)
-                    """,
             nativeQuery = true)
-    Page<Object[]> getFeaturedProductsData(@Param("category") Integer category, Pageable pageable);
+    Page<Object[]> getFeaturedProductsData(@Param("result") Integer category, Pageable pageable);
 
     @Query(value = """
             SELECT
