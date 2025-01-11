@@ -218,6 +218,7 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
+        // tổng tiền gốc nhỏ hơn 500.000
         if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
             // tiền ship đã được tính
             if (request.getShippingFee().compareTo(new BigDecimal(0)) > 0) {
@@ -228,8 +229,6 @@ public class OrderService
         } else {
             order.setShippingFee(new BigDecimal(0));
         }
-
-        order.setShippingFee(new BigDecimal(0));
 
         order.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
         order.setReceiverName(request.getReceiverName()); // tên người nhận
