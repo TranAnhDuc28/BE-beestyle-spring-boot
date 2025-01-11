@@ -49,8 +49,8 @@ public class CustomerController {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật khách hàng thành công",
                 customerService.update(id, request));
     }
-    @PutMapping("/changePassword/{id}")
-    public ApiResponse<?> changePasswordCustomer(@Min(1) @PathVariable Long id, @Valid @RequestBody ChangePasswordCustomerRequest request) {
+    @PutMapping("/changePassword")
+    public ApiResponse<?> changePasswordCustomer( @Valid @RequestBody ChangePasswordCustomerRequest request) {
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Thay đổi mật khẩu thành công",
                 customerService.changePasswordByOwner(request));
     }
@@ -64,5 +64,10 @@ public class CustomerController {
     @GetMapping("/{id}")
     public ApiResponse<?> getCustomer(@Min(1) @PathVariable Long id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Khách hàng", customerService.getDtoById(id));
+    }
+
+    @GetMapping("/productSalesByUser/{id}")
+    public ApiResponse<?> getProductSalesByUser(Pageable pageable,@PathVariable Long id){
+        return new ApiResponse<>(HttpStatus.OK.value(), "Sản phẩm theo khách hàng",customerService.ProductSalesByUser(pageable,id));
     }
 }

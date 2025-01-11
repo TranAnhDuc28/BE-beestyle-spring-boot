@@ -1,5 +1,7 @@
 package com.datn.beestyle.entity.user;
 
+import com.datn.beestyle.dto.customer.CustomerResponse;
+import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.BaseEntity;
 import com.datn.beestyle.enums.Role;
@@ -13,6 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +33,18 @@ import static jakarta.persistence.CascadeType.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@SqlResultSetMapping(
+        name = "ProductSalesByUserMapping",
+        classes = @ConstructorResult(
+                targetClass = CustomerResponse.class,
+                columns = {
+                        @ColumnResult(name = "product_name", type = String.class),
+                        @ColumnResult(name = "sale_price", type = BigDecimal.class),
+                        @ColumnResult(name = "total_quantity", type = Integer.class),
+                        @ColumnResult(name = "image_product", type = String.class)
+                }
+        )
+)
 public class Customer extends BaseEntity<Long> implements UserDetails {
 
     @Column(name = "full_name")

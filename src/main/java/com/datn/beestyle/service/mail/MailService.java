@@ -3,7 +3,7 @@ package com.datn.beestyle.service.mail;
 import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
-import com.datn.beestyle.repository.CustomerRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.OrderRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;

@@ -1,4 +1,4 @@
-package com.datn.beestyle.repository;
+package com.datn.beestyle.repository.customer;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.entity.user.Customer;
