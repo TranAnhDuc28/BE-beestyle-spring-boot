@@ -26,11 +26,13 @@ public interface OrderItemRepository extends IGenericRepository<OrderItem, Long>
             left join Size s on pv.size.id = s.id
         where oi.order.id = :orderId
     """)
-    List<OrderItemResponse> findAllByOrderId(@Param("orderId") Long orderId);
+    List<OrderItemResponse> findOrderItemsResponseByOrderId(@Param("orderId") Long orderId);
 
 
     @Transactional
     @Modifying
     @Query(value = "update OrderItem oi set oi.quantity = :quantity where oi.id = :orderItemId")
     int updateQuantityOrderItem(@Param("orderItemId") long orderItemId, @Param("quantity") int quantity);
+
+    List<OrderItem> findOrderItemsByOrderId(Long orderId);
 }

@@ -22,6 +22,7 @@ import com.datn.beestyle.enums.*;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.OrderMapper;
 import com.datn.beestyle.repository.AddressRepository;
+import com.datn.beestyle.repository.OrderItemRepository;
 import com.datn.beestyle.repository.OrderRepository;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.service.address.IAddressService;
@@ -31,6 +32,7 @@ import com.datn.beestyle.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,12 +63,13 @@ public class OrderService
     private final AddressRepository addressRepository;
     private final OrderMapper orderMapper;
     private final ProductVariantRepository productVariantRepository;
+    private final OrderItemRepository orderItemRepository;
 
     public OrderService(IGenericRepository<Order, Long> entityRepository,
                         IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
                         EntityManager entityManager, OrderRepository orderRepository, ICustomerService customerService,
                         IVoucherService voucherService, IAddressService addressService, AddressRepository addressRepository,
-                        OrderMapper orderMapper, ProductVariantRepository productVariantRepository) {
+                        OrderMapper orderMapper, ProductVariantRepository productVariantRepository, OrderItemRepository orderItemRepository) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
         this.customerService = customerService;
@@ -75,6 +78,7 @@ public class OrderService
         this.addressRepository = addressRepository;
         this.orderMapper = orderMapper;
         this.productVariantRepository = productVariantRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -163,31 +167,66 @@ public class OrderService
         return orderResponse;
     }
 
+    /**
+     * Xử lý đơn hàng online qua thay đổi các trạng thái
+     *
+     * @param id
+     * @param status
+     * @param note
+     * @return
+     */
+    @Transactional
     @Override
-    public String changeOrderStatus(Long id, String status, String note) {
+    public String updateOrderOnline(Long id, String status, String note) {
         // lấy và kiểm tra tồn tại đơn hàng
         Order order = this.getById(id);
 
         // Chuyển từ chuỗi sang enum
         OrderStatus orderStatus = OrderStatus.fromString(status);
+
         // kiểm tra key enum có chính xác
         if (orderStatus == null) {
             throw new IllegalArgumentException("Trạng thái hóa đơn " + status + " không hợp lệ.");
         }
 
         if (orderStatus == OrderStatus.CONFIRMED) {
+            // xử lí khi xác nhận
+            this.handleOrderOnlineAfterConfirm(order.getId());
 
+            // Cập nhật trạng thái đơn hàng
+            order.setOrderStatus(OrderStatus.CONFIRMED.getValue());
+
+        } else if (orderStatus == OrderStatus.AWAITING_SHIPMENT) {
+            order.setOrderStatus(OrderStatus.AWAITING_SHIPMENT.getValue());
         } else if (orderStatus == OrderStatus.CANCELLED) {
+            // kiểm tra trạng thái đơn hàng được yêu cầu hủy đơn
+            int currentOrderStatus = order.getOrderStatus();
+            if (currentOrderStatus == OrderStatus.OUT_FOR_DELIVERY.getValue()) {
+                throw new IllegalArgumentException("Đơn hàng đã được giao, bạn không thể hủy đơn này.");
+            }
+
+            // xử lý khi hủy đơn
+            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), note);
+
+            // Cập nhật trạng thái đơn hàng
+            order.setOrderStatus(OrderStatus.CANCELLED.getValue());
 
         } else if (orderStatus == OrderStatus.RETURNED) {
+            // kiểm tra trạng thái đơn hàng để được yêu cầu trả hàng
+            int currentOrderStatus = order.getOrderStatus();
+            if (currentOrderStatus == OrderStatus.AWAITING_CONFIRMATION.getValue() ||
+                currentOrderStatus == OrderStatus.CONFIRMED.getValue() ||
+                currentOrderStatus == OrderStatus.AWAITING_SHIPMENT.getValue()) {
+                throw new IllegalArgumentException("Đơn hàng chưa được giao, không thể trả hàng.");
+            }
 
+            // xử lý đơn khi trả hàng
+            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), note);
         }
 
-        // Cập nhật trạng thái và lưu
-        order.setOrderStatus(orderStatus.getValue());
         orderRepository.save(order);
 
-        return order.getOrderTrackingNumber();
+        return "OK";
     }
 
     @Transactional
@@ -277,7 +316,7 @@ public class OrderService
 
 
     /**
-     * hàm update order
+     * xử lý đơn hàng cho bán tại quầy (vừa trực tiếp vừa giao)
      *
      * @param orderId id hóa đơn
      * @param request nội dung hóa đơn được gửi từ client về server
@@ -360,8 +399,9 @@ public class OrderService
     @Override
     protected void beforeCreate(CreateOrderRequest request) {
         int countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(1L, OrderStatus.PENDING.getValue());
-        if (countOrderPending >= 20)
+        if (countOrderPending >= 20) {
             throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
+        }
     }
 
     @Override
@@ -509,7 +549,7 @@ public class OrderService
     /**
      * Xử lý list sản phẩm trong hóa đơn online khi tạo
      *
-     * @param orderItemsRequest
+     * @param orderItemsRequest danh sách sản phẩm trong hóa đơn từ client
      */
     private List<OrderItem> handleOrderItemsOnline(List<CreateOrderItemOnlineRequest> orderItemsRequest) {
         List<OrderItem> orderItems = new ArrayList<>();
@@ -531,7 +571,7 @@ public class OrderService
         // Kiểm tra sự tồn tại của productVariant
         List<ProductVariant> productVariants = productVariantRepository.findAllById(listProductVariantId);
         if (productVariants.isEmpty()) {
-            throw new InvalidDataException("Không có sản phẩm nào trong giỏ tồn tại.");
+            throw new InvalidDataException("Không có sản phẩm nào trong giỏ có trong cửa hàng.");
         }
 
         // chuyển đổi danh sách productVariant thỏa mãn sang Map
@@ -557,5 +597,64 @@ public class OrderService
         }
 
         return orderItems;
+    }
+
+
+    /**
+     * Xử lý đơn hàng online sau khi xác nhận đơn hàng
+     * Trừ số lượng trong sản phẩm trong kho
+     *
+     * @param orderId
+     * @return "OK", xác nhận xử lý thành công
+     */
+    private void handleOrderOnlineAfterConfirm(Long orderId) {
+        // Lấy danh sách sản phẩm trong đơn hàng
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
+
+        // danh sách lưu các sản phẩm cần update số lựợng
+        List<ProductVariant> productVariantsToUpdate = new ArrayList<>();
+
+        for (OrderItem orderItem : orderItems) {
+            ProductVariant productVariant = this.handleProductInStockAfterConfirmOrderOnline(orderItem);
+
+            // thêm vào danh sách sản phẩm cần update số lượng
+            productVariantsToUpdate.add(productVariant);
+        }
+
+        // cập nhật các sản phẩm đã trừ số lượng vào kho
+        productVariantRepository.saveAll(productVariantsToUpdate);
+    }
+
+    /**
+     * kiểm tra số lượng sản phẩm trong kho có thỏa mãn số lượng yêu cầu từ đơn hàng
+     *
+     * @param orderItem sản phẩm trong đơn hàng yêu cầu cần xử lý
+     * @return trả về sản phẩm sau khi trừ số lượng mua
+     */
+    private ProductVariant handleProductInStockAfterConfirmOrderOnline(OrderItem orderItem) {
+        ProductVariant productVariant = orderItem.getProductVariant();
+
+        // kiểm tra số lượng trong kho còn lại
+        if (productVariant.getQuantityInStock() < orderItem.getQuantity()) {
+            String error = "Sản phẩm " + productVariant.getProduct().getProductName() +
+                           " trong kho không đủ để xử lý đơn hàng." +
+                           "(Yêu cầu sản phẩm: " + orderItem.getQuantity() +
+                           ", trong kho còn: " + productVariant.getQuantityInStock();
+            throw new InvalidDataException(error);
+        }
+
+        // nếu thỏa mãn, giảm số lượng trong kho
+        productVariant.setQuantityInStock(productVariant.getQuantityInStock() - orderItem.getQuantity());
+        return productVariant;
+    }
+
+    private void handleOrderOnlineAfterCancelledOrReturned(Long orderId, String note) {
+        // bắt buộc nhập lý do hủy đơn hàng.
+        if (note == null || note.isBlank()) {
+            throw new InvalidDataException("Vui lòng nhập lý do hủy đơn hàng.");
+        }
+
+        // Duyệt qua các chi tiết đơn hàng để hồi lại số lượng sản phẩm trong kho
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
     }
 }
