@@ -2,7 +2,7 @@ package com.datn.beestyle.security;
 
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
-import com.datn.beestyle.repository.CustomerRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.StaffRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

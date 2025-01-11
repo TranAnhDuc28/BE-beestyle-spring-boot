@@ -47,12 +47,6 @@ public class OrderController {
                 orderService.create(request));
     }
 
-    @PostMapping("/create-order-online")
-    public ApiResponse<?> createOrderOnline(@Valid @RequestBody CreateOrderOnlineRequest request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Order online created successfully.",
-                orderService.createOrderOnline(request));
-    }
-
     @PostMapping("/update/{orderId}")
     public ApiResponse<?> updateOrder(@Min(1) @PathVariable("orderId") Long orderId,
                                       @Valid @RequestBody UpdateOrderRequest request) {
@@ -65,6 +59,6 @@ public class OrderController {
                                             @RequestParam String status,
                                             @RequestParam(required = false) String note) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully.",
-                orderService.changeOrderStatus(orderId, status, note));
+                orderService.updateOrderOnline(orderId, status, note));
     }
 }

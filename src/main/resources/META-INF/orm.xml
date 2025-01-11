@@ -46,6 +46,7 @@
                 inner join size s on s.id = pv.size_id
                 left join promotion pm on pv.promotion_id = pm.id
                 where pv.product_id = :product_id
+                and p.status = 1 and pv.status = 1
                 and (:color_code is null or cl.color_code like :color_code)
                 and (:size_id is null or s.id = :size_id)
             </query>
@@ -64,6 +65,7 @@
                 <column name="quantityInStock" class="java.lang.Integer"/>
                 <column name="colorName" class="java.lang.String"/>
                 <column name="sizeName" class="java.lang.String"/>
+                <column name="imageUrl" class="java.lang.String"/>
             </constructor-result>
         </sql-result-set-mapping>
 
@@ -76,7 +78,7 @@
                 pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100) as discountPrice,
                 pm.discount_value as discountValue, pv.sku as sku,
                 pv.quantity_in_stock as quantityInStock, cl.color_name as colorName,
-                s.size_name as sizeName
+                s.size_name as sizeName, pim.image_url as imageUrl
                 from product_variant pv
                 inner join product p on p.id = pv.product_id
                 inner join category c on c.id = p.category_id
@@ -84,7 +86,9 @@
                 inner join color cl on cl.id = pv.color_id
                 inner join size s on s.id = pv.size_id
                 left join promotion pm on pv.promotion_id = pm.id
+                left join product_image pim on p.id = pim.product_id and pim.is_default = 1
                 where pv.id in (:productVariantIds)
+                and p.status = 1 and pv.status = 1
             </query>
         </named-native-query>
     </entity>

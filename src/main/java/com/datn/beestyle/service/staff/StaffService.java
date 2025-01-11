@@ -12,7 +12,7 @@ import com.datn.beestyle.entity.user.Staff;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.DuplicateEmailException;
-import com.datn.beestyle.repository.CustomerRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.StaffRepository;
 import com.datn.beestyle.service.mail.MailService;
 import jakarta.persistence.EntityManager;

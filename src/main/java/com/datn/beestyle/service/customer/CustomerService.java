@@ -10,8 +10,9 @@ import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
 import com.datn.beestyle.exception.DuplicateEmailException;
-import com.datn.beestyle.repository.CustomerRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.StaffRepository;
+import com.datn.beestyle.repository.customer.CustomerRepositoryCustom;
 import com.datn.beestyle.service.mail.MailService;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +35,17 @@ public class CustomerService
         implements ICustomerService {
 
     private final CustomerRepository customerRepository;
+    private final CustomerRepositoryCustom customerRepositoryCustom;
     private final StaffRepository staffRepository;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
     public CustomerService(IGenericRepository<Customer, Long> entityRepository,
                            IGenericMapper<Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomerResponse> mapper,
-                           EntityManager entityManager, CustomerRepository customerRepository, StaffRepository staffRepository, MailService mailService, PasswordEncoder passwordEncoder) {
+                           EntityManager entityManager, CustomerRepository customerRepository, CustomerRepositoryCustom customerRepositoryCustom, StaffRepository staffRepository, MailService mailService, PasswordEncoder passwordEncoder) {
         super(entityRepository, mapper, entityManager);
         this.customerRepository = customerRepository;
+        this.customerRepositoryCustom = customerRepositoryCustom;
         this.staffRepository = staffRepository;
         this.mailService = mailService;
         this.passwordEncoder = passwordEncoder;
@@ -235,6 +238,19 @@ public class CustomerService
         else {
             throw new IllegalArgumentException("Tài khoản và mật khẩu không đúng, vui lòng kiểm tra lại");
         }
+    }
+
+    @Override
+    public PageResponse<List<CustomerResponse>> ProductSalesByUser(Pageable pageable, Long id) {
+        Page<CustomerResponse> customerResponsePage = customerRepositoryCustom.findProductSalesByUser(pageable,id);
+
+        return PageResponse.<List<CustomerResponse>>builder()
+                .pageNo(customerResponsePage.getNumber() + 1)
+                .pageSize(customerResponsePage.getSize())
+                .totalElements(customerResponsePage.getTotalElements())
+                .totalPages(customerResponsePage.getTotalPages())
+                .items(customerResponsePage.getContent())
+                .build();
     }
 
     public boolean checkPassword(String currentPassword, String storedHashedPassword) {
