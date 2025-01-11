@@ -6,11 +6,15 @@ import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
+import com.datn.beestyle.entity.order.Order;
+import com.datn.beestyle.entity.order.OrderItem;
 import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.repository.AddressRepository;
 import com.datn.beestyle.repository.OrderItemRepository;
 import com.datn.beestyle.repository.OrderRepository;
 import com.datn.beestyle.repository.VoucherRepository;
+import com.datn.beestyle.service.order.IOrderService;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -41,18 +45,16 @@ public class InvoicePDFExporter {
     private final OrderItemRepository orderItemRepository;
     private final OrderRepository orderRepository;
     private final AddressRepository addressRepository;
+    private final IOrderService orderService;
     public void exportInvoice(Long orderId, OutputStream out) {
         try {
-            List<OrderResponse> listOrder = orderRepository.findOrdersById(orderId);
-            if (listOrder == null || listOrder.isEmpty()) {
-                throw new IllegalArgumentException("Không có hóa đơn với ID: " + orderId);
+            Order order = orderService.getById(orderId);
+            List<OrderItem> listOrderItem = orderItemRepository.findOrderItemsByOrderId(orderId);
+            if(order.getOrderStatus() == OrderStatus.PENDING.getValue() ||
+                    order.getOrderStatus() == OrderStatus.AWAITING_CONFIRMATION.getValue()
+            ){
+                return;
             }
-            List<OrderItemResponse> listOrderItem = orderItemRepository.findAllByOrderId(orderId);
-            if (listOrderItem == null) {
-                listOrderItem = List.of(); // Khởi tạo danh sách rỗng nếu products là null
-            }
-
-
 
             PdfWriter writer = new PdfWriter(out);
             PdfDocument pdfDoc = new PdfDocument(writer);
@@ -113,33 +115,19 @@ public class InvoicePDFExporter {
             paragraph.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
 
             // Thêm nội dung
-            OrderResponse order = listOrder.get(0);
-
-            // Kiểm tra nếu ShippingAddressId không phải null trước khi truy vấn
-            AddressResponse addressResponse = null;
-            if (order.getShippingAddressId() != null) {
-                addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
-                // Tiến hành xử lý addressResponse sau khi lấy được dữ liệu
-            } else {
-                // Xử lý trường hợp ShippingAddressId là null
-                System.out.println("Shipping address ID is null");
-            }
-
-
-            //            System.out.println("Địa chỉ: " + addressResponse);
             /// Thêm nội dung bên trái (Tên khách hàng)
-            String customerName = (order.getCustomerName() == null || order.getCustomerName().isEmpty())
+            String customerName = (order.getCustomer().getFullName() == null || order.getCustomer().getFullName().isEmpty())
                     ? " Khách lẻ"
-                    : order.getCustomerName();
+                    : order.getCustomer().getFullName();
             paragraph.add("Tên khách hàng: " + customerName);
             paragraph.add(new Tab());
             paragraph.add("Mã hóa đơn: " + order.getOrderTrackingNumber());
             paragraph.add("\n");
-            if (addressResponse != null) {
+            if (order.getShippingAddress() != null) {
                 // Chỉ sử dụng addressResponse nếu nó không phải null
-                paragraph.add("Địa chỉ: " + addressResponse.getAddressName() + ","
-                        + addressResponse.getDistrict() + ","
-                        + addressResponse.getCity());
+                paragraph.add("Địa chỉ: " + order.getShippingAddress().getAddressName() + ","
+                        + order.getShippingAddress().getDistrict() + ","
+                        + order.getShippingAddress().getCity());
             } else {
                 // Xử lý trường hợp không có addressResponse
                 paragraph.add("Địa chỉ: ");
@@ -179,14 +167,14 @@ public class InvoicePDFExporter {
 
             int stt = 1;
 
-            for (OrderItemResponse orderItem : listOrderItem) {
+            for (OrderItem orderItem : listOrderItem) {
                 // Thêm thông tin sản phẩm vào bảng
                 table.addCell(String.valueOf(stt++)) // Thêm số thứ tự
                         .setTextAlignment(TextAlignment.CENTER)
                         .setFontSize(10);
-                String productName = orderItem.getProductName();
-                String productColor = orderItem.getColorName();
-                String productSize = orderItem.getSizeName();
+                String productName = orderItem.getProductVariant().getProduct().getProductName();
+                String productColor = orderItem.getProductVariant().getColor().getColorName();
+                String productSize = orderItem.getProductVariant().getSize().getSizeName();
 
 // Tạo chuỗi hiển thị
                 String displayText = String.format("%s / %s - %s", productName, productSize, productColor);
