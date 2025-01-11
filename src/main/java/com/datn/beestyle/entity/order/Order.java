@@ -59,6 +59,7 @@ import static jakarta.persistence.CascadeType.ALL;
                 }
         )
 )
+
 public class Order extends Auditable<Long> {
 
     @Column(name = "order_tracking_number")

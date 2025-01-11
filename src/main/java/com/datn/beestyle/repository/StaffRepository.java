@@ -23,5 +23,11 @@ public interface StaffRepository extends IGenericRepository<Staff,Integer> {
     Page<Staff> findByKeywordContainingAndStatusAndGender(Pageable pageable, @Param("status") Integer status,
                                                           @Param("gender") Integer gender, @Param("keyword") String keyword);
 
+
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String userName);
+    boolean existsByPhoneNumber(String phoneNumber);
+
     Optional<Staff> findByUsername(String username);
+
 }

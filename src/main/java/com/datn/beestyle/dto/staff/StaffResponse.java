@@ -19,7 +19,6 @@ public class StaffResponse {
     String fullName;
     LocalDate dateOfBirth;
     String username;
-    String password;
     String role;
     String gender;
     String phoneNumber;

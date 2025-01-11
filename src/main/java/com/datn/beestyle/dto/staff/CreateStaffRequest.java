@@ -1,8 +1,12 @@
 package com.datn.beestyle.dto.staff;
 
+
 import com.datn.beestyle.validation.PhoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,13 +25,16 @@ public class CreateStaffRequest {
     @NotBlank(message = "Không được để trống username")
     String username;
 
-    String password;
     LocalDate dateOfBirth;
 
     String gender;
 
-    @PhoneNumber(message = "Số điện thoại không hợp lệ.")
+
+    @NotBlank(message = "Không được để trống số điện thoại")
+    @PhoneNumber(message = "Số điện thoại không đúng định dạng")
     String phoneNumber;
+
+
 
     @NotBlank(message = "Không được để trống email")
     @Email(message = "Email không hợp lệ")
@@ -36,4 +43,9 @@ public class CreateStaffRequest {
     String avatar;
 
     String address;
+
+    @Size(min = 5, max = 10, message = "Password phải có độ dài từ {min} đến {max} ký tự")
+    String password;
+
+
 }

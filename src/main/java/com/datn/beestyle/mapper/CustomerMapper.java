@@ -27,7 +27,6 @@ public interface CustomerMapper extends IGenericMapper<Customer, CreateCustomerR
     @Mapping(target = "status", constant = "1")
     @Mapping(target = "role",expression = "java(com.datn.beestyle.enums.Role.OWNER)")
     @Mapping(target = "addresses", source = "addresses")
-    @Mapping(target = "password", ignore = true)
     @Override
     Customer toCreateEntity(CreateCustomerRequest request);
 

@@ -11,7 +11,10 @@ import com.datn.beestyle.dto.staff.UpdateStaffRequest;
 import com.datn.beestyle.entity.user.Staff;
 import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.DuplicateEmailException;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.StaffRepository;
+import com.datn.beestyle.service.mail.MailService;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,21 +26,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
+
 public class StaffService
     extends GenericServiceAbstract<Staff,Integer, CreateStaffRequest, UpdateStaffRequest, StaffResponse>
     implements IStaffService {
 
     private final StaffRepository staffRepository;
+    private final CustomerRepository customerRepository;
+    private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
 
     public StaffService(IGenericRepository<Staff, Integer> entityRepository, IGenericMapper<Staff, CreateStaffRequest,
             UpdateStaffRequest, StaffResponse> mapper, EntityManager entityManager,
-                        StaffRepository staffRepository, PasswordEncoder passwordEncoder) {
+                        StaffRepository staffRepository, CustomerRepository customerRepository, MailService mailService, PasswordEncoder passwordEncoder) {
         super(entityRepository, mapper, entityManager);
         this.staffRepository = staffRepository;
+        this.customerRepository = customerRepository;
+        this.mailService = mailService;
+
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -93,6 +103,24 @@ public class StaffService
 
     @Override
     protected void beforeUpdate(Integer id, UpdateStaffRequest request) {
+        Staff existingStaff = staffRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhân viên với ID: " + id));
+
+        if (!existingStaff.getEmail().equals(request.getEmail()) &&
+                (staffRepository.existsByEmail(request.getEmail()) || customerRepository.existsByEmail(request.getEmail()) )) {
+            throw new IllegalArgumentException("Email đã tồn tại");
+        }
+
+        if (!existingStaff.getUsername().equals(request.getUsername()) &&
+                staffRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username đã được đăng kí");
+        }
+
+        if (!existingStaff.getPhoneNumber().equals(request.getPhoneNumber()) &&
+                staffRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+        }
+     request.setPassword(existingStaff.getPassword());
 
     }
 
@@ -110,4 +138,50 @@ public class StaffService
     protected String getEntityName() {
         return "Staff";
     }
+
+    @Override
+    public StaffResponse create(CreateStaffRequest request) {
+        if (staffRepository.existsByEmail(request.getEmail()) || customerRepository.existsByEmail(request.getEmail()) ) {
+            throw new DuplicateEmailException("Email đã được đăng kí.");
+        }
+        if(staffRepository.existsByUsername(request.getUsername())){
+            throw new IllegalArgumentException("Username đã được đăng kí.");
+        }
+        if(staffRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+        }
+
+        String generatedPassword = request.getPassword();
+        if(request.getPassword() == null) {
+            // Tạo mật khẩu ngẫu nhiên và gán vào request
+            generatedPassword = UUID.randomUUID().toString().substring(0, 8);
+            request.setPassword(generatedPassword);
+        }
+
+        // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        request.setPassword(encodedPassword);  // Cập nhật mật khẩu đã mã hóa vào request
+
+        // Chuyển request sang entity
+        Staff entity = mapper.toCreateEntity(request);
+
+        // Lưu entity vào cơ sở dữ liệu
+        Staff savedEntity = entityRepository.save(entity);
+        log.info("staff",entity.getFullName());
+
+        if (savedEntity.getId() != null) {
+            try {
+                // Gửi email thông báo tài khoản
+                mailService.sendLoginStaffEmail(entity,generatedPassword);
+                log.info("Registration email sent successfully to {}", entity.getEmail());
+            } catch (Exception e) {
+                // Log lỗi nếu gửi email thất bại
+                log.error("Failed to send registration email to {}: {}", entity.getEmail(), e.getMessage());
+            }
+        }
+
+        // Chuyển entity đã lưu thành DTO để trả về
+        return mapper.toEntityDto(savedEntity);
+    }
+
 }

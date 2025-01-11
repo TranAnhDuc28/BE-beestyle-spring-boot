@@ -45,6 +45,8 @@ public class OrderResponse {
     Long createdBy;
     Long updatedBy;
 
+
+
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
                          BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
                          Integer orderType, Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
@@ -64,6 +66,30 @@ public class OrderResponse {
         this.updatedAt = updatedAt;
         this.createdBy = createdBy;
         this.updatedBy = updatedBy;
+    }
+
+    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
+                         BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
+                         Integer orderType, Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
+                         Long createdBy, Long updatedBy, Long shippingAddressId, BigDecimal shippingFee) {
+        this.id = id;
+        this.orderTrackingNumber = orderTrackingNumber;
+        this.customerId = customerId;
+        this.customerName = customerName;
+        this.phoneNumber = phoneNumber;
+        this.totalAmount = totalAmount;
+        this.paymentDate = paymentDate;
+        this.paymentMethod = PaymentMethod.fromInteger(paymentMethod);
+        this.orderChannel = OrderChannel.fromInteger(orderChannel);
+        this.orderType = OrderType.fromInteger(orderType);
+        this.orderStatus = OrderStatus.fromInteger(orderStatus);
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.createdBy = createdBy;
+        this.updatedBy = updatedBy;
+        this.shippingAddressId = shippingAddressId;
+        this.shippingFee = shippingFee;
+
     }
 
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, Integer orderChannel, Integer orderType,

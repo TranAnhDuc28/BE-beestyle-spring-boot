@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,4 +26,18 @@ public class CustomerResponse {
     String status;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+
+    String productName;
+    BigDecimal salePrice;
+    Integer totalQuantity;
+    String imageProduct;
+
+    public CustomerResponse(String productName,BigDecimal salePrice,Integer totalQuantity,String imageProduct){
+        this.productName = productName;
+        this.salePrice = salePrice;
+        this.totalQuantity = totalQuantity;
+        this.imageProduct = imageProduct;
+
+    }
 }
