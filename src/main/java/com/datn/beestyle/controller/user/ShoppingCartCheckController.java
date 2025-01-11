@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Validated
 @RestController
@@ -24,7 +26,7 @@ public class ShoppingCartCheckController {
     ) {
         List<ProductVariantResponse> productVariantResponses = this.productVariantService
                 .getProductVariantByIds(cartItemsRequest);
-        return ResponseEntity.ok(productVariantResponses);
+        return ResponseEntity.ok(Objects.requireNonNullElseGet(productVariantResponses, ArrayList::new));
     }
 }
 
