@@ -59,6 +59,6 @@ public class OrderController {
                                             @RequestParam String status,
                                             @RequestParam(required = false) String note) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully.",
-                orderService.changeOrderStatus(orderId, status, note));
+                orderService.updateOrderOnline(orderId, status, note));
     }
 }

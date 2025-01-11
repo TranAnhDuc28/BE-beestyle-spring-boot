@@ -47,7 +47,7 @@ public class OrderItemService
 
     @Override
     public List<OrderItemResponse> getAllByOrderId(Long orderId) {
-        return orderItemRepository.findAllByOrderId(orderId);
+        return orderItemRepository.findOrderItemsResponseByOrderId(orderId);
     }
 
     @Override
