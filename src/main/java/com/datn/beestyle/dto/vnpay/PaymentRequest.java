@@ -11,7 +11,7 @@ import java.util.Map;
 @ToString
 public class PaymentRequest {
     private String orderId;    // Mã đơn hàng
+    private Long amount;       // Tổng tiền đơn hàng
     private String ipAddress;  // Địa chỉ IP của client
     private String bankCode;   // Mã ngân hàng được chọn
-    private Map<String, Object> combinedData; // Dữ liệu đơn hàng
 }

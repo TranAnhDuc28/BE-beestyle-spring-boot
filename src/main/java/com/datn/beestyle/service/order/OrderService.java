@@ -289,7 +289,7 @@ public class OrderService
         String paymentMethod = request.getPaymentMethod();
         // nếu phương thức thanh toán là COD
         if (paymentMethod.equalsIgnoreCase(PaymentMethod.CASH.name()) ||
-            paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
+                paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
             PaymentMethod paymentMethodEnum = PaymentMethod.fromString(paymentMethod);
             order.setPaymentMethod(paymentMethodEnum.getValue());
             order.setPrepaid(false);
@@ -347,7 +347,7 @@ public class OrderService
 
         // kiểm tra tiền ship nếu là đơn giao hàng
         if (request.getOrderType().equalsIgnoreCase(OrderType.DELIVERY.name())) {
-            if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+            if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
                 throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
             }
             order.setShippingFee(new BigDecimal(0));
