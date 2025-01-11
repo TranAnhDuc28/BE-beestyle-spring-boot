@@ -218,10 +218,17 @@ public class OrderService
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
-        if (!(request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0)) {
-            throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+        // tổng tiền gốc nhỏ hơn 500.000
+        if (request.getOriginalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) < 0) {
+            // tiền ship đã được tính
+            if (request.getShippingFee().compareTo(new BigDecimal(0)) > 0) {
+                order.setShippingFee(request.getShippingFee());
+            } else {
+                throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+            }
+        } else {
+            order.setShippingFee(new BigDecimal(0));
         }
-        order.setShippingFee(new BigDecimal(0));
 
         order.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
         order.setReceiverName(request.getReceiverName()); // tên người nhận
@@ -478,7 +485,7 @@ public class OrderService
         }
 
         // kiểm tra voucher đã hết số lần sử chưa
-        if (voucher.getUsageLimit() > 0) {
+        if (voucher.getUsageLimit() <= 0) {
             throw new InvalidDataException("Voucher đã hết số lần sử dụng sử dụng!");
         }
 

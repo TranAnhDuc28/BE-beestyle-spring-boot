@@ -38,7 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final TokenService tokenService;
+//    private final TokenService tokenService;
     private final PasswordEncoder passwordEncoder;
     private final StaffRepository staffRepository;
     private final CustomerRepository customerRepository;
