@@ -81,7 +81,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                             WHEN :result = 3 OR :result = 4 THEN TRUE
                             ELSE (:result IS NULL OR p.gender = :result)
                         END
-                    )
+                    ) AND p.status = 1
             GROUP BY p.id, p.product_name
             ORDER BY (
                 CASE
@@ -104,6 +104,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             FROM product p
             INNER JOIN product_variant pv ON p.id = pv.product_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE p.status = 1
             GROUP BY p.id, p.product_name
             ORDER BY minDiscountedPrice asc
             """,
@@ -124,6 +125,7 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             INNER JOIN product_variant pv ON p.id = pv.product_id
             INNER JOIN order_item oi ON pv.id = oi.product_variant_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE p.status = 1
             GROUP BY p.id, p.product_name, oi.product_variant_id
             ORDER BY totalQuantitySold DESC, totalProduct DESC;
             """,
