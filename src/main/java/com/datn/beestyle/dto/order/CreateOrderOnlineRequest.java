@@ -1,7 +1,6 @@
 package com.datn.beestyle.dto.order;
 
 import com.datn.beestyle.dto.order.item.CreateOrderItemOnlineRequest;
-import com.datn.beestyle.dto.order.item.CreateOrderItemRequest;
 import com.datn.beestyle.enums.OrderChannel;
 import com.datn.beestyle.enums.OrderStatus;
 import com.datn.beestyle.enums.OrderType;

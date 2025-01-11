@@ -60,6 +60,7 @@ public class AppUtils {
     public static String generateProductCode(Long id) {
         return String.format("%s%06d", PRODUCT_CODE_PREFIX, id);
     }
+
     public static String generateOrderTrackingNumber() {
         LocalDateTime now = LocalDateTime.now();
         String formattedOrderTrackingNumber = now.format(formatterDateOrderTrackingNumber);
