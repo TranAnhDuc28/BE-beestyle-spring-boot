@@ -165,11 +165,11 @@ public class InvoicePDFExporter {
             Locale vietnamLocale = new Locale("vi", "VN");
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(vietnamLocale);
 
-            int stt = 1;
+            int index = 1;
 
             for (OrderItem orderItem : listOrderItem) {
                 // Thêm thông tin sản phẩm vào bảng
-                table.addCell(String.valueOf(stt++)) // Thêm số thứ tự
+                table.addCell(String.valueOf(index++)) // Thêm số thứ tự
                         .setTextAlignment(TextAlignment.CENTER)
                         .setFontSize(10);
                 String productName = orderItem.getProductVariant().getProduct().getProductName();
