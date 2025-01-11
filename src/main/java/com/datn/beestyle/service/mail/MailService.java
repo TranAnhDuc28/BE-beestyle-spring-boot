@@ -1,6 +1,7 @@
 package com.datn.beestyle.service.mail;
 
 import com.datn.beestyle.dto.order.OrderResponse;
+import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
 import com.datn.beestyle.repository.customer.CustomerRepository;
@@ -76,19 +77,13 @@ public class MailService {
     }
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
 
-        List<OrderResponse> listOrder = orderRepository.findOrdersById(id);
-        if (listOrder == null || listOrder.isEmpty()) {
-            throw new IllegalArgumentException("Không có hóa đơn với ID: " + id);
-        }
-        // Lấy ra order
-        OrderResponse order = listOrder.get(0);
-        Customer customer = customerRepository.getReferenceById(order.getCustomerId());
+        Order order = orderRepository.getReferenceById(id);
+        Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());
+
         try {
-
-
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
-            context.setVariable("customerName", order.getCustomerName());
+            context.setVariable("customerName", order.getCustomer().getFullName());
 
             // Xử lý template để tạo nội dung HTML
             String htmlContent = templateEngine.process("thankYouEmail", context);
