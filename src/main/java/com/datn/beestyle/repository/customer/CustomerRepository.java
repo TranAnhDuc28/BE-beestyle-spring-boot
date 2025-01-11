@@ -1,4 +1,4 @@
-package com.datn.beestyle.repository;
+package com.datn.beestyle.repository.customer;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.entity.user.Customer;
@@ -6,6 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+
+import java.util.Optional;
+
 
 public interface CustomerRepository extends IGenericRepository<Customer, Long> {
     @Query("""
@@ -24,6 +28,12 @@ public interface CustomerRepository extends IGenericRepository<Customer, Long> {
                                                              @Param("keyword") String keyword);
 
     boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phoneNumber);
+
+
+    Optional<Customer> findByEmail(String email);
+
 }
 
 

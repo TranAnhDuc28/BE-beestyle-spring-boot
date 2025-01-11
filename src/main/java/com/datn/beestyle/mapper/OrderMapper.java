@@ -8,10 +8,7 @@ import com.datn.beestyle.dto.order.UpdateOrderRequest;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.product.attributes.Material;
 import com.datn.beestyle.enums.*;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
+import org.mapstruct.*;
 
 import java.util.List;
 @Mapper(componentModel = "spring")
@@ -21,7 +18,6 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Mapping(target = "customerName", ignore = true)
     @Mapping(target = "customerInfo", ignore = true)
     @Mapping(target = "voucherInfo", ignore = true)
-    @Mapping(target = "shippingAddress", ignore = true)
     @Mapping(target = "customerId", source = "customer.id")
     @Mapping(target = "voucherId", source = "voucher.id")
     @Mapping(target = "shippingAddressId", source = "shippingAddress.id")
@@ -39,16 +35,22 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Mapping(target = "totalAmount", constant = "0")
     @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelIdCreate")
     @Mapping(target = "orderStatus", source = ".", qualifiedByName = "orderStatusIdCreate")
+    @Mapping(target = "orderType", source = ".", qualifiedByName = "orderTypeIdCreate")
     @Override
     Order toCreateEntity(CreateOrderRequest orderRequest);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "shippingAddress", ignore = true)
     @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelIdUpdate")
     @Mapping(target = "orderStatus", source = ".", qualifiedByName = "orderStatusIdUpdate")
     @Mapping(target = "paymentMethod", source = ".", qualifiedByName = "paymentMethodIdUpdate")
     void toUpdateEntity(@MappingTarget Order entity, UpdateOrderRequest request);
+
+    @Mapping(target = "shippingAddress", ignore = true)
+    @Override
+    List<Order> toUpdateEntityList(List<UpdateOrderRequest> dtoUpdateList);
 
     @Named("orderStatusIdCreate")
     default int orderStatusIdCreate(CreateOrderRequest request) {
@@ -58,6 +60,11 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Named("orderChannelIdCreate")
     default int orderChannelIdCreate(CreateOrderRequest request) {
         return OrderChannel.valueOf(request.getOrderChannel()).getValue();
+    }
+
+    @Named("orderTypeIdCreate")
+    default int orderTypeIdCreate(CreateOrderRequest request) {
+        return OrderType.valueOf(request.getOrderType()).getValue();
     }
 
     @Named("orderStatusIdUpdate")

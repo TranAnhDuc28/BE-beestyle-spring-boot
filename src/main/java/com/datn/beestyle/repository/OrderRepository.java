@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends IGenericRepository<Order, Long> {
@@ -46,6 +47,19 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                                         @Param("orderChannel") Integer orderChannel,
                                         @Param("orderStatus") List<Integer> orderStatus);
 
+
+    @Query(value = """
+                select new com.datn.beestyle.dto.order.OrderResponse(
+                    o.id, o.orderTrackingNumber, c.id, c.fullName, o.phoneNumber, o.totalAmount, o.paymentDate, 
+                    o.paymentMethod, o.orderChannel, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, o.updatedBy
+                )
+                from Order o
+                    left join Customer c on o.customer.id = c.id
+                where o.id = :orderId   
+            """
+    )
+    Optional<OrderResponse> findOrderById(@Param("orderId") Long orderId);
+
     @Query(value = """
                 select new com.datn.beestyle.dto.order.OrderResponse(
                     o.id, o.orderTrackingNumber, c.id, o.orderChannel, o.orderType, o.orderStatus
@@ -61,5 +75,21 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                                              @Param("orderStatus") Integer orderStatus);
 
     int countByCreatedByAndAndOrderStatus(Long staffId, Integer orderStatus);
+
+
+    @Query(value = """
+                select new com.datn.beestyle.dto.order.OrderResponse(
+                    o.id, o.orderTrackingNumber, c.id, c.fullName, o.phoneNumber, o.totalAmount, o.paymentDate, 
+                    o.paymentMethod, o.orderChannel, o.orderType, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, 
+                    o.updatedBy, o.shippingAddress.id, o.shippingFee
+                )
+                from Order o
+                    left join Customer c on o.customer.id = c.id
+                where
+                    (:id is null or o.id = :id)
+            """
+    )
+    List<OrderResponse> findOrdersById(@Param("id") Long id);
+
 
 }

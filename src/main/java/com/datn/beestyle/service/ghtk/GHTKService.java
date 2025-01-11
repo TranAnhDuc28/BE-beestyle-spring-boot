@@ -1,5 +1,6 @@
 package com.datn.beestyle.service.ghtk;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class GhtkService {
+public class GHTKService {
 
     @Value("${ghtk.api.token}")
     private String apiToken;
@@ -19,7 +20,7 @@ public class GhtkService {
 
     private final RestTemplate restTemplate;
 
-    public GhtkService(RestTemplate restTemplate) {
+    public GHTKService(RestTemplate restTemplate, HttpSession httpSession) {
         this.restTemplate = restTemplate;
     }
 
@@ -40,14 +41,12 @@ public class GhtkService {
 
         try {
             // Gửi POST request đến GHTK API và nhận phản hồi
-            ResponseEntity<String> response = restTemplate.exchange(
-                    apiUrl, HttpMethod.POST, httpEntity, String.class);
+            ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.POST, httpEntity, String.class);
 
             // Trả về phản hồi từ GHTK API với mã trạng thái và dữ liệu
             return new ResponseEntity<>(response.getBody(), response.getStatusCode());
         } catch (Exception e) {
             // Log lỗi và ném exception
-            e.printStackTrace();
             throw new RuntimeException("Failed to call GHTK API: " + e.getMessage(), e);
         }
     }

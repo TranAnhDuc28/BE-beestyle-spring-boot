@@ -33,7 +33,6 @@ public class OrderItemService
     private final OrderService orderService;
     private final ProductVariantService productVariantService;
     private final ProductVariantRepository productVariantRepository;
-    private final OrderItemMapper orderItemMapper;
 
     public OrderItemService(IGenericRepository<OrderItem, Long> entityRepository,
                             IGenericMapper<OrderItem, CreateOrderItemRequest, UpdateOrderItemRequest, OrderItemResponse> mapper,
@@ -44,12 +43,11 @@ public class OrderItemService
         this.orderService = orderService;
         this.productVariantService = productVariantService;
         this.productVariantRepository = productVariantRepository;
-        this.orderItemMapper = orderItemMapper;
     }
 
     @Override
     public List<OrderItemResponse> getAllByOrderId(Long orderId) {
-        return orderItemRepository.findAllByOrderId(orderId);
+        return orderItemRepository.findOrderItemsResponseByOrderId(orderId);
     }
 
     @Override

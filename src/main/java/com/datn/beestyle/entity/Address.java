@@ -2,7 +2,6 @@ package com.datn.beestyle.entity;
 
 import com.datn.beestyle.entity.user.Customer;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,13 +27,13 @@ public class Address extends BaseEntity<Long> {
     String city;
 
     @Column(name = "district_code")
-    String districtCode;
+    Integer districtCode;
 
     @Column(name = "district")
     String district;
 
     @Column(name = "commune_code")
-    String communeCode;
+    Integer communeCode;
 
     @Column(name = "commune")
     String commune;

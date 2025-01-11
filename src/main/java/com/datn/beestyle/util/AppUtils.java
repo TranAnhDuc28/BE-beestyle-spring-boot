@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class AppUtils {
 
-    private static final int FREE_SHIPPING_THRESHOLD = 500000;
+    public static final int FREE_SHIPPING_THRESHOLD = 500000;
     private static final String PRODUCT_CODE_PREFIX = "SP";
     private static final String ORDER_CODE_PREFIX = "HD";
     public static final int MAX_CATEGORY_LEVEL = 3;
@@ -60,6 +60,7 @@ public class AppUtils {
     public static String generateProductCode(Long id) {
         return String.format("%s%06d", PRODUCT_CODE_PREFIX, id);
     }
+
     public static String generateOrderTrackingNumber() {
         LocalDateTime now = LocalDateTime.now();
         String formattedOrderTrackingNumber = now.format(formatterDateOrderTrackingNumber);

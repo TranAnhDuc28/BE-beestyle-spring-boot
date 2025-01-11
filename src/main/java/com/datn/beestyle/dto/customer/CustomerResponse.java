@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,9 +21,23 @@ public class CustomerResponse {
     String gender;
     String phoneNumber;
     String email;
+    String role;
     String address;
     String status;
-    String role;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+
+
+    String productName;
+    BigDecimal salePrice;
+    Integer totalQuantity;
+    String imageProduct;
+
+    public CustomerResponse(String productName,BigDecimal salePrice,Integer totalQuantity,String imageProduct){
+        this.productName = productName;
+        this.salePrice = salePrice;
+        this.totalQuantity = totalQuantity;
+        this.imageProduct = imageProduct;
+
+    }
 }

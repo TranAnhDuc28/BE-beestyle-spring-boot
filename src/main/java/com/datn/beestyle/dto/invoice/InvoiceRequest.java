@@ -7,9 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
-
 public class InvoiceRequest {
-    private String orderId;
+    private Long orderId;
     private String customerName;
     private String orderDate;
     private String paymentMethod;
@@ -18,11 +17,8 @@ public class InvoiceRequest {
     @Getter
     @Setter
     public static class Product {
-
         private String productName;
         private int quantity;
         private double price;
-
-
     }
 }

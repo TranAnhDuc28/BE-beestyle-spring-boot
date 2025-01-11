@@ -1,8 +1,11 @@
 package com.datn.beestyle.entity.order;
 
+import com.datn.beestyle.dto.statistics.RevenueStatisticsResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Auditable;
 import com.datn.beestyle.entity.Voucher;
+import com.datn.beestyle.entity.product.ProductImage;
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -23,10 +26,47 @@ import static jakarta.persistence.CascadeType.ALL;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@SqlResultSetMapping(
+        name = "RevenueStatisticsDTOMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "date", type = java.sql.Date.class),
+                        @ColumnResult(name = "revenue", type = BigDecimal.class),
+                        @ColumnResult(name = "quantity", type = Long.class)
+                }
+        )
+)
+@SqlResultSetMapping(
+        name = "RevenueByPeriodMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "period", type = String.class),
+                        @ColumnResult(name = "revenue", type = BigDecimal.class),
+                        @ColumnResult(name = "quantity", type = Long.class)
+                }
+        )
+)
+@SqlResultSetMapping(
+        name = "OrderStatusByPeriodMapping",
+        classes = @ConstructorResult(
+                targetClass = RevenueStatisticsResponse.class,
+                columns = {
+                        @ColumnResult(name = "period", type = String.class),
+                        @ColumnResult(name = "total_success", type = Long.class),
+                        @ColumnResult(name = "total_failed", type = Long.class)
+                }
+        )
+)
+
 public class Order extends Auditable<Long> {
 
     @Column(name = "order_tracking_number")
     String orderTrackingNumber;
+
+    @Column(name = "receiver_name")
+    String receiverName;
 
     @Column(name = "phone_number")
     String phoneNumber;
@@ -43,6 +83,9 @@ public class Order extends Auditable<Long> {
 
     @Column(name = "payment_method")
     int paymentMethod;
+
+    @Column(name = "is_prepaid")
+    boolean isPrepaid;
 
     @Column(name = "order_channel")
     int orderChannel;
@@ -72,4 +115,13 @@ public class Order extends Auditable<Long> {
     @OneToMany(mappedBy = "order", cascade = ALL, fetch = FetchType.LAZY)
     List<OrderItem> orderItems = new ArrayList<>();
 
+    public void addOrderItem(OrderItem orderItem) {
+        if (orderItem != null) {
+            if (orderItems == null) {
+                orderItems = new ArrayList<>();
+            }
+            orderItems.add(orderItem);
+            orderItem.setOrder(this);
+        }
+    }
 }

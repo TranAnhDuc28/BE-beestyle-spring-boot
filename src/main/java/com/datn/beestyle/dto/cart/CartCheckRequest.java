@@ -9,4 +9,5 @@ import lombok.ToString;
 @ToString
 public class CartCheckRequest {
     private Long id;
+    private Integer quantity;
 }

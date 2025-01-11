@@ -60,29 +60,11 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                                           @Param("status") Integer status);
 
 
-    @Query(value = """
-            SELECT
-                p.id AS productId,
-                p.product_name AS productName,
-                MAX(pv.sale_price) AS maxSalePrice,
-                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
-                MAX(pm.discount_value) AS discountValue
-            FROM product p
-            INNER JOIN product_variant pv ON p.id = pv.product_id
-            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-            WHERE (:category IS NULL OR p.gender = :category)
-            GROUP BY p.id, p.product_name
-            ORDER BY RAND()
-            """,
-            countQuery = """
-                    SELECT COUNT(DISTINCT p.id)
-                    FROM product p
-                    LEFT JOIN product_variant pv ON p.id = pv.product_id
-                    LEFT JOIN promotion pm ON pv.promotion_id = pm.id
-                    WHERE (:category IS NULL OR p.gender = :category)
-                    """,
-            nativeQuery = true)
-    Page<Object[]> getFeaturedProductsData(@Param("category") Integer category, Pageable pageable);
+    boolean existsByProductName(String name);
+
+    boolean existsByProductCode(String code);
+
+    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 
     @Query(value = """
             SELECT
@@ -94,6 +76,35 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             FROM product p
             INNER JOIN product_variant pv ON p.id = pv.product_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE (
+                        CASE
+                            WHEN :result = 3 OR :result = 4 THEN TRUE
+                            ELSE (:result IS NULL OR p.gender = :result)
+                        END
+                    ) AND p.status = 1
+            GROUP BY p.id, p.product_name
+            ORDER BY (
+                CASE
+                    WHEN :result = 3 THEN RAND()
+                    WHEN :result = 4 THEN MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100))
+                    ELSE p.product_name
+                END
+            )
+            """,
+            nativeQuery = true)
+    Page<Object[]> getFeaturedProductsData(@Param("result") Integer category, Pageable pageable);
+
+    @Query(value = """
+            SELECT
+                p.id AS productId,
+                p.product_name AS productName,
+                MAX(pv.sale_price) AS maxSalePrice,
+                MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
+                MAX(pm.discount_value) AS discountValue
+            FROM product p
+            INNER JOIN product_variant pv ON p.id = pv.product_id
+            LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE p.status = 1
             GROUP BY p.id, p.product_name
             ORDER BY minDiscountedPrice asc
             """,
@@ -114,15 +125,10 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
             INNER JOIN product_variant pv ON p.id = pv.product_id
             INNER JOIN order_item oi ON pv.id = oi.product_variant_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
+            WHERE p.status = 1
             GROUP BY p.id, p.product_name, oi.product_variant_id
             ORDER BY totalQuantitySold DESC, totalProduct DESC;
             """,
             nativeQuery = true)
     Page<Object[]> getTopSellingProductsData(Pageable pageable);
-
-    boolean existsByProductName(String name);
-
-    boolean existsByProductCode(String code);
-
-    Optional<Product> findByProductNameAndIdNot(String productName, Long id);
 }

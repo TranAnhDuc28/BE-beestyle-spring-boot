@@ -1,6 +1,16 @@
 package com.datn.beestyle.util;
 
+import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.invoice.InvoiceRequest;
+import com.datn.beestyle.dto.order.OrderResponse;
+import com.datn.beestyle.dto.order.item.OrderItemResponse;
+import com.datn.beestyle.dto.voucher.VoucherResponse;
+import com.datn.beestyle.entity.Address;
+import com.datn.beestyle.enums.DiscountType;
+import com.datn.beestyle.repository.AddressRepository;
+import com.datn.beestyle.repository.OrderItemRepository;
+import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.repository.VoucherRepository;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -10,8 +20,13 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.TabAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,14 +34,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+@RequiredArgsConstructor
+@Component
 public class InvoicePDFExporter {
 
-    public void exportInvoice(InvoiceRequest request, OutputStream out) {
+    private final OrderItemRepository orderItemRepository;
+    private final OrderRepository orderRepository;
+    private final AddressRepository addressRepository;
+    public void exportInvoice(Long orderId, OutputStream out) {
         try {
-            List<InvoiceRequest.Product> products = request.getProducts();
-            if (products == null) {
-                products = List.of(); // Khởi tạo danh sách rỗng nếu products là null
+            List<OrderResponse> listOrder = orderRepository.findOrdersById(orderId);
+            if (listOrder == null || listOrder.isEmpty()) {
+                throw new IllegalArgumentException("Không có hóa đơn với ID: " + orderId);
             }
+            List<OrderItemResponse> listOrderItem = orderItemRepository.findOrderItemsResponseByOrderId(orderId);
+            if (listOrderItem == null) {
+                listOrderItem = List.of(); // Khởi tạo danh sách rỗng nếu products là null
+            }
+
+
 
             PdfWriter writer = new PdfWriter(out);
             PdfDocument pdfDoc = new PdfDocument(writer);
@@ -43,20 +69,31 @@ public class InvoicePDFExporter {
             // Thông tin công ty
             document.add(new Paragraph("BEESTYLE")
                     .setFont(font).setTextAlignment(TextAlignment.CENTER)
-                    .setFontSize(20).setBold());
-            document.add(new Paragraph("Phương Canh, Từ Liêm, Hà Nội, Việt Nam")
-                    .setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10));
-            document.add(new Paragraph("SĐT: 0123456789").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10));
+                    .setFontSize(24).setBold()
+                    .setMarginTop(0) // Khoảng cách trên đoạn văn
+                    .setMarginBottom(5)); // Khoảng cách dưới đoạn văn
+
+            document.add(new Paragraph("SĐT: 0123456789")
+                    .setFont(font).setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(10)
+                    .setMarginTop(0) // Khoảng cách trên đoạn văn
+                    .setMarginBottom(5)); // Khoảng cách dưới đoạn văn
+
+            document.add(new Paragraph("Địa chỉ: Phương Canh, Nam Từ Liêm, Hà Nội")
+                    .setFont(font).setTextAlignment(TextAlignment.CENTER)
+                    .setFontSize(10)
+                    .setMarginTop(0) // Khoảng cách trên đoạn văn
+                    .setMarginBottom(10)); // Khoảng cách dưới đoạn văn
 
             // Đường kẻ ngang
             LineSeparator lineSeparator = new LineSeparator(new SolidLine());
             lineSeparator.setWidth(500);
             document.add(lineSeparator);
 
-            Paragraph titleHeader = new Paragraph("HÓA ĐƠN THANH TOÁN")
+            Paragraph titleHeader = new Paragraph("HÓA ĐƠN BÁN HÀNG")
                     .setFont(font)
                     .setTextAlignment(TextAlignment.CENTER)
-                    .setFontSize(18) // Giảm cỡ chữ tiêu đề
+                    .setFontSize(20) // Giảm cỡ chữ tiêu đề
                     .setBold();
             document.add(titleHeader);
 
@@ -76,101 +113,131 @@ public class InvoicePDFExporter {
             paragraph.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
 
             // Thêm nội dung
-            paragraph.add("Mã hóa đơn: " + request.getOrderId()); // Nội dung bên trái
-            paragraph.add(new Tab()); // Tab để đẩy nội dung tiếp theo sang bên phải
-            paragraph.add("Khách hàng: " + request.getCustomerName()); // Nội dung bên phải
+            OrderResponse order = listOrder.get(0);
 
-            // Thêm Paragraph vào tài liệu
+            // Kiểm tra nếu ShippingAddressId không phải null trước khi truy vấn
+            AddressResponse addressResponse = null;
+            if (order.getShippingAddressId() != null) {
+                addressResponse = addressRepository.findByAddressId(order.getShippingAddressId());
+                // Tiến hành xử lý addressResponse sau khi lấy được dữ liệu
+            } else {
+                // Xử lý trường hợp ShippingAddressId là null
+                System.out.println("Shipping address ID is null");
+            }
+
+
+            //            System.out.println("Địa chỉ: " + addressResponse);
+            /// Thêm nội dung bên trái (Tên khách hàng)
+            String customerName = (order.getCustomerName() == null || order.getCustomerName().isEmpty())
+                    ? " Khách lẻ"
+                    : order.getCustomerName();
+            paragraph.add("Tên khách hàng: " + customerName);
+            paragraph.add(new Tab());
+            paragraph.add("Mã hóa đơn: " + order.getOrderTrackingNumber());
+            paragraph.add("\n");
+            if (addressResponse != null) {
+                // Chỉ sử dụng addressResponse nếu nó không phải null
+                paragraph.add("Địa chỉ: " + addressResponse.getAddressName() + ","
+                        + addressResponse.getDistrict() + ","
+                        + addressResponse.getCity());
+            } else {
+                // Xử lý trường hợp không có addressResponse
+                paragraph.add("Địa chỉ: ");
+            }
+            paragraph.add(new Tab());
+            paragraph.add("Ngày tạo: " + order.getCreatedAt());
+            paragraph.add("\n");
+            String phoneNumber = (order.getPhoneNumber() == null || order.getPhoneNumber().isEmpty())
+                    ? ""
+                    : order.getPhoneNumber();
+            paragraph.add("Số điện thoại: " + phoneNumber);
+
+            // Thêm vào tài liệu
             document.add(paragraph);
-
-            document.add(new Paragraph("Thu ngân: ")
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-
-            String orderDate = request.getOrderDate(); // Giả sử là "yyyy-MM-dd HH:mm:ss"
-            // Sử dụng định dạng mới
-            SimpleDateFormat fullDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-            Date date = fullDateFormat.parse(orderDate); // Chuyển đổi thành đối tượng Date
-
-            // Định dạng lại ngày và giờ
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-
-            String formattedDate = dateFormat.format(date); // Định dạng ngày
-            String formattedTime = timeFormat.format(date); // Định dạng giờ
-
-            // Tạo Paragraph
-            Paragraph dateTime = new Paragraph();
-            dateTime.setFont(font).setFontSize(10);
-
-            // Đặt TabStops
-            dateTime.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
-
-            // Thêm nội dung vào Paragraph
-            dateTime.add("Ngày: " + formattedDate); // Nội dung bên trái
-            dateTime.add(new Tab()); // Đẩy nội dung tiếp theo sang bên phải
-            dateTime.add("Giờ: " + formattedTime); // Nội dung bên phải
-
-            // Thêm Paragraph vào tài liệu
-            document.add(dateTime);
-
-
             // **3. Dòng nội dung đơn hàng**
-            document.add(new Paragraph("Nội dung đơn hàng: ").setFont(font).setTextAlignment(TextAlignment.LEFT).setBold().setFontSize(10));
+            double totalAmount = 0;
+            int totalQuantity = 0; // Biến tổng số lượng
+
+            // **Hiển thị dòng "Nội dung đơn hàng" trước bảng**
+            document.add(new Paragraph("Nội dung đơn hàng: ")
+                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setBold().setFontSize(14));
 
             // **5. Bảng chi tiết sản phẩm**
-            document.add(new Paragraph("\n"));
-            float[] columnWidths = {2, 1, 1, 2}; // Điều chỉnh độ rộng cột để vừa với trang
+            float[] columnWidths = {0.5f, 2f, 1.5f, 1f, 1.5f}; // Chia độ rộng cột: Cột "Tên sản phẩm" chiếm nhiều không gian hơn
             Table table = new Table(columnWidths);
-            table.setWidth(500);
+            table.setWidth(UnitValue.createPercentValue(100));  // Đặt tổng chiều rộng bảng bằng 100% chiều rộng trang
 
             // Header
+            table.addHeaderCell("STT").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Tên sản phẩm").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
-            table.addHeaderCell("Giá").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
+            table.addHeaderCell("Đơn giá").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Số lượng").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
             table.addHeaderCell("Thành tiền").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10);
 
-            double totalAmount = 0;
-            int totalQuantity = 0; // Biến tổng số lượng
             Locale vietnamLocale = new Locale("vi", "VN");
             NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(vietnamLocale);
 
-            for (InvoiceRequest.Product product : products) {
-                table.addCell(product.getProductName()).setFont(font).setFontSize(10);
-                table.addCell(currencyFormatter.format(product.getPrice())).setFont(font).setFontSize(10);
-                table.addCell(String.valueOf(product.getQuantity())).setFont(font).setFontSize(10);
-                double itemTotal = product.getQuantity() * product.getPrice();
-                table.addCell(currencyFormatter.format(itemTotal)).setFont(font).setFontSize(10);
-                totalAmount += itemTotal;
-                totalQuantity += product.getQuantity();
-            }
-            document.add(table);
+            int stt = 1;
 
+            for (OrderItemResponse orderItem : listOrderItem) {
+                // Thêm thông tin sản phẩm vào bảng
+                table.addCell(String.valueOf(stt++)) // Thêm số thứ tự
+                        .setTextAlignment(TextAlignment.CENTER)
+                        .setFontSize(10);
+                String productName = orderItem.getProductName();
+                String productColor = orderItem.getColorName();
+                String productSize = orderItem.getSizeName();
+
+// Tạo chuỗi hiển thị
+                String displayText = String.format("%s / %s - %s", productName, productSize, productColor);
+                table.addCell(displayText).setFont(font).setFontSize(10);
+
+                // Sử dụng giá giảm nếu có, nếu không dùng giá bán
+                BigDecimal salePrice = (orderItem.getDiscountedPrice() != null && orderItem.getDiscountedPrice().compareTo(BigDecimal.ZERO) > 0)
+                        ? orderItem.getDiscountedPrice()
+                        : orderItem.getSalePrice();
+
+                table.addCell(currencyFormatter.format(salePrice)).setFont(font).setFontSize(10);
+                table.addCell(String.valueOf(orderItem.getQuantity())).setFont(font).setFontSize(10);
+
+                BigDecimal quantity = BigDecimal.valueOf(orderItem.getQuantity());  // Số lượng dưới dạng BigDecimal
+
+                // Tính tổng tiền cho một sản phẩm
+                BigDecimal itemTotal = salePrice.multiply(quantity);
+                table.addCell(currencyFormatter.format(itemTotal)).setFont(font).setFontSize(10);
+
+                // Cập nhật tổng số tiền và số lượng
+                totalAmount += itemTotal.doubleValue();  // Convert BigDecimal to double for totalAmount
+                totalQuantity += orderItem.getQuantity();
+            }
+            // Thêm bảng vào tài liệu
+            document.add(table);
             // **Tổng số lượng**
             document.add(new Paragraph("Tổng số lượng sản phẩm: " + totalQuantity).setFont(font).setBold().setTextAlignment(TextAlignment.LEFT).setFontSize(10));
 
-            // **6. Tổng tiền và các khoản khác**
-            document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount)).setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Giảm giá: 0 đ").setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Phí ship: 0 đ").setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-            document.add(new Paragraph("Tổng hóa đơn: " + currencyFormatter.format(totalAmount))
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
+// Tính giảm giá
+            BigDecimal totalAmountBigDecimal = BigDecimal.valueOf(totalAmount); // Tổng tiền hàng
+            BigDecimal discount = totalAmountBigDecimal.subtract(order.getTotalAmount()).subtract(order.getShippingFee());
 
-            // **7. Thông tin thanh toán**
-            document.add(new Paragraph("Phương thức thanh toán: " + request.getPaymentMethod())
-                    .setFont(font).setTextAlignment(TextAlignment.LEFT).setFontSize(10));
-
-            // **8. Tổng thanh toán**
-            Paragraph total = new Paragraph("Tổng thanh toán: " + currencyFormatter.format(totalAmount))
+// Thêm thông tin vào tài liệu
+            document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount))
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
+            document.add(new Paragraph("Giảm giá: " + currencyFormatter.format(discount))
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
+            document.add(new Paragraph("Phí ship: " + currencyFormatter.format(order.getShippingFee()))
+                    .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
+// Tổng thanh toán
+            Paragraph total = new Paragraph("Tổng thanh toán: " + currencyFormatter.format(order.getTotalAmount()))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(12).setBold();
             document.add(total);
+
 
             // **9. Lời cảm ơn**
             document.add(new Paragraph("Cảm ơn quý khách đã mua hàng!").setFont(font).setTextAlignment(TextAlignment.CENTER).setFontSize(10));
 
             document.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

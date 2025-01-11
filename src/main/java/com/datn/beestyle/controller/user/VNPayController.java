@@ -1,15 +1,12 @@
 package com.datn.beestyle.controller.user;
 
+import com.datn.beestyle.config.VNPayConfig;
 import com.datn.beestyle.dto.vnpay.PaymentRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -17,28 +14,20 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/payment")
-public class VNPayController {
-    @Value("${vnpay.tmn_code}")
-    private String vnp_TmnCode;
-
-    @Value("${vnpay.hash_secret}")
-    private String vnp_HashSecret;
-
-    @Value("${vnpay.pay_url}")
-    private String vnp_PayUrl;
-
-    @Value("${vnpay.return_url}")
-    private String vnp_ReturnUrl;
+public class VNPayController extends VNPayConfig {
 
     @PostMapping("/create-payment")
-    public ResponseEntity<?> createPayment(@RequestBody PaymentRequest request) throws UnsupportedEncodingException {
+    public ResponseEntity<?> createPayment(
+            @RequestBody PaymentRequest request
+    ) {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String vnp_OrderInfo = "Thanh toan don hang: " + request.getOrderId();
         String vnp_OrderType = "billpayment";
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
         String vnp_IpAddr = request.getIpAddress();
-        String vnp_Amount = String.valueOf(request.getAmount() * 100);
+        Long amount = request.getAmount() * 100;
+        String vnp_Amount = String.valueOf(amount);
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", vnp_Version);
@@ -84,73 +73,24 @@ public class VNPayController {
         String paymentUrl = vnp_PayUrl + "?" + query.toString();
         return ResponseEntity.ok(Map.of("paymentUrl", paymentUrl));
     }
+
     @GetMapping("/return")
-    public void handleVNPayReturn(@RequestParam Map<String, String> params, HttpServletResponse response) throws IOException {
-        // 1. Kiểm tra tính toàn vẹn của dữ liệu trả về
-//        if (!isValidVNPayResponse(params)) {
-//            // Redirect đến trang lỗi nếu dữ liệu không hợp lệ
-//            response.sendRedirect("http://localhost:3000/vnpay/error");
-//            return;
-//        }
-
-        // 2. Lấy mã phản hồi từ VNPay
+    public void handleVNPayReturn(
+            @RequestParam Map<String, String> params,
+            HttpServletResponse response
+    ) throws IOException {
         String vnp_ResponseCode = params.get("vnp_ResponseCode");
+        String trackingNumber = params.get("vnp_TxnRef");
+        String redirectUrl = "http://localhost:3000/order/confirm?";
 
-        // 3. Phân loại trạng thái giao dịch và redirect đến trang tương ứng
         if ("00".equals(vnp_ResponseCode)) {
-            // Giao dịch thành công
-            response.sendRedirect("http://localhost:3000/vnpay/success");
+            redirectUrl += "vnp_ResponseCode=00&vnp_TxnRef=" + trackingNumber;
         } else if ("24".equals(vnp_ResponseCode)) {
-            // Người dùng hủy giao dịch
-            response.sendRedirect("http://localhost:3000/vnpay/cancel");
+            redirectUrl += "vnp_ResponseCode=24";
         } else {
-            // Các lỗi khác
-            response.sendRedirect("http://localhost:3000/vnpay/error");
+            redirectUrl += "vnp_ResponseCode=" + vnp_ResponseCode;
         }
 
-    }
-
-    private String HmacSHA512(String key, String data) {
-        try {
-            Mac hmacSHA512 = Mac.getInstance("HmacSHA512");
-            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(), "HmacSHA512");
-            hmacSHA512.init(secretKey);
-            byte[] bytes = hmacSHA512.doFinal(data.getBytes());
-            StringBuilder hash = new StringBuilder();
-            for (byte b : bytes) {
-                hash.append(String.format("%02x", b));
-            }
-            return hash.toString();
-        } catch (Exception ex) {
-            throw new RuntimeException("Error while hashing data", ex);
-        }
-    }
-
-    /**
-     * Kiểm tra tính toàn vẹn của dữ liệu trả về từ VNPay bằng cách xác thực vnp_SecureHash.
-     */
-    private boolean isValidVNPayResponse(Map<String, String> params) {
-        String vnp_SecureHash = params.get("vnp_SecureHash");
-        params.remove("vnp_SecureHash"); // Loại bỏ hash để tính lại
-
-        // Sắp xếp các tham số theo thứ tự key
-        List<String> fieldNames = new ArrayList<>(params.keySet());
-        Collections.sort(fieldNames);
-
-        // Tạo chuỗi dữ liệu để hash
-        StringBuilder hashData = new StringBuilder();
-        for (String fieldName : fieldNames) {
-            String fieldValue = params.get(fieldName);
-            if (fieldValue != null && fieldValue.length() > 0) {
-                hashData.append(fieldName).append("=").append(fieldValue).append("&");
-            }
-        }
-        hashData.deleteCharAt(hashData.length() - 1);
-
-        // Hash dữ liệu với key bí mật
-        String computedHash = HmacSHA512(vnp_HashSecret, hashData.toString());
-
-        // So sánh hash trả về với hash đã tính
-        return computedHash.equals(vnp_SecureHash);
+        response.sendRedirect(redirectUrl);
     }
 }

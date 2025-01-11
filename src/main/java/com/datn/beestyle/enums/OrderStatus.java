@@ -15,11 +15,10 @@ public enum OrderStatus {
     AWAITING_SHIPMENT(4), // chờ giao hàng
     OUT_FOR_DELIVERY(5), // đang giao hàng
 
-    // đã thanh toán dành cho bán giao hàng
-    DELIVERED(6),
-    CANCELLED(7) // đã hủy
+    DELIVERED(6), // đã thanh toán dành cho bán giao hàng
+    CANCELLED(7), // đã hủy
 //    RETURN_REQUESTED(7), // yêu cầu trả hàng
-//    RETURNED(8), // đã trả hàng
+    RETURNED(8), // đã trả hàng
 //    REFUNDED(9) // đã hoàn tiền
     ;
 

@@ -16,7 +16,7 @@ public interface IProductService
 
     PageResponse<List<ProductResponse>> searchProductByStatusIsActive(Pageable pageable, String keyword);
 
-    PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String categoryIds, String genderProduct,
+    PageResponse<List<ProductResponse>> filterProductByStatusIsActive(Pageable pageable, String keyword, String categoryIds, String genderProduct,
                                                                       String brandIds, String materialIds,
                                                                       BigDecimal minPrice, BigDecimal maxPrice);
 
