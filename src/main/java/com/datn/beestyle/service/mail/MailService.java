@@ -1,11 +1,10 @@
 package com.datn.beestyle.service.mail;
 
-import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
-import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.service.order.IOrderService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -20,7 +19,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -31,7 +29,6 @@ public class MailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
     private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
 
     @Value("${spring.mail.from}")
     private String emailFrom;
@@ -76,6 +73,7 @@ public class MailService {
         }
     }
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
+        Order order = orderRepository.findById(id).get();
 
         Order order = orderRepository.getReferenceById(id);
         Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());

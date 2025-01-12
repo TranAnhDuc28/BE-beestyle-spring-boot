@@ -1,9 +1,9 @@
 package com.datn.beestyle.controller;
 
 import com.datn.beestyle.dto.ApiResponse;
-import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
 import com.datn.beestyle.dto.order.CreateOrderRequest;
 import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.dto.order.UpdateOrderStatusDeliveryRequest;
 import com.datn.beestyle.service.order.OrderService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -54,11 +54,10 @@ public class OrderController {
                 orderService.update(orderId, request));
     }
 
-    @PatchMapping("/{orderId}/update-status")
+    @PostMapping("/{orderId}/update-status")
     public ApiResponse<?> updateOrderStatus(@Min(1) @PathVariable("orderId") Long orderId,
-                                            @RequestParam String status,
-                                            @RequestParam(required = false) String note) {
+                                            @Valid @RequestBody UpdateOrderStatusDeliveryRequest request) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Order status updated successfully.",
-                orderService.updateOrderOnline(orderId, status, note));
+                orderService.updateOrderOnline(orderId, request));
     }
 }
