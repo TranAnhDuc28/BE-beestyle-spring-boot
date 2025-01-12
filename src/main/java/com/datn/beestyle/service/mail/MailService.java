@@ -75,12 +75,13 @@ public class MailService {
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
         Order order = orderRepository.findById(id).get();
 
-        // Lấy ra order
-        Customer customer = order.getCustomer();
+        Order order = orderRepository.getReferenceById(id);
+        Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());
+
         try {
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
-//            context.setVariable("customerName", order.getCustomerName());
+            context.setVariable("customerName", order.getCustomer().getFullName());
 
             // Xử lý template để tạo nội dung HTML
             String htmlContent = templateEngine.process("thankYouEmail", context);

@@ -63,5 +63,4 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                                              @Param("orderStatus") Integer orderStatus);
 
     int countByCreatedByAndAndOrderStatus(Long staffId, Integer orderStatus);
-
 }
