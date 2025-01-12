@@ -6,10 +6,7 @@ import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.customer.CustomerResponse;
-import com.datn.beestyle.dto.order.CreateOrderOnlineRequest;
-import com.datn.beestyle.dto.order.CreateOrderRequest;
-import com.datn.beestyle.dto.order.OrderResponse;
-import com.datn.beestyle.dto.order.UpdateOrderRequest;
+import com.datn.beestyle.dto.order.*;
 import com.datn.beestyle.dto.order.item.CreateOrderItemOnlineRequest;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
@@ -171,22 +168,21 @@ public class OrderService
      * Xử lý đơn hàng online qua thay đổi các trạng thái
      *
      * @param id
-     * @param status
-     * @param note
+     * @param  request
      * @return
      */
     @Transactional
     @Override
-    public String updateOrderOnline(Long id, String status, String note) {
+    public String updateOrderOnline(Long id, UpdateOrderStatusDeliveryRequest request) {
         // lấy và kiểm tra tồn tại đơn hàng
         Order order = this.getById(id);
 
         // Chuyển từ chuỗi sang enum
-        OrderStatus orderStatus = OrderStatus.fromString(status);
+        OrderStatus orderStatus = OrderStatus.fromString(request.getOrderStatus());
 
         // kiểm tra key enum có chính xác
         if (orderStatus == null) {
-            throw new IllegalArgumentException("Trạng thái hóa đơn " + status + " không hợp lệ.");
+            throw new IllegalArgumentException("Trạng thái hóa đơn " + request.getOrderStatus() + " không hợp lệ.");
         }
 
         if (orderStatus == OrderStatus.CONFIRMED) {
@@ -206,7 +202,7 @@ public class OrderService
             }
 
             // xử lý khi hủy đơn
-            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), note);
+            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), request.getNote());
 
             // Cập nhật trạng thái đơn hàng
             order.setOrderStatus(OrderStatus.CANCELLED.getValue());
@@ -221,7 +217,7 @@ public class OrderService
             }
 
             // xử lý đơn khi trả hàng
-            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), note);
+            this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), request.getNote());
         }
 
         orderRepository.save(order);
@@ -648,13 +644,40 @@ public class OrderService
         return productVariant;
     }
 
+    /**
+     * xử lý đơn hàng khi hủy
+     * @param orderId
+     * @param note
+     */
     private void handleOrderOnlineAfterCancelledOrReturned(Long orderId, String note) {
         // bắt buộc nhập lý do hủy đơn hàng.
         if (note == null || note.isBlank()) {
             throw new InvalidDataException("Vui lòng nhập lý do hủy đơn hàng.");
         }
 
+        // danh sách lưu các sản phẩm cần update hồi số lựợng
+        List<ProductVariant> productVariantsToUpdate = new ArrayList<>();
+
         // Duyệt qua các chi tiết đơn hàng để hồi lại số lượng sản phẩm trong kho
         List<OrderItem> orderItems = orderItemRepository.findOrderItemsByOrderId(orderId);
+
+        for (OrderItem orderItem : orderItems) {
+            ProductVariant productVariant = orderItem.getProductVariant();
+
+            // hồi lại số lượng sản phẩm trong kho
+            productVariant.setQuantityInStock(productVariant.getQuantityInStock() + orderItem.getQuantity());
+            productVariantsToUpdate.add(productVariant);
+        }
+
+        // cập nhật các sản phẩm đã hồi số lượng vào kho
+        productVariantRepository.saveAll(productVariantsToUpdate);
+    }
+
+    /**
+     * Cập nhật thông tin nhận hàng của hóa đơn
+     */
+    private String updateOrderShippingInfo() {
+
+        return "OK";
     }
 }

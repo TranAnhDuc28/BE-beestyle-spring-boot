@@ -14,5 +14,8 @@ public interface IOrderItemService
         extends IGenericService<OrderItem, Long, CreateOrderItemRequest, UpdateOrderItemRequest, OrderItemResponse> {
     List<OrderItemResponse> getAllByOrderId(Long orderId);
     Map<Long, Long> createOrUpdateOrderItems(Long orderId, List<UpdateOrderItemRequest> requests);
+    Map<Long, Long> createOrUpdateOrderItemsDeliverySale(Long orderId, List<UpdateOrderItemRequest> requests);
+
+
     int patchUpdateQuantity(PatchUpdateQuantityOrderItem request);
 }
