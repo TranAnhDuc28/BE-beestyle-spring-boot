@@ -29,10 +29,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Component
@@ -47,7 +45,7 @@ public class InvoicePDFExporter {
             if (listOrder == null || listOrder.isEmpty()) {
                 throw new IllegalArgumentException("Không có hóa đơn với ID: " + orderId);
             }
-            List<OrderItemResponse> listOrderItem = orderItemRepository.findAllByOrderId(orderId);
+            List<OrderItemResponse> listOrderItem =  new ArrayList<>(); // orderItemRepository.findAllByOrderId(orderId);
             if (listOrderItem == null) {
                 listOrderItem = List.of(); // Khởi tạo danh sách rỗng nếu products là null
             }
