@@ -1,6 +1,7 @@
 package com.datn.beestyle.entity.cart;
 
 import com.datn.beestyle.entity.BaseEntity;
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,25 +22,22 @@ import java.util.UUID;
 public class ShoppingCart extends BaseEntity<Long> {
 
     @Column(name = "cart_code")
-    UUID cartCode;
+    String cartCode;
 
-    @Column(name = "total_amount")
-    BigDecimal totalAmount = BigDecimal.ZERO;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_variant_id", referencedColumnName = "id")
+    ProductVariant productVariant;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     Customer customer;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ShoppingCartItem> items = new ArrayList<>();
+    @Column(name = "quantity")
+    Integer quantity;
 
-    public void saveItem(ShoppingCartItem item) {
-        if(item != null) {
-            if(items == null) {
-                items = new ArrayList<>();
-            }
-            items.add(item);
-            item.setShoppingCart(this);
-        }
-    }
+    @Column(name = "sale_price")
+    BigDecimal salePrice;
+
+    @Column(name = "discounted_price")
+    BigDecimal discountedPrice;
 }
