@@ -1,10 +1,6 @@
 package com.datn.beestyle.util;
 
-import com.datn.beestyle.dto.address.AddressResponse;
-import com.datn.beestyle.dto.invoice.InvoiceRequest;
-import com.datn.beestyle.dto.order.OrderResponse;
 import com.datn.beestyle.dto.order.item.OrderItemResponse;
-import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.order.OrderItem;
@@ -30,10 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -67,7 +60,6 @@ public class InvoicePDFExporter {
             );
 
             // **1. Thêm tiêu đề "HÓA ĐƠN THANH TOÁN"**
-
             // Thông tin công ty
             document.add(new Paragraph("BEESTYLE")
                     .setFont(font).setTextAlignment(TextAlignment.CENTER)
@@ -132,6 +124,7 @@ public class InvoicePDFExporter {
                 // Xử lý trường hợp không có addressResponse
                 paragraph.add("Địa chỉ: ");
             }
+          
             paragraph.add(new Tab());
             paragraph.add("Ngày tạo: " + order.getCreatedAt());
             paragraph.add("\n");
@@ -176,7 +169,7 @@ public class InvoicePDFExporter {
                 String productColor = orderItem.getProductVariant().getColor().getColorName();
                 String productSize = orderItem.getProductVariant().getSize().getSizeName();
 
-// Tạo chuỗi hiển thị
+                // Tạo chuỗi hiển thị
                 String displayText = String.format("%s / %s - %s", productName, productSize, productColor);
                 table.addCell(displayText).setFont(font).setFontSize(10);
 
@@ -203,18 +196,18 @@ public class InvoicePDFExporter {
             // **Tổng số lượng**
             document.add(new Paragraph("Tổng số lượng sản phẩm: " + totalQuantity).setFont(font).setBold().setTextAlignment(TextAlignment.LEFT).setFontSize(10));
 
-// Tính giảm giá
+            // Tính giảm giá
             BigDecimal totalAmountBigDecimal = BigDecimal.valueOf(totalAmount); // Tổng tiền hàng
             BigDecimal discount = totalAmountBigDecimal.subtract(order.getTotalAmount()).subtract(order.getShippingFee());
 
-// Thêm thông tin vào tài liệu
+            // Thêm thông tin vào tài liệu
             document.add(new Paragraph("Tổng tiền hàng: " + currencyFormatter.format(totalAmount))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
             document.add(new Paragraph("Giảm giá: " + currencyFormatter.format(discount))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
             document.add(new Paragraph("Phí ship: " + currencyFormatter.format(order.getShippingFee()))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(10));
-// Tổng thanh toán
+            // Tổng thanh toán
             Paragraph total = new Paragraph("Tổng thanh toán: " + currencyFormatter.format(order.getTotalAmount()))
                     .setFont(font).setTextAlignment(TextAlignment.RIGHT).setFontSize(12).setBold();
             document.add(total);

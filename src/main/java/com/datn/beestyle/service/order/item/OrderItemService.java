@@ -50,6 +50,12 @@ public class OrderItemService
         return orderItemRepository.findOrderItemsResponseByOrderId(orderId);
     }
 
+    /**
+     * Bán tại quầy, xử lý cộng và trừ sản phẩm luôn trong kho
+     * @param orderId
+     * @param requests
+     * @return
+     */
     @Override
     public Map<Long, Long> createOrUpdateOrderItems(Long orderId, List<UpdateOrderItemRequest> requests) {
         Map<Long, Long> newOrderItemsMap = new HashMap<>();
@@ -132,6 +138,91 @@ public class OrderItemService
         return newOrderItemsMap;
     }
 
+    /**
+     * Bán giao hàng, thay đổi sản phẩm trong giỏ khi trng thái hóa đơn chờ thanh toán
+     * @param orderId
+     * @param requests
+     * @return
+     */
+    @Override
+    public Map<Long, Long> createOrUpdateOrderItemsDeliverySale(Long orderId, List<UpdateOrderItemRequest> requests) {
+        Map<Long, Long> newOrderItemsMap = new HashMap<>();
+        List<Long> orderItemIds;
+        List<Long> productVariantIds;
+        List<OrderItem> orderItemsToSave = new ArrayList<>();
+
+        // kiểm hóa đơn có hợp lệ hay tồn tại không
+        if (orderId == null) throw new InvalidDataException("Id hóa đơn không hợp lệ (null).");
+        Order order = orderService.getById(orderId);
+
+        if (requests.isEmpty()) throw new InvalidDataException("Vui lòng chọn sản phẩm.");
+        // lấy ra orderItemIds và productVariantIds
+        orderItemIds = new ArrayList<>();
+        productVariantIds = new ArrayList<>();
+        for (UpdateOrderItemRequest request : requests) {
+            if (request.getId() != null) orderItemIds.add(request.getId());
+            if (request.getProductVariantId() != null) productVariantIds.add(request.getProductVariantId());
+        }
+
+        // validate tồn tại OrderItem
+        Map<Long, OrderItem> orderItemMap = Collections.emptyMap();
+        if (!orderItemIds.isEmpty()) {
+            List<OrderItem> orderItemList = orderItemRepository.findAllById(orderItemIds);
+
+            orderItemMap = orderItemList.stream().collect(Collectors.toMap(OrderItem::getId, orderItem -> orderItem));
+
+            this.validatePropOrderItems(orderId, orderItemIds, orderItemMap);
+        }
+
+        // validate tồn tại ProductVariant
+        Map<Long, ProductVariant> productVariantMap = Collections.emptyMap();
+        if (!productVariantIds.isEmpty()) {
+            List<ProductVariant> productVariantList = productVariantRepository.findAllById(productVariantIds);
+
+            productVariantMap = productVariantList.stream().collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
+
+            this.validatePropProductVariants(productVariantIds, productVariantMap);
+        }
+
+        for (UpdateOrderItemRequest request : requests) {
+            ProductVariant productVariant = productVariantMap.get(request.getProductVariantId());
+
+            // Kiểm tra số lượng tồn kho có đủ hay không
+            int newStockQuantity = productVariant.getQuantityInStock() - request.getQuantity();
+            if (newStockQuantity < 0) {
+                throw new InvalidDataException("Số lượng tồn kho không đủ cho sản phẩm: " + productVariant.getSku());
+            }
+
+            OrderItem orderItem;
+            if (request.getId() != null) {
+                // Cập nhật OrderItem đã tồn tại
+                orderItem = orderItemMap.get(request.getId());
+                orderItem.setOrder(order);
+                orderItem.setSalePrice(productVariant.getSalePrice());
+
+                int newQuantity = orderItem.getQuantity() + request.getQuantity();
+                orderItem.setQuantity(newQuantity);
+            } else {
+                // Tạo mới OrderItem
+                orderItem = new OrderItem();
+                orderItem.setOrder(order);
+                orderItem.setProductVariant(productVariant);
+                orderItem.setQuantity(request.getQuantity());
+                orderItem.setSalePrice(productVariant.getSalePrice());
+            }
+
+            // Thêm vào danh sách để lưu
+            orderItemsToSave.add(orderItem);
+        }
+        List<OrderItem> savedOrderItems = orderItemRepository.saveAll(orderItemsToSave);
+
+        for (OrderItem newOrderItem : savedOrderItems) {
+            newOrderItemsMap.put(newOrderItem.getProductVariant().getId(), newOrderItem.getId());
+        }
+
+        return newOrderItemsMap;
+    }
+
     @Transactional
     @Override
     public int patchUpdateQuantity(PatchUpdateQuantityOrderItem request) {
@@ -141,6 +232,11 @@ public class OrderItemService
         return orderItemRepository.updateQuantityOrderItem(request.getId(), request.getQuantity());
     }
 
+    /**
+     * xóa sản phẩm trong giỏ khi bán hag tại quầy
+     * hồi lại sản phẩm ngay vào kho
+     * @param id
+     */
     @Transactional
     @Override
     public void delete(Long id) {
