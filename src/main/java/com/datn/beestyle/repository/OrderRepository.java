@@ -9,19 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends IGenericRepository<Order, Long> {
 
     @Query(value = """
                 select new com.datn.beestyle.dto.order.OrderResponse(
-                    o.id, o.orderTrackingNumber, c.id, c.fullName, o.phoneNumber, o.totalAmount, o.paymentDate, 
-                    o.paymentMethod, o.orderChannel, o.orderType, o.orderStatus, o.createdAt, o.updatedAt, o.createdBy, 
-                    o.updatedBy
+                    o.id, o.orderTrackingNumber, c.id, c.fullName, c.phoneNumber, o.receiverName, o.phoneNumber, o.totalAmount, 
+                    o.paymentDate, o.paymentMethod, o.orderChannel, o.orderType, o.orderStatus, o.createdAt, o.updatedAt, 
+                    o.createdBy, o.updatedBy
                 )
                 from Order o
                     left join Customer c on o.customer.id = c.id
@@ -29,6 +27,8 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                     (:keyword is null or 
                         o.orderTrackingNumber like concat('%', :keyword, '%') or
                         c.fullName like concat('%', :keyword, '%') or
+                        c.phoneNumber like concat('%', :keyword, '%') or
+                        o.receiverName like concat('%', :keyword, '%') or
                         o.phoneNumber like concat('%', :keyword, '%')) and
                     (:startDate is null or o.createdAt >= :startDate) and
                     (:endDate is null or o.createdAt <= :endDate) and
@@ -57,6 +57,7 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
                 where
                     (:orderChannel is null or o.orderChannel = :orderChannel) and 
                     (:orderStatus is null or o.orderStatus = :orderStatus)
+                order by o.createdAt desc 
             """
     )
     List<OrderResponse> findOrdersByOrderChannelAndOrderStatus(@Param("orderChannel") Integer orderChannel,
