@@ -43,7 +43,7 @@ public class BrandController {
 
     @PostMapping("/create")
     public ApiResponse<?> createBrand(@Valid @RequestBody CreateBrandRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Brand added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới thương hiệu thành công!",
                 brandService.create(request));
     }
 
@@ -56,7 +56,7 @@ public class BrandController {
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateBrand(@Min(1) @PathVariable int id,
                                       @Valid @RequestBody UpdateBrandRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Brand updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật thương hiệu thành công!",
                 brandService.update(id, request));
     }
 
