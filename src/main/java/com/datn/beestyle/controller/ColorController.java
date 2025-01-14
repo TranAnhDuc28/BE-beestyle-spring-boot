@@ -39,26 +39,26 @@ public class ColorController {
 
     @PostMapping("/create")
     public ApiResponse<?> createColor(@Valid @RequestBody CreateColorRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Color added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới màu sắc thành công!",
                 colorService.create(request));
     }
 
     @PostMapping("/creates")
     public ApiResponse<?> createColors(@RequestBody List<@Valid CreateColorRequest> requestList) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Colors added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới màu sắc thành công!",
                 colorService.createEntities(requestList));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateColor(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateColorRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Color updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật màu sắc thành công!",
                 colorService.update(id, request));
     }
 
     @PatchMapping("/updates")
     public ApiResponse<?> updateColors(@RequestBody List<@Valid UpdateColorRequest> requestList) {
         colorService.updateEntities(requestList);
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Colors updated successfully");
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật màu sắc thành công!");
     }
 
 //    @DeleteMapping("/delete/{id}")

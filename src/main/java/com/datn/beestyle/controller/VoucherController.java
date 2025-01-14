@@ -54,13 +54,13 @@ public class VoucherController {
 
     @PostMapping("/create")
     public ApiResponse<?> createVoucher(@Valid @RequestBody CreateVoucherRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Voucher thêm thành công",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới voucher thành công!",
                 voucherService.create(request));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateVoucher(@PathVariable Integer id, @RequestBody UpdateVoucherRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Voucher sửa thành công",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật voucher thành công!",
                 voucherService.update(id, request));
     }
 

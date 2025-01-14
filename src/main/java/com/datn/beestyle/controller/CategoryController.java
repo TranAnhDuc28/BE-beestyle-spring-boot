@@ -40,14 +40,14 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ApiResponse<?> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Category added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới danh mục thành công!",
                 categoryService.create(request));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateCategory(@Min(1) @PathVariable int id,
                                          @Valid @RequestBody UpdateCategoryRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Category updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật danh mục thành công!",
                 categoryService.update(id, request));
     }
 
