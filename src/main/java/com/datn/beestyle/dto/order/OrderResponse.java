@@ -26,12 +26,14 @@ public class OrderResponse {
     String orderTrackingNumber;
     Long customerId;
     String customerName;
+    String phoneNumberCustomer;
     CustomerResponse customerInfo;
     Integer voucherId;
     VoucherResponse voucherInfo;
     Long shippingAddressId;
     AddressResponse shippingAddress;
     String phoneNumber;
+    String receiverName;
     BigDecimal shippingFee;
     BigDecimal totalAmount;
     Timestamp paymentDate;
@@ -46,15 +48,16 @@ public class OrderResponse {
     Long updatedBy;
 
 
-
-    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumber,
-                         BigDecimal totalAmount, Timestamp paymentDate, Integer paymentMethod, Integer orderChannel,
-                         Integer orderType, Integer orderStatus, LocalDateTime createdAt, LocalDateTime updatedAt,
-                         Long createdBy, Long updatedBy) {
+    public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumberCustomer,
+                         String receiverName, String phoneNumber, BigDecimal totalAmount, Timestamp paymentDate,
+                         Integer paymentMethod, Integer orderChannel, Integer orderType, Integer orderStatus, LocalDateTime createdAt,
+                         LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
         this.id = id;
         this.orderTrackingNumber = orderTrackingNumber;
         this.customerId = customerId;
         this.customerName = customerName;
+        this.phoneNumberCustomer = phoneNumberCustomer;
+        this.receiverName = receiverName;
         this.phoneNumber = phoneNumber;
         this.totalAmount = totalAmount;
         this.paymentDate = paymentDate;

@@ -29,7 +29,6 @@ import com.datn.beestyle.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -168,7 +167,7 @@ public class OrderService
      * Xử lý đơn hàng online qua thay đổi các trạng thái
      *
      * @param id
-     * @param  request
+     * @param request
      * @return
      */
     @Transactional
@@ -180,11 +179,6 @@ public class OrderService
         // Chuyển từ chuỗi sang enum
         OrderStatus orderStatus = OrderStatus.fromString(request.getOrderStatus());
 
-        // kiểm tra key enum có chính xác
-        if (orderStatus == null) {
-            throw new IllegalArgumentException("Trạng thái hóa đơn " + request.getOrderStatus() + " không hợp lệ.");
-        }
-
         if (orderStatus == OrderStatus.CONFIRMED) {
             // xử lí khi xác nhận
             this.handleOrderOnlineAfterConfirm(order.getId());
@@ -192,8 +186,29 @@ public class OrderService
             // Cập nhật trạng thái đơn hàng
             order.setOrderStatus(OrderStatus.CONFIRMED.getValue());
 
+            // kiểm tra tiền ship có được miễn phí hay không
+            // tổng tiền gốc nhỏ hơn 500.000
+            if (request.getTotalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) <= 0 &&
+                request.getShippingFee().compareTo(new BigDecimal(0)) == 0) {
+                // tiền ship đã được tính
+                throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
+            } else {
+                order.setShippingFee(request.getShippingFee());
+
+                // lưu tổng tiền mới khi đổi
+                order.setTotalAmount(request.getTotalAmount());
+            }
+
         } else if (orderStatus == OrderStatus.AWAITING_SHIPMENT) {
             order.setOrderStatus(OrderStatus.AWAITING_SHIPMENT.getValue());
+
+        } else if (orderStatus == OrderStatus.OUT_FOR_DELIVERY) {
+            order.setOrderStatus(OrderStatus.OUT_FOR_DELIVERY.getValue());
+
+        } else if (orderStatus == OrderStatus.DELIVERED) {
+            order.setPaymentDate(new Timestamp(System.currentTimeMillis()));
+            order.setOrderStatus(OrderStatus.DELIVERED.getValue());
+
         } else if (orderStatus == OrderStatus.CANCELLED) {
             // kiểm tra trạng thái đơn hàng được yêu cầu hủy đơn
             int currentOrderStatus = order.getOrderStatus();
@@ -241,15 +256,28 @@ public class OrderService
             throw new InvalidDataException("Vui lòng chọn phương thức thanh toán.");
         }
 
-        // Kiểm tra địa chỉ giao hàng đã nhập chưa
-        if (!StringUtils.hasText(request.getShippingAddress())) {
-            throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
-        }
-
         // kiểm tra khách hàng có đăng nhập không
         if (request.getCustomerId() != null) {
             Customer customer = customerService.getById(request.getCustomerId());
             order.setCustomer(customer);
+        } else {
+            // Kiểm tra địa chỉ giao hàng đã nhập chưa
+            if (!StringUtils.hasText(request.getShippingAddress())) {
+                throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
+            }
+
+            // chuyển đổi chỗi JSON sang obj Address
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+
+                // kiểm tra Address
+                this.validateGuestShippingAddress(address);
+
+                order.setShippingAddress(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
@@ -272,20 +300,10 @@ public class OrderService
         order.setOrderType(OrderType.DELIVERY.getValue()); // loại giao hàng
         order.setOrderStatus(OrderStatus.AWAITING_CONFIRMATION.getValue()); // trạng thái chờ xác nhận
 
-        // kiểm tra Address
-        // chuyển đổi chỗi JSON sang obj Address
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
-            order.setShippingAddress(address);
-        } catch (Exception e) {
-            throw new RuntimeException("Error deserializing address: " + e.getMessage());
-        }
-
         String paymentMethod = request.getPaymentMethod();
         // nếu phương thức thanh toán là COD
         if (paymentMethod.equalsIgnoreCase(PaymentMethod.CASH.name()) ||
-                paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
+            paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
             PaymentMethod paymentMethodEnum = PaymentMethod.fromString(paymentMethod);
             order.setPaymentMethod(paymentMethodEnum.getValue());
             order.setPrepaid(false);
@@ -302,6 +320,9 @@ public class OrderService
 
             order.setVoucher(voucher);
         }
+
+        // lưu tổng tiền thanh toán cuối cùng
+        order.setTotalAmount(request.getTotalAmount());
 
         // xử lý list order item của hóa đơn
         List<OrderItem> orderItems = handleOrderItemsOnline(request.getOrderItems());
@@ -515,6 +536,11 @@ public class OrderService
     private Voucher validateVoucherForOrder(BigDecimal originalAmount, BigDecimal discountAmountRequest, Integer voucherId) {
         Voucher voucher = voucherService.getById(voucherId);
 
+        // kiểm tra voucher trường hợp chưa diễn ra
+        if (voucher.getStatus() == DiscountStatus.UPCOMING.getValue()) {
+            throw new InvalidDataException("Voucher chưa đến thời gian diễn ra để áp dụng!");
+        }
+
         // kiểm tra voucher đã hết hạn chưa
         if (voucher.getEndDate().before(new Date())) {
             throw new InvalidDataException("Voucher đã hết hạn sử dụng!");
@@ -646,6 +672,7 @@ public class OrderService
 
     /**
      * xử lý đơn hàng khi hủy
+     *
      * @param orderId
      * @param note
      */
@@ -674,10 +701,34 @@ public class OrderService
     }
 
     /**
+     * kiểm tra địa chỉ nhận hàng cho khách hàng mua online chưa đăng nhập
+     * @param address địa chỉ giao hàng
+     */
+    private void validateGuestShippingAddress(Address address) {
+        if (address.getAddressName() == null || address.getAddressName().isBlank()) {
+            throw new InvalidDataException("Vui lòng nhập địa chỉ chi tiết.");
+        }
+
+        if (address.getCommuneCode() == null || address.getCommune().isBlank()) {
+            throw new InvalidDataException("Vui lòng chọn phường/xã.");
+        }
+
+        if (address.getDistrictCode() == null || address.getDistrict().isBlank()) {
+            throw new InvalidDataException("Vui lòng chọn quận/huyện.");
+        }
+
+        if (address.getCityCode() == null || address.getCity().isBlank()) {
+            throw new InvalidDataException("Vui lòng chọn tỉnh/thành phố.");
+        }
+    }
+
+    /**
      * Cập nhật thông tin nhận hàng của hóa đơn
      */
-    private String updateOrderShippingInfo() {
+//    private String updateOrderShippingInfo() {
+//
+//        return "OK";
+//    }
 
-        return "OK";
-    }
+
 }

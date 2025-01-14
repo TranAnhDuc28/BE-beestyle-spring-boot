@@ -92,7 +92,7 @@ ghtk:
     url: https://services.giaohangtietkiem.vn/services/shipment/fee
 
 jwt:
-  expiryHour: 2
+  expiryHour: 10
   expiryDay: 14
   accessKey: C4E578E7FB3FF5A4FC71B3BCB4389C8C457528A91FA4B74AAD0B348A93C68067
   refreshKey: 835EDFFA4D866E90725E477CFBD5C0F8C0EDE5D1F9F4092FC4E75C946FAFB19B
