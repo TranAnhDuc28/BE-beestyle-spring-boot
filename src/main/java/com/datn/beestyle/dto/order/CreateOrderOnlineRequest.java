@@ -57,6 +57,8 @@ public class CreateOrderOnlineRequest {
 
     Boolean isPrepaid;
 
+    Long shippingAddressId;
+
     String shippingAddress;
 
     String note;

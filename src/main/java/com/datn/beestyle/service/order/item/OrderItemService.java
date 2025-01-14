@@ -37,7 +37,8 @@ public class OrderItemService
     public OrderItemService(IGenericRepository<OrderItem, Long> entityRepository,
                             IGenericMapper<OrderItem, CreateOrderItemRequest, UpdateOrderItemRequest, OrderItemResponse> mapper,
                             EntityManager entityManager, OrderItemRepository orderItemRepository, OrderService orderService,
-                            ProductVariantService productVariantService, ProductVariantRepository productVariantRepository, OrderItemMapper orderItemMapper) {
+                            ProductVariantService productVariantService, ProductVariantRepository productVariantRepository,
+                            OrderItemMapper orderItemMapper) {
         super(entityRepository, mapper, entityManager);
         this.orderItemRepository = orderItemRepository;
         this.orderService = orderService;
@@ -91,7 +92,8 @@ public class OrderItemService
         if (!productVariantIds.isEmpty()) {
             List<ProductVariant> productVariantList = productVariantRepository.findAllById(productVariantIds);
 
-            productVariantMap = productVariantList.stream().collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
+            productVariantMap = productVariantList.stream()
+                    .collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
 
             this.validatePropProductVariants(productVariantIds, productVariantMap);
         }
@@ -179,7 +181,8 @@ public class OrderItemService
         if (!productVariantIds.isEmpty()) {
             List<ProductVariant> productVariantList = productVariantRepository.findAllById(productVariantIds);
 
-            productVariantMap = productVariantList.stream().collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
+            productVariantMap = productVariantList.stream()
+                    .collect(Collectors.toMap(ProductVariant::getId, productVariant -> productVariant));
 
             this.validatePropProductVariants(productVariantIds, productVariantMap);
         }
@@ -297,7 +300,9 @@ public class OrderItemService
     }
 
     private void validatePropProductVariants(List<Long> productVariantIds, Map<Long, ProductVariant> productVariantMap) {
-        List<Long> invalidProductVariantIds = productVariantIds.stream().filter(id -> productVariantMap.get(id) == null).toList();
+        List<Long> invalidProductVariantIds = productVariantIds.stream()
+                .filter(id -> productVariantMap.get(id) == null)
+                .toList();
 
         if (!invalidProductVariantIds.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("ID biến thể sản phẩm không tồn tại: ");
@@ -311,7 +316,9 @@ public class OrderItemService
 
     private void validatePropOrderItems(Long orderId, List<Long> orderItemIds, Map<Long, OrderItem> orderItemMap) {
         List<Long> invalidOrderItemIds = orderItemIds.stream()
-                .filter(id -> orderItemMap.get(id) == null || !Objects.equals(orderItemMap.get(id).getOrder().getId(), orderId)).toList();
+                .filter(id -> orderItemMap.get(id) == null ||
+                              !Objects.equals(orderItemMap.get(id).getOrder().getId(), orderId))
+                .toList();
 
         if (!invalidOrderItemIds.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("Hóa đơn chi tiết ID không tồn tại: ");
