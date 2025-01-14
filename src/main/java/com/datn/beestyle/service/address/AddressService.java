@@ -8,8 +8,10 @@ import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.address.CreateAddressRequest;
 import com.datn.beestyle.dto.address.UpdateAddressRequest;
 import com.datn.beestyle.entity.Address;
+import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.exception.ResourceNotFoundException;
 import com.datn.beestyle.repository.AddressRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,10 +30,12 @@ public class AddressService
         implements IAddressService {
 
     private final AddressRepository addressRepository;
+    private final CustomerRepository customerRepository;
 
-    public AddressService(IGenericRepository<Address, Long> entityRepository, IGenericMapper<Address, CreateAddressRequest, UpdateAddressRequest, AddressResponse> mapper, EntityManager entityManager, AddressRepository addressRepository) {
+    public AddressService(IGenericRepository<Address, Long> entityRepository, IGenericMapper<Address, CreateAddressRequest, UpdateAddressRequest, AddressResponse> mapper, EntityManager entityManager, AddressRepository addressRepository, CustomerRepository customerRepository) {
         super(entityRepository, mapper, entityManager);
         this.addressRepository = addressRepository;
+        this.customerRepository = customerRepository;
     }
 
     @Override
@@ -101,11 +105,7 @@ public class AddressService
 
     @Override
     protected void beforeCreate(CreateAddressRequest request) {
-        // Kiểm tra nếu không có bản ghi nào với isDefault = true
-        boolean existsDefaultAddress = addressRepository.existsByCustomerIdAndIsDefaultTrue(request.getCustomer().getId());
-
-        // Nếu chưa có bản ghi nào có isDefault = true, đặt isDefault của bản ghi mới là true
-        request.setIsDefault(!existsDefaultAddress);
+        log.info("request: {}",request.getCustomerId());
     }
 
     @Override
@@ -128,4 +128,28 @@ public class AddressService
         return "Address";
     }
 
+    @Override
+    public AddressResponse create(CreateAddressRequest request) {
+        // Lấy customer từ customerId
+
+        if(addressRepository.countAddressByCustomer(request.getCustomerId())>=3){
+            throw new IllegalArgumentException("Mỗi khách hàng chỉ có tối đa 3 địa chỉ");
+        }
+        // Kiểm tra nếu không có bản ghi nào với isDefault = true
+        boolean existsDefaultAddress = addressRepository.existsByCustomerIdAndIsDefaultTrue(request.getCustomerId());
+
+        // Nếu chưa có bản ghi nào có isDefault = true, đặt isDefault của bản ghi mới là true
+        request.setIsDefault(!existsDefaultAddress);
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // Tạo đối tượng Address từ request
+        Address address = mapper.toCreateEntity(request);
+
+        // Gán customer vào address
+        address.setCustomer(customer);
+        addressRepository.save(address);
+
+        return mapper.toEntityDto(address);
+    }
 }

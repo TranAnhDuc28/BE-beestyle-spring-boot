@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.RuntimeErrorException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -136,7 +137,6 @@ public class CustomerService
                 .build();
     }
 
-    @Override
     public Customer getCustomerByEmail(String email) {
         return customerRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Email not found"));
     }
@@ -185,11 +185,15 @@ public class CustomerService
 
 
     public CustomerResponse createByOwner(RegisterCustomerRequest request) {
+        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+        }
         if (customerRepository.existsByEmail(request.getEmail()) || staffRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateEmailException("Email đã đã được đăng kí.");
         }
-        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
-            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+
+        if(!request.getPassword().equals(request.getPasswordComfirm())){
+            throw new IllegalArgumentException("Xác nhận mật khẩu không đúng, vui lòng kiểm tra lại!");
         }
 
         CreateCustomerRequest createRequest = CustomerConverter.toCreateCustomerRequest(request);

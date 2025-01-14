@@ -75,7 +75,7 @@ public class MailService {
         }
     }
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
-        Order order = orderRepository.findById(id).get();
+//        Order order = orderRepository.findById(id).get();
 
 //        Order order = orderRepository.getReferenceById(id);
         Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());

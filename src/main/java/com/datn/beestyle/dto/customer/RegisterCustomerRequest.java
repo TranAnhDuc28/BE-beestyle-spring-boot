@@ -39,6 +39,10 @@ public class RegisterCustomerRequest{
     @NotBlank(message = "Không được để trống password")
     String password;
 
+    @Size(min = 5, max = 10, message = "Password phải có độ dài từ {min} đến {max} ký tự")
+    @NotBlank(message = "Không được để trống password")
+    String passwordComfirm;
+
 //    ShoppingCart shoppingCart;
 
     Set<Address> addresses = new HashSet<>();

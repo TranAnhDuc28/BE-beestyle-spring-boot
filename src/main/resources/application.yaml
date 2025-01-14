@@ -19,7 +19,8 @@ spring:
 
     url: jdbc:mysql://localhost:3307/ecommerce-beestyle?useSSL=true&characterEncoding=UTF-8
     username: root
-    password: 123456
+    password: locnhph38787
+
 
     driver-class-name: com.mysql.cj.jdbc.Driver
 

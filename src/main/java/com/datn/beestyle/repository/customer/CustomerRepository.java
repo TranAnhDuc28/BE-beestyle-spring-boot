@@ -28,11 +28,11 @@ public interface CustomerRepository extends IGenericRepository<Customer, Long> {
                                                              @Param("keyword") String keyword);
 
     boolean existsByEmail(String email);
+
     boolean existsByPhoneNumber(String phoneNumber);
 
 
     Optional<Customer> findByEmail(String email);
-
 
 }
 
