@@ -168,7 +168,7 @@ public class OrderService
      * Xử lý đơn hàng online qua thay đổi các trạng thái
      *
      * @param id
-     * @param  request
+     * @param request
      * @return
      */
     @Transactional
@@ -211,8 +211,8 @@ public class OrderService
             // kiểm tra trạng thái đơn hàng để được yêu cầu trả hàng
             int currentOrderStatus = order.getOrderStatus();
             if (currentOrderStatus == OrderStatus.AWAITING_CONFIRMATION.getValue() ||
-                currentOrderStatus == OrderStatus.CONFIRMED.getValue() ||
-                currentOrderStatus == OrderStatus.AWAITING_SHIPMENT.getValue()) {
+                    currentOrderStatus == OrderStatus.CONFIRMED.getValue() ||
+                    currentOrderStatus == OrderStatus.AWAITING_SHIPMENT.getValue()) {
                 throw new IllegalArgumentException("Đơn hàng chưa được giao, không thể trả hàng.");
             }
 
@@ -633,9 +633,9 @@ public class OrderService
         // kiểm tra số lượng trong kho còn lại
         if (productVariant.getQuantityInStock() < orderItem.getQuantity()) {
             String error = "Sản phẩm " + productVariant.getProduct().getProductName() +
-                           " trong kho không đủ để xử lý đơn hàng." +
-                           "(Yêu cầu sản phẩm: " + orderItem.getQuantity() +
-                           ", trong kho còn: " + productVariant.getQuantityInStock();
+                    " trong kho không đủ để xử lý đơn hàng." +
+                    "(Yêu cầu sản phẩm: " + orderItem.getQuantity() +
+                    ", trong kho còn: " + productVariant.getQuantityInStock();
             throw new InvalidDataException(error);
         }
 
@@ -646,6 +646,7 @@ public class OrderService
 
     /**
      * xử lý đơn hàng khi hủy
+     *
      * @param orderId
      * @param note
      */

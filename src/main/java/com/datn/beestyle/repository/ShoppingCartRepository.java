@@ -11,6 +11,33 @@ import java.util.List;
 
 @Repository
 public interface ShoppingCartRepository extends IGenericRepository<ShoppingCart, Long> {
+
+    @Query("""
+            select new com.datn.beestyle.dto.cart.ShoppingCartResponse(
+                sc.id,
+                sc.productVariant.id,
+                p.id,
+                sc.cartCode,
+                p.productName,
+                img.imageUrl,
+                s.sizeName,
+                c.colorName,
+                pv.quantityInStock,
+                sc.quantity,
+                sc.salePrice,
+                sc.discountedPrice
+            )
+            from ShoppingCart sc
+            join sc.productVariant pv
+            join pv.product p
+            join pv.size s
+            join pv.color c
+            left join ProductImage img on p.id = img.product.id and img.isDefault = true
+            where sc.customer.id = :customerId
+            """)
+    List<ShoppingCartResponse> findShoppingCartByCustomerId(@Param("customerId") Long customerId);
+
+
     @Query("""
             select new com.datn.beestyle.dto.cart.ShoppingCartResponse(
                 sc.id,

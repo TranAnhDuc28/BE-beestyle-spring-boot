@@ -9,5 +9,11 @@ import java.util.List;
 
 public interface IShoppingCartService extends
         IGenericService<ShoppingCart, Long, ShoppingCartRequest, ShoppingCartRequest, ShoppingCartResponse> {
+    List<ShoppingCartResponse> findShoppingCartByCustomerId(Long customerId);
+
     void createCartItemOnline(List<ShoppingCartRequest> cartRequests);
+
+    void updateCartQuantityById(Long id, Integer quantity);
+
+    void deleteAllCartItems();
 }

@@ -1,6 +1,5 @@
 package com.datn.beestyle.dto.cart;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,13 +10,49 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 public class ShoppingCartResponse {
-    Long id;
-    Long productVariantId;
-    Long customerId;
-    String cartCode;
-    Integer quantity;
-    BigDecimal salePrice;
-    BigDecimal discountedPrice;
+    private Long id;
+    private Long productVariantId;
+    private Long productId;
+    private Long customerId;
+    private String cartCode;
+    private String productName;
+    private String imageUrl;
+    private String sizeName;
+    private String colorName;
+    private Integer quantityInStock;
+    private Integer quantity;
+    private BigDecimal salePrice;
+    private BigDecimal discountedPrice;
+    private Integer totalPrice;
+    private String description;
+
+    public ShoppingCartResponse(
+            Long id,
+            Long productVariantId,
+            Long productId,
+            String cartCode,
+            String productName,
+            String imageUrl,
+            String sizeName,
+            String colorName,
+            Integer quantityInStock,
+            Integer quantity,
+            BigDecimal salePrice,
+            BigDecimal discountedPrice
+    ) {
+        this.id = id;
+        this.productVariantId = productVariantId;
+        this.productId = productId;
+        this.cartCode = cartCode;
+        this.productName = productName;
+        this.imageUrl = imageUrl;
+        this.sizeName = sizeName;
+        this.colorName = colorName;
+        this.quantityInStock = quantityInStock;
+        this.quantity = quantity;
+        this.salePrice = salePrice;
+        this.discountedPrice = discountedPrice;
+    }
 
     public ShoppingCartResponse(
             Long id, Long productVariantId, Long customerId,

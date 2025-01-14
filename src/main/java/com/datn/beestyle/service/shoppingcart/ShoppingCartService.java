@@ -36,6 +36,11 @@ public class ShoppingCartService implements IShoppingCartService {
         this.customerRepository = customerRepository;
     }
 
+    @Override
+    public List<ShoppingCartResponse> findShoppingCartByCustomerId(Long customerId) {
+        return this.cartRepository.findShoppingCartByCustomerId(customerId);
+    }
+
     @Modifying
     @Transactional
     public void createCartItemOnline(List<ShoppingCartRequest> cartRequests) {
@@ -75,31 +80,59 @@ public class ShoppingCartService implements IShoppingCartService {
                     ShoppingCart existingCart = cartRepository.findById(existingCartResponse.getId()).orElse(null);
                     if (existingCart != null &&
                             productVariant != null &&
-                            productVariant.getQuantityInStock() > existingCart.getQuantity()
+                            productVariant.getQuantityInStock() >= request.getQuantity()
                     ) {
                         existingCart.setQuantity(existingCart.getQuantity() + request.getQuantity());
                         cartsToSave.add(existingCart);
+                    } else {
+                        throw new NullPointerException("Thông tin đơn hàng không chính xác");
                     }
                 } else {
                     // Tạo mới cart nếu chưa tồn tại
                     ShoppingCart newCart = new ShoppingCart();
                     Customer customer = customerRepository.findById(customerId).orElse(null); // Sử dụng customerId từ Map.Entry
 
-                    if (productVariant != null && customer != null) {
+                    if (productVariant != null && customer != null && productVariant.getQuantityInStock() >= request.getQuantity()) {
                         newCart.setProductVariant(productVariant);
                         newCart.setCustomer(customer);
                         newCart.setQuantity(request.getQuantity());
                         newCart.setCartCode(request.getCartCode());
-                        newCart.setSalePrice(request.getSalePrice());
+                        newCart.setSalePrice(productVariant.getSalePrice());
                         newCart.setDiscountedPrice(request.getDiscountedPrice());
                         cartsToSave.add(newCart);
                     } else {
-                        throw new NullPointerException("Không tìm thấy ProductVariant hoặc Customer");
+                        throw new NullPointerException("Thông tin đơn hàng không chính xác");
                     }
                 }
             }
 
             cartRepository.saveAll(cartsToSave);
+        }
+    }
+
+    @Override
+    public void updateCartQuantityById(Long id, Integer quantity) {
+        ShoppingCart cart = this.cartRepository.findById(id).get();
+        Long productVariantId = cart.getProductVariant().getId();
+        ProductVariant productVariant = this.productVariantRepository.findById(productVariantId).get();
+        int quantityInStock = productVariant.getQuantityInStock();
+
+        if (quantityInStock >= quantity) {
+            cart.setQuantity(quantity);
+            this.cartRepository.save(cart);
+        }
+    }
+
+    @Override
+    public void deleteAllCartItems() {
+        this.cartRepository.deleteAll();
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (id != null) {
+            ShoppingCart cart = this.cartRepository.findById(id).get();
+            this.cartRepository.delete(cart);
         }
     }
 
@@ -116,11 +149,6 @@ public class ShoppingCartService implements IShoppingCartService {
     @Override
     public ShoppingCartResponse update(Long aLong, ShoppingCartRequest request) {
         return null;
-    }
-
-    @Override
-    public void delete(Long aLong) {
-
     }
 
     @Override

@@ -10,8 +10,12 @@ import java.math.BigDecimal;
 
 @Data
 public class ShoppingCartRequest {
+    private Long id;
+
     @NotNull
     private Long productVariantId;
+
+    @NotNull
     private Long customerId;
 
     @NotBlank
