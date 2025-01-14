@@ -4,20 +4,17 @@ import com.datn.beestyle.dto.ApiResponse;
 import com.datn.beestyle.dto.cart.ShoppingCartRequest;
 import com.datn.beestyle.dto.cart.ShoppingCartResponse;
 import com.datn.beestyle.dto.product.variant.ProductVariantResponse;
-import com.datn.beestyle.entity.cart.ShoppingCart;
 import com.datn.beestyle.service.shoppingcart.IShoppingCartService;
 import com.datn.beestyle.service.user.UserProductVariantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Validated

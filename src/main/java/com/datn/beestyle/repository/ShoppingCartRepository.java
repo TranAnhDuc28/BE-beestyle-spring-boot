@@ -2,7 +2,7 @@ package com.datn.beestyle.repository;
 
 import com.datn.beestyle.common.IGenericRepository;
 import com.datn.beestyle.dto.cart.ShoppingCartResponse;
-import com.datn.beestyle.entity.cart.ShoppingCart;
+import com.datn.beestyle.entity.ShoppingCart;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -24,8 +24,7 @@ public interface ShoppingCartRepository extends IGenericRepository<ShoppingCart,
                 c.colorName,
                 pv.quantityInStock,
                 sc.quantity,
-                sc.salePrice,
-                sc.discountedPrice
+                sc.salePrice
             )
             from ShoppingCart sc
             join sc.productVariant pv
@@ -45,8 +44,7 @@ public interface ShoppingCartRepository extends IGenericRepository<ShoppingCart,
                 sc.customer.id,
                 sc.cartCode,
                 sc.quantity,
-                sc.salePrice,
-                sc.discountedPrice
+                sc.salePrice
             )
             from ShoppingCart sc 
             where sc.productVariant.id in :productVariantIds and sc.customer.id = :customerId

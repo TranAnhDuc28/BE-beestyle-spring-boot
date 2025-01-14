@@ -22,23 +22,14 @@ public class ShoppingCartResponse {
     private Integer quantityInStock;
     private Integer quantity;
     private BigDecimal salePrice;
-    private BigDecimal discountedPrice;
     private Integer totalPrice;
     private String description;
 
     public ShoppingCartResponse(
-            Long id,
-            Long productVariantId,
-            Long productId,
-            String cartCode,
-            String productName,
-            String imageUrl,
-            String sizeName,
-            String colorName,
-            Integer quantityInStock,
-            Integer quantity,
-            BigDecimal salePrice,
-            BigDecimal discountedPrice
+            Long id, Long productVariantId, Long productId,
+            String cartCode, String productName, String imageUrl,
+            String sizeName, String colorName, Integer quantityInStock,
+            Integer quantity, BigDecimal salePrice
     ) {
         this.id = id;
         this.productVariantId = productVariantId;
@@ -51,13 +42,12 @@ public class ShoppingCartResponse {
         this.quantityInStock = quantityInStock;
         this.quantity = quantity;
         this.salePrice = salePrice;
-        this.discountedPrice = discountedPrice;
     }
 
     public ShoppingCartResponse(
             Long id, Long productVariantId, Long customerId,
             String cartCode, Integer quantity,
-            BigDecimal salePrice, BigDecimal discountedPrice
+            BigDecimal salePrice
     ) {
         this.id = id;
         this.productVariantId = productVariantId;
@@ -65,6 +55,5 @@ public class ShoppingCartResponse {
         this.cartCode = cartCode;
         this.quantity = quantity;
         this.salePrice = salePrice;
-        this.discountedPrice = discountedPrice;
     }
 }

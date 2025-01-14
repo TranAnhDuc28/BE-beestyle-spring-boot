@@ -1,13 +1,10 @@
 package com.datn.beestyle.dto.customer;
 
 import com.datn.beestyle.entity.Address;
-import com.datn.beestyle.entity.cart.ShoppingCart;
-import com.datn.beestyle.enums.Gender;
 import com.datn.beestyle.validation.PhoneNumber;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter

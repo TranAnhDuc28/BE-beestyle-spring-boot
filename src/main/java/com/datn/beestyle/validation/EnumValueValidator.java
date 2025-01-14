@@ -21,7 +21,7 @@ public class EnumValueValidator implements ConstraintValidator<EnumValue, CharSe
 
     @Override
     public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-        if (value == null || !acceptedValues.contains(value.toString())) {
+        if (value == null || !acceptedValues.contains(value.toString().toUpperCase())) {
             String errorMessage = String.format("%s must be one of the following values: %s",
                     enumValue, String.join(", ", acceptedValues));
 

@@ -23,14 +23,9 @@ public class ShoppingCartRequest {
 
     @NotNull
     @Min(value = 1)
-    @Max(value = Integer.MAX_VALUE)
     private Integer quantity;
 
     @NotNull
     @Min(value = 0)
     BigDecimal salePrice;
-
-    @NotNull
-    @Min(value = 0)
-    BigDecimal discountedPrice;
 }

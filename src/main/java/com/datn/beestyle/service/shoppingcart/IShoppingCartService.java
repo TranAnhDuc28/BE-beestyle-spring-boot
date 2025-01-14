@@ -3,7 +3,7 @@ package com.datn.beestyle.service.shoppingcart;
 import com.datn.beestyle.common.IGenericService;
 import com.datn.beestyle.dto.cart.ShoppingCartRequest;
 import com.datn.beestyle.dto.cart.ShoppingCartResponse;
-import com.datn.beestyle.entity.cart.ShoppingCart;
+import com.datn.beestyle.entity.ShoppingCart;
 
 import java.util.List;
 

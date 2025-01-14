@@ -3,14 +3,13 @@ package com.datn.beestyle.service.shoppingcart;
 import com.datn.beestyle.dto.PageResponse;
 import com.datn.beestyle.dto.cart.ShoppingCartRequest;
 import com.datn.beestyle.dto.cart.ShoppingCartResponse;
-import com.datn.beestyle.entity.cart.ShoppingCart;
+import com.datn.beestyle.entity.ShoppingCart;
 import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.repository.ProductVariantRepository;
 import com.datn.beestyle.repository.ShoppingCartRepository;
 import com.datn.beestyle.repository.customer.CustomerRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -98,7 +97,6 @@ public class ShoppingCartService implements IShoppingCartService {
                         newCart.setQuantity(request.getQuantity());
                         newCart.setCartCode(request.getCartCode());
                         newCart.setSalePrice(productVariant.getSalePrice());
-                        newCart.setDiscountedPrice(request.getDiscountedPrice());
                         cartsToSave.add(newCart);
                     } else {
                         throw new NullPointerException("Thông tin đơn hàng không chính xác");
