@@ -1,6 +1,6 @@
 package com.datn.beestyle.service.user;
 
-import com.datn.beestyle.dto.cart.CartCheckRequest;
+import com.datn.beestyle.dto.cart.ShoppingCartRequest;
 import com.datn.beestyle.dto.product.attributes.color.ColorResponse;
 import com.datn.beestyle.dto.product.attributes.image.ImageReponse;
 import com.datn.beestyle.dto.product.attributes.size.SizeResponse;
@@ -51,11 +51,11 @@ public class UserProductVariantService {
     }
 
     public List<ProductVariantResponse> getProductVariantByIds(
-            List<CartCheckRequest> cartItemsRequest
+            List<ShoppingCartRequest> cartItemsRequest
     ) {
         List<Long> productVariantIds = cartItemsRequest.stream()
-                .filter(cart -> cart != null && cart.getId() != null)
-                .map(CartCheckRequest::getId)
+                .filter(cart -> cart != null && cart.getProductVariantId() != null)
+                .map(ShoppingCartRequest::getProductVariantId)
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -67,8 +67,8 @@ public class UserProductVariantService {
                 .findProductVariantIds(productVariantIds);
 
         Map<Long, Integer> cartQuantityMap = cartItemsRequest.stream()
-                .filter(cart -> cart != null && cart.getId() != null && cart.getQuantity() != null)
-                .collect(Collectors.toMap(CartCheckRequest::getId, CartCheckRequest::getQuantity));
+                .filter(cart -> cart != null && cart.getProductVariantId() != null && cart.getQuantity() != null)
+                .collect(Collectors.toMap(ShoppingCartRequest::getProductVariantId, ShoppingCartRequest::getQuantity));
 
         for (ProductVariantResponse response : responses) {
             Integer quantity = cartQuantityMap.get(response.getId());

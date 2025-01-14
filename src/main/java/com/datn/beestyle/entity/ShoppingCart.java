@@ -1,5 +1,6 @@
 package com.datn.beestyle.entity;
 
+import com.datn.beestyle.entity.product.ProductVariant;
 import com.datn.beestyle.entity.user.Customer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,10 +19,14 @@ import java.util.UUID;
 public class ShoppingCart extends BaseEntity<Long> {
 
     @Column(name = "cart_code")
-    UUID cartCode;
+    String cartCode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_variant_id", referencedColumnName = "id")
+    ProductVariant productVariant;
 
     @Column(name = "quantity")
-    BigDecimal quantity = BigDecimal.ZERO;
+    Integer quantity;
 
     @Column(name = "sale_price")
     BigDecimal salePrice = BigDecimal.ZERO;
