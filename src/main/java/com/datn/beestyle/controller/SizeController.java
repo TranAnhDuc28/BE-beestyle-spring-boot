@@ -39,26 +39,26 @@ public class SizeController {
 
     @PostMapping("/create")
     public ApiResponse<?> createSize(@Valid @RequestBody CreateSizeRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Size added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới size thành công!",
                 sizeService.create(request));
     }
 
     @PostMapping("/creates")
     public ApiResponse<?> createSizes(@RequestBody List<@Valid CreateSizeRequest> requestList) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Sizes added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới size thành công!",
                 sizeService.createEntities(requestList));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateSize(@Min(1) @PathVariable int id, @Valid @RequestBody UpdateSizeRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Size updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật size thành công!",
                 sizeService.update(id, request));
     }
 
     @PatchMapping("/updates")
     public ApiResponse<?> updateSizes(@RequestBody List<@Valid UpdateSizeRequest> requestList) {
         sizeService.updateEntities(requestList);
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Sizes updated successfully");
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật size thành công!");
     }
 
 //    @DeleteMapping("/delete/{id}")

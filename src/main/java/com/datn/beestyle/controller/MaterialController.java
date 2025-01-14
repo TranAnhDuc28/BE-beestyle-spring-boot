@@ -41,27 +41,27 @@ public class MaterialController {
 
     @PostMapping("/create")
     public ApiResponse<?> createMaterial(@Valid @RequestBody CreateMaterialRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Material added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới chất liệu thành công!",
                 materialService.create(request));
     }
 
     @PostMapping("/creates")
     public ApiResponse<?> createMaterials(@RequestBody List<@Valid CreateMaterialRequest> requestList) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials added successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới chất liệu thành công!",
                 materialService.createEntities(requestList));
     }
 
     @PutMapping("/update/{id}")
     public ApiResponse<?> updateMaterial(@Min(1) @PathVariable int id,
                                          @Valid @RequestBody UpdateMaterialRequest request) {
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Material updated successfully",
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật chất liệu thành công!",
                 materialService.update(id, request));
     }
 
     @PatchMapping("/updates")
     public ApiResponse<?> updateMaterials(@Valid @RequestBody List<UpdateMaterialRequest> requestList) {
         materialService.updateEntities(requestList);
-        return new ApiResponse<>(HttpStatus.CREATED.value(), "Materials updated successfully");
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "Cập nhật chất liệu thành công!");
     }
 
 //    @DeleteMapping("/delete/{id}")
