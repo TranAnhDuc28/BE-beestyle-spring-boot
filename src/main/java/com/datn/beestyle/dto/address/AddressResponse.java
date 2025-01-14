@@ -21,6 +21,7 @@ public class AddressResponse {
     Integer communeCode;
     String commune;
     Boolean isDefault;
+    Long customerId;
 
 
     public AddressResponse (Long id, String addressName, Integer cityCode, String city, Integer districtCode, String district, Integer communeCode,

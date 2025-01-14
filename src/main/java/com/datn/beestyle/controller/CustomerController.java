@@ -56,12 +56,6 @@ public class CustomerController {
                 customerService.changePasswordByOwner(request));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ApiResponse<?> deleteCustomer(@Min(1) @PathVariable Long id) {
-        customerService.delete(id);
-        return new ApiResponse<>(HttpStatus.OK.value(), "Xóa khách hàng thành công");
-    }
-
     @GetMapping("/{id}")
     public ApiResponse<?> getCustomer(@Min(1) @PathVariable Long id) {
         return new ApiResponse<>(HttpStatus.OK.value(), "Khách hàng", customerService.getDtoById(id));

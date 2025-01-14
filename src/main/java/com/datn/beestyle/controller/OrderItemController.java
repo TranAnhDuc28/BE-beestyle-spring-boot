@@ -34,7 +34,15 @@ public class OrderItemController {
     @PostMapping("/order-item/creates")
     public ApiResponse<?> createsOrderItemByOrderId(@RequestParam Long orderId,
                                                     @RequestBody List<@Valid UpdateOrderItemRequest> request) {
-        return new ApiResponse<>(HttpStatus.OK.value(), "Creates Order item", orderItemService.createOrUpdateOrderItems(orderId, request));
+        return new ApiResponse<>(HttpStatus.OK.value(), "Creates Order item",
+                orderItemService.createOrUpdateOrderItems(orderId, request));
+    }
+
+    @PostMapping("/order-item/creates/delivery-sale")
+    public ApiResponse<?> createsOrderItemByOrderIdForDeliverySale(@RequestParam Long orderId,
+                                                                   @RequestBody List<@Valid UpdateOrderItemRequest> request) {
+        return new ApiResponse<>(HttpStatus.OK.value(), "Creates order item delivery sale",
+                orderItemService.createOrUpdateOrderItemsDeliverySale(orderId, request));
     }
 
     @PutMapping("/order-item/{orderItemId}/update")

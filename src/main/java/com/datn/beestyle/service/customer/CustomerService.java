@@ -185,11 +185,15 @@ public class CustomerService
 
 
     public CustomerResponse createByOwner(RegisterCustomerRequest request) {
+        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
+            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+        }
         if (customerRepository.existsByEmail(request.getEmail()) || staffRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateEmailException("Email đã đã được đăng kí.");
         }
-        if(customerRepository.existsByPhoneNumber(request.getPhoneNumber())){
-            throw new IllegalArgumentException("Số điện thoại đã được đăng kí");
+
+        if(!request.getPassword().equals(request.getPasswordComfirm())){
+            throw new IllegalArgumentException("Xác nhận mật khẩu không đúng, vui lòng kiểm tra lại!");
         }
 
         CreateCustomerRequest createRequest = CustomerConverter.toCreateCustomerRequest(request);

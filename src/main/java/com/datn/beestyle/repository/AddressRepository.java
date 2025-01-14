@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface AddressRepository extends IGenericRepository<Address, Long> {
     @Query("""
             select a from Address a 
@@ -38,6 +40,11 @@ public interface AddressRepository extends IGenericRepository<Address, Long> {
 """)
     AddressResponse findByAddressId(@Param("addressId") Long addressId);
 
+    @Query("""
+            select count(a) from Address a
+            where :customerId is null or a.customer.id = :customerId
+            """)
+    Integer countAddressByCustomer(Long customerId);
 
 
 }

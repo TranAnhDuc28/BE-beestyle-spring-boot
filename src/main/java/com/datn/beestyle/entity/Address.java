@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import static jakarta.persistence.CascadeType.ALL;
+
 @Table(name = "address")
 @Entity
 @Getter
@@ -41,7 +43,7 @@ public class Address extends BaseEntity<Long> {
     @Column(name = "is_default")
     Boolean isDefault;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {ALL})
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     Customer customer;
 }

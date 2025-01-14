@@ -1,10 +1,11 @@
 package com.datn.beestyle.service.mail;
 
-import com.datn.beestyle.dto.order.OrderResponse;
+import com.datn.beestyle.entity.order.Order;
 import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.entity.user.Staff;
-import com.datn.beestyle.repository.customer.CustomerRepository;
 import com.datn.beestyle.repository.OrderRepository;
+import com.datn.beestyle.repository.customer.CustomerRepository;
+import com.datn.beestyle.service.order.IOrderService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -19,7 +20,6 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -75,20 +75,15 @@ public class MailService {
         }
     }
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
+//        Order order = orderRepository.findById(id).get();
 
-        List<OrderResponse> listOrder = orderRepository.findOrdersById(id);
-        if (listOrder == null || listOrder.isEmpty()) {
-            throw new IllegalArgumentException("Không có hóa đơn với ID: " + id);
-        }
-        // Lấy ra order
-        OrderResponse order = listOrder.get(0);
-        Customer customer = customerRepository.getReferenceById(order.getCustomerId());
+        Order order = orderRepository.getReferenceById(id);
+        Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());
+
         try {
-
-
             // Tạo dữ liệu gửi vào template
             Context context = new Context();
-            context.setVariable("customerName", order.getCustomerName());
+            context.setVariable("customerName", order.getCustomer().getFullName());
 
             // Xử lý template để tạo nội dung HTML
             String htmlContent = templateEngine.process("thankYouEmail", context);
