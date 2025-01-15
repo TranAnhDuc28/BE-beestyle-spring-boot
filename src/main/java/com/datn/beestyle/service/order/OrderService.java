@@ -233,7 +233,7 @@ public class OrderService
             // kiểm tra tiền ship có được miễn phí hay không
             // tổng tiền gốc nhỏ hơn 500.000
             if (request.getTotalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) <= 0 &&
-                request.getShippingFee().compareTo(new BigDecimal(0)) == 0) {
+                    request.getShippingFee().compareTo(new BigDecimal(0)) == 0) {
                 // tiền ship đã được tính
                 throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
             } else {
@@ -313,12 +313,14 @@ public class OrderService
         if (request.getCustomerId() != null) {
             Customer customer = customerService.getById(request.getCustomerId());
             order.setCustomer(customer);
-        } else {
-            // Kiểm tra địa chỉ giao hàng đã nhập chưa
-            if (!StringUtils.hasText(request.getShippingAddress())) {
-                throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
+
+            if (request.getShippingAddressId() == null) {
+                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
             }
 
+            Address address = addressService.getById(request.getShippingAddressId());
+            order.setShippingAddress(address);
+        } else {
             // chuyển đổi chỗi JSON sang obj Address
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -356,7 +358,7 @@ public class OrderService
         String paymentMethod = request.getPaymentMethod();
         // nếu phương thức thanh toán là COD
         if (paymentMethod.equalsIgnoreCase(PaymentMethod.CASH.name()) ||
-            paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
+                paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
             PaymentMethod paymentMethodEnum = PaymentMethod.fromString(paymentMethod);
             order.setPaymentMethod(paymentMethodEnum.getValue());
             order.setPrepaid(false);
@@ -754,6 +756,7 @@ public class OrderService
 
     /**
      * kiểm tra địa chỉ nhận hàng cho khách hàng mua online chưa đăng nhập
+     *
      * @param address địa chỉ giao hàng
      */
     private void validateGuestShippingAddress(Address address) {
