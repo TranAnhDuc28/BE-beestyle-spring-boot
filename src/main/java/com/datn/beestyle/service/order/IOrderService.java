@@ -14,7 +14,10 @@ public interface IOrderService
     PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters);
     List<OrderResponse> getOrdersPending();
     OrderResponse getOrderDetailById(Long id);
+    OrderResponse getOrderDetailByOrderTrackingNumber(String orderTrackingNumber);
     String updateOrderOnline(Long id, UpdateOrderStatusDeliveryRequest request);
     OrderResponse createOrderOnline(CreateOrderOnlineRequest request);
+    PageResponse<List<OrderResponse>> getOrderByCustomerId(Long customerId, Pageable pageable);
+
 
 }

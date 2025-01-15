@@ -75,6 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             customerResponse.setId(customer.getId());
             customerResponse.setFullName(customer.getFullName());
             customerResponse.setDateOfBirth(customer.getDateOfBirth());
+            customerResponse.setPhoneNumber(customer.getPhoneNumber());
             customerResponse.setGender(Gender.fromInteger(customer.getGender()));
             customerResponse.setEmail(customer.getEmail());
             customerResponse.setRole(customer.getRole().name());

@@ -140,8 +140,52 @@ public class OrderService
     }
 
     @Override
+    public PageResponse<List<OrderResponse>> getOrderByCustomerId(Long customerId, Pageable pageable) {
+        int page = 0;
+        if (pageable.getPageNumber() > 0) page = pageable.getPageNumber() - 1;
+        PageRequest pageRequest = PageRequest.of(page, pageable.getPageSize())
+                .withSort(Sort.Direction.DESC, "createdAt");
+
+        Page<OrderResponse> orderResponsePages = orderRepository.findOrdersByCustomerId(pageRequest, customerId);
+
+        return PageResponse.<List<OrderResponse>>builder()
+                .pageNo(pageRequest.getPageNumber() + 1)
+                .pageSize(pageable.getPageSize())
+                .totalElements(orderResponsePages.getTotalElements())
+                .totalPages(orderResponsePages.getTotalPages())
+                .items(orderResponsePages.getContent())
+                .build();
+    }
+
+    @Override
     public OrderResponse getOrderDetailById(Long id) {
         OrderResponse orderResponse = this.getDtoById(id);
+
+        if (orderResponse.getCustomerId() != null) {
+            CustomerResponse customerResponse = customerService.getDtoById(orderResponse.getCustomerId());
+            orderResponse.setCustomerInfo(customerResponse);
+        }
+
+        // kiểm tra hóa đơn được áp dụng voucher không
+        if (orderResponse.getVoucherId() != null) {
+            VoucherResponse voucherResponse = voucherService.getDtoById(orderResponse.getVoucherId());
+            orderResponse.setVoucherInfo(voucherResponse);
+        }
+
+        // Lấy địa chỉ giao hàng của hóa đơn
+        if (orderResponse.getShippingAddressId() != null) {
+            AddressResponse addressResponse = addressService.getDtoById(orderResponse.getShippingAddressId());
+            orderResponse.setShippingAddress(addressResponse);
+        }
+
+        return orderResponse;
+    }
+
+    @Override
+    public OrderResponse getOrderDetailByOrderTrackingNumber(String orderTrackingNumber) {
+        Order order = orderRepository.findOrderByOrderTrackingNumber(orderTrackingNumber);
+
+        OrderResponse orderResponse = orderMapper.toEntityDto(order);
 
         if (orderResponse.getCustomerId() != null) {
             CustomerResponse customerResponse = customerService.getDtoById(orderResponse.getCustomerId());
@@ -330,7 +374,6 @@ public class OrderService
 
         return orderMapper.toEntityDto(orderRepository.save(order));
     }
-
 
     /**
      * xử lý đơn hàng cho bán tại quầy (vừa trực tiếp vừa giao)
