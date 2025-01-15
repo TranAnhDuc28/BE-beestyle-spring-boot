@@ -71,4 +71,7 @@ public interface VoucherRepository extends IGenericRepository<Voucher, Integer> 
             WHERE v.status = :status AND v.minOrderValue <= :totalAmount
             """)
     List<VoucherResponse> findValidVouchers(@Param("status") int status, @Param("totalAmount") BigDecimal totalAmount);
+
+    boolean existsByVoucherName(String voucherName);
+    boolean existsByVoucherCode(String voucherCode);
 }

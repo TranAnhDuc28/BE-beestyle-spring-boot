@@ -12,6 +12,7 @@ import com.datn.beestyle.entity.Voucher;
 import com.datn.beestyle.enums.DiscountStatus;
 import com.datn.beestyle.enums.DiscountType;
 import com.datn.beestyle.enums.Status;
+import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.VoucherMapper;
 import com.datn.beestyle.repository.VoucherRepository;
 import jakarta.persistence.EntityManager;
@@ -129,11 +130,38 @@ public class VoucherService
     @Override
     protected void beforeCreate(CreateVoucherRequest request) {
         // Logic kiểm tra trước khi tạo voucher nếu cần
+        if (voucherRepository.existsByVoucherName(request.getVoucherName())) {
+            throw new InvalidDataException("Tên voucher đã tồn tại.");
+        }
+        if (voucherRepository.existsByVoucherCode(request.getVoucherCode())) {
+            throw new InvalidDataException("Mã voucher đã tồn tại.");
+        }
+
+        // Kiểm tra nếu giảm tiền mặt và giá trị đơn hàng tối thiểu không hợp lệ
+        if (Integer.parseInt(request.getDiscountType()) == DiscountType.CASH.getValue()) {
+            if (request.getMinOrderValue().compareTo(BigDecimal.valueOf(request.getDiscountValue())) <= 0) {
+                throw new InvalidDataException("Giá trị đơn hàng tối thiểu phải lớn hơn giá trị giảm.");
+            }
+        }
+
     }
 
     @Override
     protected void beforeUpdate(Integer id, UpdateVoucherRequest request) {
         // Logic kiểm tra trước khi cập nhật voucher nếu cần
+        if (voucherRepository.existsByVoucherName(request.getVoucherName())) {
+            throw new InvalidDataException("Tên voucher đã tồn tại.");
+        }
+        if (voucherRepository.existsByVoucherCode(request.getVoucherCode())) {
+            throw new InvalidDataException("Mã voucher đã tồn tại.");
+        }
+
+        // Kiểm tra nếu giảm tiền mặt và giá trị đơn hàng tối thiểu không hợp lệ
+        if (Integer.parseInt(request.getDiscountType()) == DiscountType.CASH.getValue()) {
+            if (request.getMinOrderValue().compareTo(BigDecimal.valueOf(request.getDiscountValue())) <= 0) {
+                throw new InvalidDataException("Giá trị đơn hàng tối thiểu phải lớn hơn giá trị giảm.");
+            }
+        }
     }
 
     @Override
