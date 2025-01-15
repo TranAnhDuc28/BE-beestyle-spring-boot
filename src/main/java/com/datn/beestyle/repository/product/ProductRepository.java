@@ -118,15 +118,14 @@ public interface ProductRepository extends IGenericRepository<Product, Long>, Pr
                 MAX(pv.sale_price) AS maxSalePrice,
                 MIN(pv.sale_price - (pv.sale_price * COALESCE(pm.discount_value, 0) / 100)) AS minDiscountedPrice,
                 MAX(pm.discount_value) AS discountValue,
-                COUNT(oi.product_variant_id) AS totalProduct,
-                SUM(oi.quantity) AS totalQuantitySold,
-                pv.id AS productVariantId
+                COUNT(DISTINCT pv.id) AS totalProduct, 
+                SUM(oi.quantity) AS totalQuantitySold 
             FROM product p
             INNER JOIN product_variant pv ON p.id = pv.product_id
             INNER JOIN order_item oi ON pv.id = oi.product_variant_id
             LEFT JOIN promotion pm ON pv.promotion_id = pm.id
             WHERE p.status = 1
-            GROUP BY p.id, p.product_name, oi.product_variant_id
+            GROUP BY p.id, p.product_name
             ORDER BY totalQuantitySold DESC, totalProduct DESC;
             """,
             nativeQuery = true)
