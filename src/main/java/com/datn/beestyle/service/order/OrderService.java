@@ -313,6 +313,13 @@ public class OrderService
         if (request.getCustomerId() != null) {
             Customer customer = customerService.getById(request.getCustomerId());
             order.setCustomer(customer);
+
+            if (request.getShippingAddressId() == null) {
+                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
+            }
+
+            Address address = addressService.getById(request.getShippingAddressId());
+            order.setShippingAddress(address);
         } else {
             // Kiểm tra địa chỉ giao hàng đã nhập chưa
             if (!StringUtils.hasText(request.getShippingAddress())) {
