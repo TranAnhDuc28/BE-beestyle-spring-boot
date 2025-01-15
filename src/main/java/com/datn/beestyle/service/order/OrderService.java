@@ -266,6 +266,9 @@ public class OrderService
             // Cập nhật trạng thái đơn hàng
             order.setOrderStatus(OrderStatus.CANCELLED.getValue());
 
+            // cập nhật lý do hủy
+            order.setNote(request.getNote());
+
         } else if (orderStatus == OrderStatus.RETURNED) {
             // kiểm tra trạng thái đơn hàng để được yêu cầu trả hàng
             int currentOrderStatus = order.getOrderStatus();
@@ -277,6 +280,12 @@ public class OrderService
 
             // xử lý đơn khi trả hàng
             this.handleOrderOnlineAfterCancelledOrReturned(order.getId(), request.getNote());
+
+            // Cập nhật trạng thái đơn hàng
+            order.setOrderStatus(OrderStatus.RETURNED.getValue());
+
+            // cập nhật lý do hủy
+            order.setNote(request.getNote());
         }
 
         orderRepository.save(order);
