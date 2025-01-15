@@ -25,6 +25,7 @@ public interface AddressMapper extends IGenericMapper<Address, CreateAddressRequ
     @Override
     void toUpdateEntity(@MappingTarget Address entity, UpdateAddressRequest request);
 
+
 //    // Phương thức kiểm tra và thiết lập giá trị isDefault
 //    default boolean checkAndSetDefault(CreateAddressRequest request) {
 //        boolean existsDefaultAddress = addressRepository.existsByIsDefaultTrue();

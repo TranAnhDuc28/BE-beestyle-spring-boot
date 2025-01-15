@@ -27,17 +27,15 @@ import org.springframework.stereotype.Component;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Component
 public class InvoicePDFExporter {
 
     private final OrderItemRepository orderItemRepository;
-    private final OrderRepository orderRepository;
-    private final AddressRepository addressRepository;
     private final IOrderService orderService;
     public void exportInvoice(Long orderId, OutputStream out) {
         try {
@@ -107,10 +105,14 @@ public class InvoicePDFExporter {
             paragraph.addTabStops(new TabStop(usableWidth, TabAlignment.RIGHT));
 
             // Thêm nội dung
-            /// Thêm nội dung bên trái (Tên khách hàng)
-            String customerName = (order.getCustomer().getFullName() == null || order.getCustomer().getFullName().isEmpty())
-                    ? " Khách lẻ"
-                    : order.getCustomer().getFullName();
+            // Thêm nội dung bên trái (Tên khách hàng)
+            String customerName = " Khách lẻ";
+            if (order.getCustomer() != null &&
+                order.getCustomer().getFullName() != null &&
+                !order.getCustomer().getFullName().isEmpty()) {
+                customerName = order.getCustomer().getFullName();
+            }
+
             paragraph.add("Tên khách hàng: " + customerName);
             paragraph.add(new Tab());
             paragraph.add("Mã hóa đơn: " + order.getOrderTrackingNumber());
@@ -126,7 +128,7 @@ public class InvoicePDFExporter {
             }
           
             paragraph.add(new Tab());
-            paragraph.add("Ngày tạo: " + order.getCreatedAt());
+            paragraph.add("Ngày tạo: " + order.getCreatedAt().format(AppUtils.formatterDateGlobal));
             paragraph.add("\n");
             String phoneNumber = (order.getPhoneNumber() == null || order.getPhoneNumber().isEmpty())
                     ? ""

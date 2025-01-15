@@ -27,8 +27,8 @@ public class AddressController {
                 addressService.getAllByCustomerId(pageable, id));
     }
     @PostMapping("/create")
-    public ApiResponse<?> createAddress(@RequestBody CreateAddressRequest request) {
-
+    public ApiResponse<?> createAddress(@Valid @RequestBody CreateAddressRequest request) {
+        System.out.println("CustomerId: "+request.getCustomerId());
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới địa chỉ thành công",
                 addressService.create(request));
     }

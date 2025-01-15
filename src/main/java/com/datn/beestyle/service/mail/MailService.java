@@ -74,10 +74,9 @@ public class MailService {
             throw new RuntimeException("Failed to send email", e);
         }
     }
-    public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
-        Order order = orderRepository.findById(id).get();
 
-//        Order order = orderRepository.getReferenceById(id);
+    public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
+        Order order = orderRepository.getReferenceById(id);
         Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());
 
         try {
@@ -107,14 +106,13 @@ public class MailService {
             // Gửi email
             mailSender.send(message);
             return "Email sent successfully";
-        }
-        catch (MessagingException | UnsupportedEncodingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             log.error("Error sending email to {}: {}", customer.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email", e);
         }
     }
 
-    public String sendLoginStaffEmail(Staff staff,String generatedPassword) throws MessagingException {
+    public String sendLoginStaffEmail(Staff staff, String generatedPassword) throws MessagingException {
 
         try {
             // Tạo dữ liệu gửi vào template
@@ -123,7 +121,6 @@ public class MailService {
             context.setVariable("email", staff.getEmail());
             context.setVariable("password", generatedPassword);
             context.setVariable("loginUrl", "http://localhost:3000/login");
-
 
 
             // Xử lý template để tạo nội dung HTML
@@ -141,14 +138,13 @@ public class MailService {
             // Gửi email
             mailSender.send(message);
             return "Email sent successfully";
-        }
-        catch (MessagingException | UnsupportedEncodingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             log.error("Error sending email to {}: {}", staff.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email", e);
         }
     }
 
-    public String sendLoginCustomerEmail(Customer customer,String generatedPassword) throws MessagingException {
+    public String sendLoginCustomerEmail(Customer customer, String generatedPassword) throws MessagingException {
 
         try {
             // Tạo dữ liệu gửi vào template
@@ -157,7 +153,6 @@ public class MailService {
             context.setVariable("email", customer.getEmail());
             context.setVariable("password", generatedPassword);
             context.setVariable("loginUrl", "http://localhost:3000/login");
-
 
 
             // Xử lý template để tạo nội dung HTML
@@ -175,8 +170,7 @@ public class MailService {
             // Gửi email
             mailSender.send(message);
             return "Email sent successfully";
-        }
-        catch (MessagingException | UnsupportedEncodingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             log.error("Error sending email to {}: {}", customer.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send email", e);
         }

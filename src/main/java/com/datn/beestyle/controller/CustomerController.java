@@ -34,6 +34,7 @@ public class CustomerController {
 
     @PostMapping("/create")
     public ApiResponse<?> createCustomer(@Valid @RequestBody CreateCustomerRequest request) {
+
         return new ApiResponse<>(HttpStatus.CREATED.value(), "Thêm mới khách hàng thành công",
                 customerService.create(request));
     }
