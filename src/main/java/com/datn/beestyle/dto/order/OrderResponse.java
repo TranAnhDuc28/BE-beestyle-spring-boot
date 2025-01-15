@@ -38,6 +38,7 @@ public class OrderResponse {
     BigDecimal totalAmount;
     Timestamp paymentDate;
     String paymentMethod;
+    Boolean isPrepaid;
     String orderChannel;
     String orderType;
     String orderStatus;
@@ -49,8 +50,8 @@ public class OrderResponse {
 
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumberCustomer,
                          String receiverName, String phoneNumber, BigDecimal totalAmount, Timestamp paymentDate,
-                         Integer paymentMethod, Integer orderChannel, Integer orderType, Integer orderStatus, LocalDateTime createdAt,
-                         LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
+                         Integer paymentMethod, Integer orderChannel, Integer orderType, Integer orderStatus,
+                         LocalDateTime createdAt, LocalDateTime updatedAt, Long createdBy, Long updatedBy) {
         this.id = id;
         this.orderTrackingNumber = orderTrackingNumber;
         this.customerId = customerId;
@@ -70,6 +71,17 @@ public class OrderResponse {
         this.updatedBy = updatedBy;
     }
 
+    public OrderResponse(Long id, String orderTrackingNumber, Integer orderStatus, Integer orderChannel, Integer orderType,
+                          BigDecimal totalAmount, LocalDateTime createdAt) {
+        this.id = id;
+        this.orderTrackingNumber = orderTrackingNumber;
+        this.orderStatus = OrderStatus.fromInteger(orderStatus);
+        this.orderChannel = OrderChannel.fromInteger(orderChannel);
+        this.orderType = OrderType.fromInteger(orderType);
+        this.totalAmount = totalAmount;
+        this.createdAt = createdAt;
+    }
+
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, Integer orderChannel, Integer orderType,
                          Integer orderStatus) {
         this.id = id;
@@ -79,4 +91,6 @@ public class OrderResponse {
         this.orderType = OrderType.fromInteger(orderType);
         this.orderStatus = OrderStatus.fromInteger(orderStatus);
     }
+
+
 }

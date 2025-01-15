@@ -18,6 +18,7 @@ public class AppUtils {
     private static final Pattern WHITE_SPACE = Pattern.compile("[\\s]");
     private static final Pattern EDGES_DASHES = Pattern.compile("(^-|-$)");
     private static final DateTimeFormatter formatterDateOrderTrackingNumber = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
+    public static final DateTimeFormatter formatterDateGlobal = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm:ss");
 
     public static String toSlug(String input) {
         // Thay thế khoảng trắng bằng dấu gạch ngang

@@ -61,7 +61,20 @@ public interface OrderRepository extends IGenericRepository<Order, Long> {
             """
     )
     List<OrderResponse> findOrdersByOrderChannelAndOrderStatus(@Param("orderChannel") Integer orderChannel,
-                                             @Param("orderStatus") Integer orderStatus);
+                                                               @Param("orderStatus") Integer orderStatus);
+
+    @Query(value = """
+                select new com.datn.beestyle.dto.order.OrderResponse(
+                    o.id, o.orderTrackingNumber, o.orderStatus, o.orderChannel, o.orderType, o.totalAmount, o.createdAt
+                )
+                from Order o
+                where o.customer.id = :customerId
+            """
+    )
+    Page<OrderResponse> findOrdersByCustomerId(Pageable pageable, @Param("customerId") Long customerId);
+
+    Order findOrderByOrderTrackingNumber(String orderTrackingNumber);
 
     int countByCreatedByAndAndOrderStatus(Long staffId, Integer orderStatus);
+
 }
