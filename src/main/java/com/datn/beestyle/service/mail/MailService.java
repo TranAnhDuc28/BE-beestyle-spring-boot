@@ -175,4 +175,35 @@ public class MailService {
             throw new RuntimeException("Failed to send email", e);
         }
     }
+
+    public String sendOrderTrackingNumber(String orderTrackingNumber, String recipient, String customerName) throws MessagingException {
+
+        try {
+            // Tạo dữ liệu gửi vào template
+            Context context = new Context();
+            context.setVariable("customerName", customerName);
+            context.setVariable("orderTrackingNumber", orderTrackingNumber);
+            context.setVariable("orderTrackingNumberUrl", "http://localhost:3000/order-lookup?orderTrackingNumber=" + orderTrackingNumber);
+
+
+            // Xử lý template để tạo nội dung HTML
+            String htmlContent = templateEngine.process("orderTrackingNumber", context);
+
+            // Tạo và cấu hình email
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(emailFrom, "Beestyle");
+            helper.setTo(recipient);
+            helper.setSubject("Kiểm tra đơn hàng");
+            helper.setText(htmlContent, true);
+
+            // Gửi email
+            mailSender.send(message);
+            return "Email sent successfully";
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            log.error("Error sending email to {}: {}", recipient, e.getMessage(), e);
+            throw new RuntimeException("Failed to send email", e);
+        }
+    }
 }

@@ -38,5 +38,13 @@ public class MailController {
         }
     }
 
+    @PostMapping("/send-orderTrackingNumber")
+    public ApiResponse<?> sendOrderTrackingNumber(@RequestParam String orderTrackingNumber,String recipient, String customerName ){
+        try {
+            return new ApiResponse<>(HttpStatus.OK.value(), mailService.sendOrderTrackingNumber(orderTrackingNumber,recipient,customerName));
+        }catch (Exception e){
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
 
 }

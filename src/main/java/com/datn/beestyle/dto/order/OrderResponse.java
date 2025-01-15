@@ -48,7 +48,6 @@ public class OrderResponse {
     Long createdBy;
     Long updatedBy;
 
-
     public OrderResponse(Long id, String orderTrackingNumber, Long customerId, String customerName, String phoneNumberCustomer,
                          String receiverName, String phoneNumber, BigDecimal totalAmount, Timestamp paymentDate,
                          Integer paymentMethod, Integer orderChannel, Integer orderType, Integer orderStatus,
