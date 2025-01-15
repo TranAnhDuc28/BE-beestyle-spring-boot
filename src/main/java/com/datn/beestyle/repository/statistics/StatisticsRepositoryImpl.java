@@ -91,8 +91,8 @@ public class StatisticsRepositoryImpl {
                               WHERE %s
                               %s
                               ORDER BY %s;
-                        """, components.selectClause, components.whereClause,
-                period.equals("range") ? "" : "GROUP BY " + components.groupByClause, components.orderByClause);
+                        """, components.selectClauseOrderStatus, components.whereClauseOrderStatus,
+                period.equals("range") ? "" : "GROUP BY " + components.groupByClauseOrderStatus, components.orderByClauseOrderStatus);
 
         Query query = entityManager.createNativeQuery(sql, "OrderStatusByPeriodMapping");
         query.setFirstResult((int) pageable.getOffset());
@@ -106,7 +106,7 @@ public class StatisticsRepositoryImpl {
                     SELECT COUNT(*) 
                       FROM `order` o
                       WHERE %s
-                """, components.whereClause);
+                """, components.whereClauseOrderStatus);
 
         Query countQuery = entityManager.createNativeQuery(countSql);
         long totalElements = ((Number) countQuery.getSingleResult()).longValue();
@@ -251,28 +251,48 @@ public class StatisticsRepositoryImpl {
         switch (period) {
             case "day":
                 components.selectClause = "DATE(o.payment_date) AS period";
+                components.selectClauseOrderStatus = "DATE(o.updated_at) AS period";
                 components.groupByClause = "DATE(o.payment_date) ";
+                components.groupByClauseOrderStatus = "DATE(o.updated_at) ";
                 components.whereClause = String.format(
                         "DATE(o.payment_date) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
                         periodValue, periodValue
                 );
+                components.whereClauseOrderStatus = String.format(
+                        "DATE(o.updated_at) BETWEEN DATE_SUB('%s', INTERVAL 6 DAY) AND '%s'",
+                        periodValue, periodValue
+                );
+
                 components.orderByClause = "DATE(o.payment_date) ASC";
+                components.orderByClauseOrderStatus = "DATE(o.updated_at) ASC";
                 break;
 
             case "month":
                 components.selectClause = "DATE_FORMAT(o.payment_date, '%Y-%m') AS period";
+                components.selectClauseOrderStatus = "DATE_FORMAT(o.updated_at, '%Y-%m') AS period";
                 components.groupByClause = "DATE_FORMAT(o.payment_date, '%Y-%m')";
+                components.groupByClauseOrderStatus = "DATE_FORMAT(o.updated_at, '%Y-%m')";
                 components.whereClause = "YEAR(o.payment_date) = '" + periodValue + "'";
+                components.whereClauseOrderStatus = "YEAR(o.updated_at) = '" + periodValue + "'";
                 components.orderByClause = "DATE_FORMAT(o.payment_date, '%Y-%m') ASC";
+                components.orderByClauseOrderStatus = "DATE_FORMAT(o.updated_at, '%Y-%m') ASC";
+
                 break;
 
             case "year":
                 components.selectClause = "YEAR(o.payment_date) AS period";
+                components.selectClauseOrderStatus = "YEAR(o.updated_at) AS period";
                 components.groupByClause = "YEAR(o.payment_date)";
+                components.groupByClauseOrderStatus = "YEAR(o.updated_at)";
                 components.whereClause = String.format(
                         "YEAR(o.payment_date) BETWEEN ('%s' - 4) AND '%s'",
                         periodValue, periodValue);
+                components.whereClauseOrderStatus = String.format(
+                        "YEAR(o.updated_at) BETWEEN ('%s' - 4) AND '%s'",
+                        periodValue, periodValue);
                 components.orderByClause = "YEAR(o.payment_date) ASC";
+                components.orderByClauseOrderStatus = "YEAR(o.updated_at) ASC";
+
                 break;
 
             case "range":
@@ -283,11 +303,18 @@ public class StatisticsRepositoryImpl {
                 String startDate = dateRange[0];
                 String endDate = dateRange[1];
                 components.selectClause = String.format("'%s - %s' AS period", startDate, endDate);
+                components.selectClauseOrderStatus = String.format("'%s - %s' AS period", startDate, endDate);
                 components.whereClause = String.format(
                         "DATE(o.payment_date) BETWEEN '%s' AND '%s'",
                         startDate, endDate
                 );
+                components.whereClauseOrderStatus = String.format(
+                        "DATE(o.updated_at) BETWEEN '%s' AND '%s'",
+                        startDate, endDate
+                );
                 components.orderByClause = "DATE(o.payment_date) ASC";
+                components.orderByClauseOrderStatus = "DATE(o.updated_at) ASC";
+
                 break;
 
             default:
@@ -299,9 +326,14 @@ public class StatisticsRepositoryImpl {
     // Lớp hỗ trợ cấu hình các thành phần truy vấn
     private static class QueryComponents {
         String selectClause = "";
+        String selectClauseOrderStatus = "";
         String groupByClause = "";
+        String groupByClauseOrderStatus = "";
+        String whereClauseOrderStatus = "";
         String whereClause = "";
         String orderByClause = "";
+        String orderByClauseOrderStatus = "";
+
     }
 
 
