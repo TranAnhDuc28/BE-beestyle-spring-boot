@@ -314,20 +314,41 @@ public class OrderService
             Customer customer = customerService.getById(request.getCustomerId());
             order.setCustomer(customer);
 
-            if (request.getShippingAddressId() == null) {
-                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
+//            if (request.getShippingAddressId() == null) {
+//                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
+//            }
+
+            // Kiểm tra địa chỉ giao hàng đã nhập chưa
+            if (!StringUtils.hasText(request.getShippingAddress())) {
+                throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
             }
 
-            Address address = addressService.getById(request.getShippingAddressId());
-            order.setShippingAddress(address);
+            // chuyển đổi chỗi JSON sang obj Address
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+                // kiểm tra Address
+                this.validateGuestShippingAddress(address);
+                order.setShippingAddress(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         } else {
             // Kiểm tra địa chỉ giao hàng đã nhập chưa
             if (!StringUtils.hasText(request.getShippingAddress())) {
                 throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
             }
 
-            Address address = addressService.getById(request.getShippingAddressId());
-            order.setShippingAddress(address);
+            // chuyển đổi chỗi JSON sang obj Address
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+                // kiểm tra Address
+                this.validateGuestShippingAddress(address);
+                order.setShippingAddress(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
