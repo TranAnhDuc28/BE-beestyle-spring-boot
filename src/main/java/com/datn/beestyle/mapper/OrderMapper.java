@@ -31,6 +31,8 @@ public interface OrderMapper extends IGenericMapper<Order, CreateOrderRequest, U
     @Mapping(target = "orderTrackingNumber", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "shippingFee", constant = "0")
     @Mapping(target = "totalAmount", constant = "0")
     @Mapping(target = "orderChannel", source = ".", qualifiedByName = "orderChannelIdCreate")

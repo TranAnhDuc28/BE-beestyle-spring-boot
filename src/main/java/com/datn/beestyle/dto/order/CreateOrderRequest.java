@@ -29,4 +29,6 @@ public class CreateOrderRequest {
 
     @EnumValue(enumClass = OrderStatus.class, name = "OrderStatus", message = "Invalid value for Order status")
     String orderStatus;
+
+    Long staffId;
 }

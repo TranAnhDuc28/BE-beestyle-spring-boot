@@ -43,6 +43,7 @@ public class OrderResponse {
     String orderType;
     String orderStatus;
     String note;
+    String staffName;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Long createdBy;

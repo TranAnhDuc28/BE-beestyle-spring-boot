@@ -77,6 +77,7 @@ public class MailService {
 
     public String sendThankYouEmail(Long id, MultipartFile[] files) throws MessagingException {
         Order order = orderRepository.getReferenceById(id);
+        if (order.getCustomer() == null) return "No send mail";
         Customer customer = customerRepository.getReferenceById(order.getCustomer().getId());
 
         try {
@@ -183,7 +184,7 @@ public class MailService {
             Context context = new Context();
             context.setVariable("customerName", customerName);
             context.setVariable("orderTrackingNumber", orderTrackingNumber);
-            context.setVariable("orderTrackingNumberUrl", "http://localhost:3000/order-lookup?orderTrackingNumber=" + orderTrackingNumber);
+            context.setVariable("orderTrackingNumberUrl", "http://localhost:3000/order-tracking?orderTrackingNumber=" + orderTrackingNumber);
 
 
             // Xử lý template để tạo nội dung HTML
