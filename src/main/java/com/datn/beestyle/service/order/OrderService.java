@@ -8,6 +8,7 @@ import com.datn.beestyle.dto.address.AddressResponse;
 import com.datn.beestyle.dto.customer.CustomerResponse;
 import com.datn.beestyle.dto.order.*;
 import com.datn.beestyle.dto.order.item.CreateOrderItemOnlineRequest;
+import com.datn.beestyle.dto.staff.StaffResponse;
 import com.datn.beestyle.dto.voucher.VoucherResponse;
 import com.datn.beestyle.entity.Address;
 import com.datn.beestyle.entity.Voucher;
@@ -18,12 +19,10 @@ import com.datn.beestyle.entity.user.Customer;
 import com.datn.beestyle.enums.*;
 import com.datn.beestyle.exception.InvalidDataException;
 import com.datn.beestyle.mapper.OrderMapper;
-import com.datn.beestyle.repository.AddressRepository;
-import com.datn.beestyle.repository.OrderItemRepository;
-import com.datn.beestyle.repository.OrderRepository;
-import com.datn.beestyle.repository.ProductVariantRepository;
+import com.datn.beestyle.repository.*;
 import com.datn.beestyle.service.address.IAddressService;
 import com.datn.beestyle.service.customer.ICustomerService;
+import com.datn.beestyle.service.staff.StaffService;
 import com.datn.beestyle.service.voucher.IVoucherService;
 import com.datn.beestyle.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,12 +59,13 @@ public class OrderService
     private final OrderMapper orderMapper;
     private final ProductVariantRepository productVariantRepository;
     private final OrderItemRepository orderItemRepository;
+    private final StaffService staffService;
 
     public OrderService(IGenericRepository<Order, Long> entityRepository,
                         IGenericMapper<Order, CreateOrderRequest, UpdateOrderRequest, OrderResponse> mapper,
                         EntityManager entityManager, OrderRepository orderRepository, ICustomerService customerService,
                         IVoucherService voucherService, IAddressService addressService, AddressRepository addressRepository,
-                        OrderMapper orderMapper, ProductVariantRepository productVariantRepository, OrderItemRepository orderItemRepository) {
+                        OrderMapper orderMapper, ProductVariantRepository productVariantRepository, OrderItemRepository orderItemRepository, StaffService staffService) {
         super(entityRepository, mapper, entityManager);
         this.orderRepository = orderRepository;
         this.customerService = customerService;
@@ -75,6 +75,7 @@ public class OrderService
         this.orderMapper = orderMapper;
         this.productVariantRepository = productVariantRepository;
         this.orderItemRepository = orderItemRepository;
+        this.staffService = staffService;
     }
 
     public PageResponse<List<OrderResponse>> getOrdersFilterByFields(Pageable pageable, Map<String, String> filters) {
@@ -178,6 +179,14 @@ public class OrderService
             orderResponse.setShippingAddress(addressResponse);
         }
 
+        if (orderResponse.getCreatedBy() != null) {
+            Integer staffId = Math.toIntExact(orderResponse.getCreatedBy());
+            StaffResponse staffResponse = staffService.getDtoById(staffId);
+            if (staffResponse != null) {
+                orderResponse.setStaffName(staffResponse.getFullName());
+            }
+        }
+
         return orderResponse;
     }
 
@@ -202,6 +211,14 @@ public class OrderService
         if (orderResponse.getShippingAddressId() != null) {
             AddressResponse addressResponse = addressService.getDtoById(orderResponse.getShippingAddressId());
             orderResponse.setShippingAddress(addressResponse);
+        }
+
+        if (order.getCreatedBy() != null) {
+            Integer staffId = Math.toIntExact(order.getCreatedBy());
+            StaffResponse staffResponse = staffService.getDtoById(staffId);
+            if (staffResponse != null) {
+                orderResponse.setStaffName(staffResponse.getFullName());
+            }
         }
 
         return orderResponse;
@@ -233,7 +250,7 @@ public class OrderService
             // kiểm tra tiền ship có được miễn phí hay không
             // tổng tiền gốc nhỏ hơn 500.000
             if (request.getTotalAmount().compareTo(new BigDecimal(AppUtils.FREE_SHIPPING_THRESHOLD)) <= 0 &&
-                    request.getShippingFee().compareTo(new BigDecimal(0)) == 0) {
+                request.getShippingFee().compareTo(new BigDecimal(0)) == 0) {
                 // tiền ship đã được tính
                 throw new InvalidDataException("Tổng giá trị đơn hàng chưa đủ để miễn phí ship.");
             } else {
@@ -273,8 +290,8 @@ public class OrderService
             // kiểm tra trạng thái đơn hàng để được yêu cầu trả hàng
             int currentOrderStatus = order.getOrderStatus();
             if (currentOrderStatus == OrderStatus.AWAITING_CONFIRMATION.getValue() ||
-                    currentOrderStatus == OrderStatus.CONFIRMED.getValue() ||
-                    currentOrderStatus == OrderStatus.AWAITING_SHIPMENT.getValue()) {
+                currentOrderStatus == OrderStatus.CONFIRMED.getValue() ||
+                currentOrderStatus == OrderStatus.AWAITING_SHIPMENT.getValue()) {
                 throw new IllegalArgumentException("Đơn hàng chưa được giao, không thể trả hàng.");
             }
 
@@ -314,20 +331,41 @@ public class OrderService
             Customer customer = customerService.getById(request.getCustomerId());
             order.setCustomer(customer);
 
-            if (request.getShippingAddressId() == null) {
-                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
+//            if (request.getShippingAddressId() == null) {
+//                throw new InvalidDataException("Vui lòng chọn địa chỉ giao hàng");
+//            }
+
+            // Kiểm tra địa chỉ giao hàng đã nhập chưa
+            if (!StringUtils.hasText(request.getShippingAddress())) {
+                throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
             }
 
-            Address address = addressService.getById(request.getShippingAddressId());
-            order.setShippingAddress(address);
+            // chuyển đổi chỗi JSON sang obj Address
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+                // kiểm tra Address
+                this.validateGuestShippingAddress(address);
+                order.setShippingAddress(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         } else {
             // Kiểm tra địa chỉ giao hàng đã nhập chưa
             if (!StringUtils.hasText(request.getShippingAddress())) {
                 throw new InvalidDataException("Vui lòng nhập địa chỉ giao hàng");
             }
 
-            Address address = addressService.getById(request.getShippingAddressId());
-            order.setShippingAddress(address);
+            // chuyển đổi chỗi JSON sang obj Address
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Address address = objectMapper.readValue(request.getShippingAddress().trim(), Address.class);
+                // kiểm tra Address
+                this.validateGuestShippingAddress(address);
+                order.setShippingAddress(address);
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         // kiểm tra tiền ship có được miễn phí hay không
@@ -353,7 +391,7 @@ public class OrderService
         String paymentMethod = request.getPaymentMethod();
         // nếu phương thức thanh toán là COD
         if (paymentMethod.equalsIgnoreCase(PaymentMethod.CASH.name()) ||
-                paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
+            paymentMethod.equalsIgnoreCase(PaymentMethod.CASH_AND_BANK_TRANSFER.name())) {
             PaymentMethod paymentMethodEnum = PaymentMethod.fromString(paymentMethod);
             order.setPaymentMethod(paymentMethodEnum.getValue());
             order.setPrepaid(false);
@@ -464,7 +502,10 @@ public class OrderService
 
     @Override
     protected void beforeCreate(CreateOrderRequest request) {
-        int countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(1L, OrderStatus.PENDING.getValue());
+        int countOrderPending = 0;
+        if (request.getStaffId() != null) {
+            countOrderPending = orderRepository.countByCreatedByAndAndOrderStatus(request.getStaffId(), OrderStatus.PENDING.getValue());
+        }
         if (countOrderPending >= 20) {
             throw new InvalidDataException("Hóa đơn chờ tạo tối đa 20, vui lòng sử dụng để tiếp tục tạo! ");
         }
@@ -485,6 +526,8 @@ public class OrderService
     protected void afterConvertCreateRequest(CreateOrderRequest request, Order entity) {
         entity.setOrderTrackingNumber(AppUtils.generateOrderTrackingNumber());
         entity.setOrderChannel(OrderChannel.OFFLINE.getValue());
+        entity.setCreatedBy(request.getStaffId());
+        entity.setUpdatedBy(request.getStaffId());
 
         // kiểm tra loại hóa đơn cho kênh bán hàng OFFLINE
         if (request.getOrderType().equalsIgnoreCase(OrderType.DELIVERY.name())) {
@@ -708,9 +751,9 @@ public class OrderService
         // kiểm tra số lượng trong kho còn lại
         if (productVariant.getQuantityInStock() < orderItem.getQuantity()) {
             String error = "Sản phẩm " + productVariant.getProduct().getProductName() +
-                    " trong kho không đủ để xử lý đơn hàng." +
-                    "(Yêu cầu sản phẩm: " + orderItem.getQuantity() +
-                    ", trong kho còn: " + productVariant.getQuantityInStock();
+                           " trong kho không đủ để xử lý đơn hàng." +
+                           "(Yêu cầu sản phẩm: " + orderItem.getQuantity() +
+                           ", trong kho còn: " + productVariant.getQuantityInStock();
             throw new InvalidDataException(error);
         }
 
